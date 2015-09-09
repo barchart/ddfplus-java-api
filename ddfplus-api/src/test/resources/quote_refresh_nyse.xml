@@ -1,0 +1,25 @@
+<data>
+	<QUOTE ask="355" asksize="515" basecode="A" bid="354" bidsize="639" ddfexchange="N" exchange="NYSE"
+		lastupdate="20150804102228" mode="R" name="Sprint Corporation" pointvalue="1.0" symbol="S" tickincrement="1">
+		<SESSION day="4" high="370" id="combined" last="355" low="350" numtrades="27250" open="367"
+			previous="334" pricevolume="89127010.85" session="R" ticks="+-" timestamp="20150804112228" tradesize="4600"
+			tradetime="20150804112228" volume="33847306" />
+		<SESSION day="3" high="351" id="previous" last="334" low="325" open="339" previous="337" ticks=".."
+			timestamp="20150803000000" volume="48533200" />
+		<SESSION day="4" id="session_4_R" previous="334" session="R" timestamp="20150804112228" />
+		<SESSION day="4" id="session_4_T" last="367" numtrades="7233" previous="334" pricevolume="22523230.83"
+			session="T" ticks=".." timestamp="20150804092958" tradesize="100" tradetime="20150804092958" volume="6265388" />
+	</QUOTE>
+	<QUOTE ask="2639" asksize="15" basecode="A" bid="2638" bidsize="12" ddfexchange="N" exchange="NYSE"
+		lastupdate="20150804102228" mode="R" name="Citizens Financial Group Inc/Ri" pointvalue="1.0" symbol="CFG"
+		tickincrement="1">
+		<SESSION day="4" high="2644" id="combined" last="2640" low="2590" numtrades="10667" open="2605"
+			previous="2603" pricevolume="61044358.93" session="R" ticks="+." timestamp="20150804112228" tradesize="100"
+			tradetime="20150804112228" volume="2458144" />
+		<SESSION day="3" high="2650" id="previous" last="2603" low="2600" open="2618" previous="2607" ticks=".."
+			timestamp="20150803000000" volume="6981500" />
+		<SESSION day="4" id="session_4_R" previous="2603" session="R" timestamp="20150804112228" />
+	</QUOTE>
+</data>
+
+

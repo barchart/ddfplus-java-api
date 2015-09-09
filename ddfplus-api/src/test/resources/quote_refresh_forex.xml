@@ -1,0 +1,22 @@
+<data>
+	<QUOTE ask="12241" basecode="B" bid="12240" ddfexchange="$" exchange="FOREX"
+		lastupdate="20150804100949" mode="R" name="Botswana Pula/Japanese Yen" pointvalue="1.0"
+		symbol="^BWPJPY" tickincrement="1">
+		<SESSION day="4" high="12268" id="combined" last="12239" low="12184" numtrades="97086"
+			open="12208" previous="12207" pricevolume="1188108.46" session=" " ticks="+-"
+			timestamp="20150804100949" tradesize="1" tradetime="20150804100949" volume="142088" />
+		<SESSION day="3" id="previous" last="12207" settlement="12207" ticks=".."
+			timestamp="20150803000000" />
+	</QUOTE>
+	<QUOTE ask="8170" basecode="D" bid="8169" ddfexchange="$" exchange="FOREX"
+		lastupdate="20150804100949" mode="R" name="Japanese Yen/Botswana Pula" pointvalue="1.0"
+		symbol="^JPYBWP" tickincrement="1">
+		<SESSION day="4" high="8206" id="combined" last="8169" low="8150" numtrades="3733"
+			open="8188" previous="8190" pricevolume="304.97" session=" " ticks=".." timestamp="20150804100949"
+			tradesize="1" tradetime="20150804100949" volume="119478" />
+		<SESSION day="3" id="previous" last="8190" settlement="8190" ticks=".."
+			timestamp="20150803000000" />
+	</QUOTE>
+</data>
+
+

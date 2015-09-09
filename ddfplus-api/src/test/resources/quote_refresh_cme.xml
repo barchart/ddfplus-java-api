@@ -1,0 +1,26 @@
+<data>
+	<QUOTE basecode="A" ddfexchange="M" exchange="GBLX" flag="p" lastupdate="20150804103113" mode="R"
+		name="E-Mini S&amp;P 500" pointvalue="50.0" symbol="ESZ2125C" tickincrement="5">
+		<SESSION day="3" id="combined" previous="4575" timestamp="20150803164100" />
+		<SESSION day="U" id="previous" last="4575" openinterest="2732" previous="5075" settlement="4575"
+			timestamp="20150731000000" />
+	</QUOTE>
+	<QUOTE basecode="B" ddfexchange="M" exchange="CME" lastupdate="20150804103113" mode="R" name="Lean Hogs"
+		pointvalue="400.0" symbol="HEQ780C" tickincrement="25">
+		
+		<SESSION day="4" high="2850" id="combined" last="2750" low="2750" open="2850" previous="2475"
+			timestamp="20150804101100" tradesize="2" volume="102" />
+			
+		<SESSION day="3" id="previous" last="2475" openinterest="1965" previous="1300" settlement="2475"
+			timestamp="20150803000000" volume="202" />
+	</QUOTE>
+	<QUOTE basecode="E" ddfexchange="M" exchange="CME" lastupdate="20150804103113" mode="R" name="Japanese Yen"
+		pointvalue="125000.0" symbol="J6U810P" tickincrement="5">
+		<SESSION day="4" high="8700" id="combined" last="8700" low="8700" open="8700" previous="8500"
+			timestamp="20150804084600" tradesize="1" volume="26" />
+		<SESSION day="3" id="previous" last="8500" openinterest="1020" previous="9300" settlement="8500"
+			timestamp="20150803000000" volume="31" />
+	</QUOTE>
+</data>
+
+

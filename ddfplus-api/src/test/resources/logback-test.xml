@@ -1,0 +1,21 @@
+<configuration scan="false" scanPeriod="120 seconds" debug="false">
+
+    <jmxConfigurator />
+ 
+	<property name="PATTERN" value="%date %-5level [%-6thread{6}] %-16logger{0} | %message %n" />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.ddfplus.service.feed" level="info">
+	</logger>
+
+	<root level="info">
+		<appender-ref ref="console" />
+		<appender-ref ref="LOG" />
+	</root>
+
+</configuration>

@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.ddfplus.jaws</groupId>
+		<artifactId>ddfplus-parent</artifactId>
+		<version>1.0.1-SNAPSHOT</version>
+	</parent>
+
+
+	<artifactId>ddfplus-api</artifactId>
+	<description>DDF Plus API</description>
+
+	<dependencies>
+		<!-- Must be provided by user of library -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Must be provided by user of library -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- An SLF4J implementation must be provided by the user if they want to see library logging. -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<!-- Change to "compile" to see logging in development -->
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Web socket support in JDK 1.7 using Java 7 Asynchronous Channel API 
+		See Tyrus User Guide -->  
+		<dependency>
+			<groupId>org.glassfish.tyrus.bundles</groupId>
+			<artifactId>tyrus-standalone-client-jdk</artifactId>
+			<version>1.11</version>
+		</dependency>
+		
+		<!-- Uses Grizzly container
+		<dependency>
+			<groupId>org.glassfish.tyrus.bundles</groupId>
+			<artifactId>tyrus-standalone-client</artifactId>
+			<version>1.11</version>
+		</dependency>
+		-->
+
+	</dependencies>
+
+
+</project>

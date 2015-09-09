@@ -1,0 +1,15 @@
+<usersettings>
+	<login username="dlucek" status="ok" credentials="ok">
+		<service id="TRADER" maxsymbols="2000" />
+		<exchanges
+			ids="AMEX,NYSE,NTDS,OTCBB,FUND,INDEX,AMEXBA,NYSEBA,NTDSBA,OTCBBBA,BMF_TR,CBOT,CBOTM,KCBT,CFE,CME,IOM,IMM,GBLX,CNSX,COMEX,CXMI,ERIS,EUIDX,EUREX,FOREX,ICE,LCE,ICEUS,ICEFI,INDEX,INDEX-CFE,INDEX-CBOE,INDEX-DOW,INDEX-NQ,INDEX-NY,INDEX-RL,INDEX-SP,LIFFE,LCE,LME,MATIF,MGEX,MNTRL,NLIF,NYMEX,NYMI,TSX,TSXV,INDEX-TSX,WPG" />
+	</login>
+	<servers>
+		<server type="stream" primary="qs-us-e-01.aws.barchart.com" secondary="qs01.aws.ddfplus.com"
+			recovery="qs02.aws.ddfplus.com" wss="qsws-us-e-01.aws.barchart.com" />
+		<server type="historical" primary="http://datasrv.ddfplus.com/isv/data.htx" maxrecords="14000" />
+		<server type="historicalv2" primary="http://ds01.ddfplus.com/historical/" secondary="http://ds02.ddfplus.com/historical/" />
+		<server type="extras" primary="http://extras.ddfplus.com" />
+		<server type="news" primary="news-proxy.aws.barchart.com:6397" />
+	</servers>
+</usersettings>

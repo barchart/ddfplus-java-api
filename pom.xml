@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.barchart.base</groupId>
+		<artifactId>barchart-archon</artifactId>
+		<version>3.0.17</version>
+	</parent>
+
+	<groupId>com.ddfplus.jaws</groupId>
+	<artifactId>ddfplus-parent</artifactId>
+	<version>1.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<scm>
+		<url>https://github.com:/barchart/ddfplus-java-api</url>
+		<connection>scm:git:git://github.com/barchart/ddfplus-java-api.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/barchart/ddfplus-java-api.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<description>DDF Plus API Parent</description>
+
+	<properties>
+		<projectJavaVersion>1.7</projectJavaVersion>
+	</properties>
+
+
+	<modules>
+		<module>ddfplus-api</module>
+		<module>ddfplus-examples</module>
+	</modules>
+
+</project>
