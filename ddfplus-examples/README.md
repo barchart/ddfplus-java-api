@@ -43,20 +43,23 @@ Run in "push" mode for exchange NYSE (N)
 How to run the Server example
 -----------------------------
   The server example API is used by clients who will receive market data directly from Barchart's internal servers.
-The source code is in src/**/ServerExample.java.  
+The source code is in src/**/ServerListenExample.java.  
 
-  java -cp ddf-examples-<version>-exe.jar com.ddfplus.api.examples.ServerExample LISTEN_TCP|LISTEN_UDP address port <interface>
+  java -cp ddf-examples-<version>-exe.jar com.ddfplus.api.examples.ServerListenExample LISTEN_TCP|LISTEN_UDP address port [interface] [-su user] [-sp password]
 
 where:
   LISTEN_TCP|LISTEN_UDP - Specify whether the inbound packets are TCP or UDP
   address               - Specify the Local Address to bind to. Use 0.0.0.0 for any
   port                  - Specify the port to bind to
   interface             -(Optional) Only if address is a multicast address.\n" + "")
-
+  -su user              - Snapshot User Name
+  -sp password          - Snapshot Password
+    
   This command will listen on port 10110 for inbound TCP market feed messages on any interface:
   
    java -cp ddfplus-examples-<version>-exe.jar com.ddfplus.api.examples.ServerExample LISTEN_TCP  0.0.0.0  10110
    
+   If the snapshot user and password are set then in the background a refresh request will be sent to obtain the statistics such as (hi,low, etc..).
    
 How to build the example code
 -----------------------------

@@ -144,8 +144,8 @@ public class DdfClientImpl implements DdfClient {
 		}
 
 		/*
-		 * For remote snapshot refreshes when using the "push"/STREAM LISTEN
-		 * commands.
+		 * For remote snapshot/refresh refreshes when using the "push"/STREAM
+		 * LISTEN commands.
 		 */
 		if (snapshotUserName != null && snapshotPassword != null) {
 			// Look up via user settings
@@ -347,8 +347,9 @@ public class DdfClientImpl implements DdfClient {
 				 * We already have a subscription and only one Exchange handler
 				 * is allowed.
 				 */
-				log.warn("An exchange quote subscription was already active, only 1 handler is allowed per exchange, exchange: "
-						+ exchangeCode);
+				log.warn(
+						"An exchange quote subscription was already active, only 1 handler is allowed per exchange, exchange: "
+								+ exchangeCode);
 			}
 		}
 	}
@@ -448,7 +449,7 @@ public class DdfClientImpl implements DdfClient {
 			FeedEvent fe = dataMaster.processMessage(array);
 
 			if (fe == null) {
-				// decode failure or no quote in the cache
+				// decode failure
 				return;
 			}
 

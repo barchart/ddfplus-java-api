@@ -146,7 +146,7 @@ class IoChannelListenUDP extends IoChannel {
 
 		socket.setReceiveBufferSize(NetConstants.UDP_RECV_BUFFER_SIZE);
 
-		log.error("DDFUDPListener getReceiveBufferSize(): " + socket.getReceiveBufferSize());
+		log.info("DDF UDP Listener getReceiveBufferSize(): " + socket.getReceiveBufferSize());
 
 		return socket;
 

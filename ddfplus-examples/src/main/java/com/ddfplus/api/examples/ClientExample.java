@@ -237,9 +237,10 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		text.append("\n-t connection type  - Connection Type, TCP,HTTP,HTTPSTREAM,WSS, defaults to TCP");
 		text.append("\n-s server           - DDF Server, otherwise it defaults to the server assigned to the user.");
 		text.append("\n-d                  - Activate depth subscriptions");
-		text.append("\n-su                 - Snapshot User Name");
-		text.append("\n-sp                 - Snapshot Password");
-		text.append("\n-l a,ts,d,me,q,qe,b - Logs messages: a=all,ts=timetamp,d=ddf messages,me=market events,q=quotes,qe=all exchange quotes,b=book/depth");
+		text.append("\n-su user            - Snapshot User Name");
+		text.append("\n-sp password        - Snapshot Password");
+		text.append(
+				"\n-l a,ts,d,me,q,qe,b - Logs messages: a=all,ts=timetamp,d=ddf messages,me=market events,q=quotes,qe=all exchange quotes,b=book/depth");
 		text.append("\n-sm                 - Stores DDF messages to a binary file in the current directory.");
 		text.append("\n-f <prop filename>  - Use property file instead of the default: " + CLIENT_PROPS_FILE);
 		System.out.println(text);

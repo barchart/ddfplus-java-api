@@ -21,7 +21,6 @@ import com.ddfplus.enums.DdfSessionCode;
 import com.ddfplus.enums.DdfSubRecord;
 import com.ddfplus.enums.QuoteElement;
 import com.ddfplus.enums.QuoteElementModifiers;
-import com.ddfplus.messages.DdfTimestamp;
 import com.ddfplus.messages.DdfMarketBase;
 import com.ddfplus.messages.DdfMarketBidAsk;
 import com.ddfplus.messages.DdfMarketCondition;
@@ -30,6 +29,7 @@ import com.ddfplus.messages.DdfMarketParameter;
 import com.ddfplus.messages.DdfMarketRefresh;
 import com.ddfplus.messages.DdfMarketRefreshXML;
 import com.ddfplus.messages.DdfMarketTrade;
+import com.ddfplus.messages.DdfTimestamp;
 import com.ddfplus.service.feed.FeedService;
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
@@ -117,19 +117,24 @@ public class DataMaster {
 			return null;
 		}
 
-		if (_type == MasterType.EndOfDay) {
-			// Do not process live messages if EOD cache.
-			return null;
-		}
-
 		if (log.isDebugEnabled()) {
 			log.debug("processMessage: " + msg);
 		}
 
-		// Can contain Quotes, Book, and a series of Market Events
+		/*
+		 * Can contain Quotes, Book, and a series of Market Events. Always
+		 * return the DDF message even if we can't process it by this class. The
+		 * TCP and UDP Listen modes (which pushes data from the replay server)
+		 * just use the raw DDF Message.
+		 */
 		FeedEvent fe = new FeedEvent();
 		// Save RAW DDF Message
 		fe.setDdfMessage(msg);
+
+		if (_type == MasterType.EndOfDay) {
+			// Do not process live messages if EOD cache.
+			return fe;
+		}
 
 		// //////////////////////////////////////////////////////////
 		// //////////////////////////////////////////////////////////
@@ -167,12 +172,7 @@ public class DataMaster {
 				/*
 				 * Initial Quote refresh not received yet, get snapshot refresh
 				 * from the web service. Until we receive the snapshot we will
-				 * not process any updates.
-				 * 
-				 * ISSUE: Until the snapshot is processed we will drop updates
-				 * and the snapshot exchange callback will be old as compared to
-				 * the most recent updates that where not processed. How to fix,
-				 * queue the updates.
+				 * not call the QuoteHandler.
 				 */
 				if (feedService != null) {
 					// Schedule the refresh
@@ -531,8 +531,8 @@ public class DataMaster {
 		}
 
 		if ((element == QuoteElement.Trade.value())
-				&& ((modifier == QuoteElementModifiers.Last.value()) || (modifier == QuoteElementModifiers.Ask.value()) || (modifier == QuoteElementModifiers.Bid
-						.value()))) {
+				&& ((modifier == QuoteElementModifiers.Last.value()) || (modifier == QuoteElementModifiers.Ask.value())
+						|| (modifier == QuoteElementModifiers.Bid.value()))) {
 			// Trade - Last
 			if (session != null) {
 				session.setLast(f);
@@ -887,8 +887,8 @@ public class DataMaster {
 					pCombinedSession._settlement = f;
 					clearPreFlag = true;
 					// MarketEvent.Settlement
-					MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Settlement, quote.getSymbolInfo()
-							.getSymbol());
+					MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Settlement,
+							quote.getSymbolInfo().getSymbol());
 					me.setSettlement(f);
 					if (log.isDebugEnabled()) {
 						log.debug(me.toString());

@@ -73,6 +73,10 @@ public class FeedServiceImpl implements FeedService {
 	// for testing only
 	private String queryUrl;
 
+	public FeedServiceImpl(DataMaster datamaster, UserSettings userSettings) {
+		this(datamaster, userSettings, null);
+	}
+
 	public FeedServiceImpl(DataMaster datamaster, UserSettings userSettings,
 			Map<String, QuoteHandler> quoteExchangehandlers) {
 		this.datamaster = datamaster;
@@ -118,10 +122,12 @@ public class FeedServiceImpl implements FeedService {
 					/*
 					 * We have the snapshot now, callback the handler
 					 */
-					String ddfExchange = q.getDDFExchange();
-					QuoteHandler eh = quoteExchangehandlers.get(ddfExchange);
-					if (eh != null) {
-						eh.onQuote(q);
+					if (quoteExchangehandlers != null) {
+						String ddfExchange = q.getDDFExchange();
+						QuoteHandler eh = quoteExchangehandlers.get(ddfExchange);
+						if (eh != null) {
+							eh.onQuote(q);
+						}
 					}
 				} catch (Exception e2) {
 					log.error("Parsing Quote Error: " + e2.getMessage());
@@ -166,10 +172,10 @@ public class FeedServiceImpl implements FeedService {
 				element.getAttribute("name"), //
 				element.getAttribute("exchange"), //
 				element.getAttribute("basecode").charAt(0), //
-				((element.getAttribute("pointvalue").length() > 0) ? Float.parseFloat(element
-						.getAttribute("pointvalue")) : 1.0f),
-				((element.getAttribute("tickincrement").length() > 0) ? Integer.parseInt(element
-						.getAttribute("tickincrement")) : 1));
+				((element.getAttribute("pointvalue").length() > 0)
+						? Float.parseFloat(element.getAttribute("pointvalue")) : 1.0f),
+				((element.getAttribute("tickincrement").length() > 0)
+						? Integer.parseInt(element.getAttribute("tickincrement")) : 1));
 
 		Quote q = new Quote(symbolInfo);
 

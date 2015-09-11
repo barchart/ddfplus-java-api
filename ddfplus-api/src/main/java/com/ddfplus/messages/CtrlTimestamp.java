@@ -47,13 +47,7 @@ public class CtrlTimestamp extends AbstractMsgBaseMarket implements DdfTimestamp
 	/** The _second. */
 	protected volatile int _second = 0;
 
-	/**
-	 * Instantiates a new ctrl timestamp.
-	 * 
-	 * @param message
-	 *            the message
-	 */
-	CtrlTimestamp(byte[] message) {
+	public CtrlTimestamp(byte[] message) {
 		super(message);
 	}
 

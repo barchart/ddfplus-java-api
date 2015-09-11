@@ -22,6 +22,11 @@ import com.ddfplus.enums.ConnectionType;
 import com.ddfplus.messages.DdfMarketBase;
 import com.ddfplus.net.Connection;
 import com.ddfplus.net.ConnectionHandler;
+import com.ddfplus.service.feed.FeedService;
+import com.ddfplus.service.feed.FeedServiceImpl;
+import com.ddfplus.service.usersettings.UserSettings;
+import com.ddfplus.service.usersettings.UserSettingsService;
+import com.ddfplus.service.usersettings.UserSettingsServiceImpl;
 
 /**
  * The Server application is meant as a simple example on how to create a server
@@ -51,6 +56,9 @@ public class ServerListenExample implements ConnectionHandler {
 	private final DataMaster dataMaster = new DataMaster(MasterType.Realtime);
 	private Connection connection = null;
 	private final AtomicLong messageCount = new AtomicLong(0);
+	// Snapshot/Refresh via web service
+	private FeedService feedService;
+	private UserSettingsService userSettingsService = new UserSettingsServiceImpl();
 
 	public static void main(String[] args) {
 
@@ -100,8 +108,22 @@ public class ServerListenExample implements ConnectionHandler {
 			System.exit(1);
 		}
 
+		String snapshotUser = null;
+		String snapshotPassword = null;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-su") && i + 1 < args.length) {
+				snapshotUser = args[i + 1];
+				i++;
+			}
+			if (args[i].equals("-sp") && i + 1 < args.length) {
+				snapshotPassword = args[i + 1];
+				i++;
+			}
+		}
+
 		// If all of the inputs are good, start the server.
-		ServerListenExample server = new ServerListenExample(connType, addr, port, intf);
+		ServerListenExample server = new ServerListenExample(connType, addr, port, intf, snapshotUser,
+				snapshotPassword);
 
 		ShutdownHook shutdownThread = new ShutdownHook(server);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
@@ -115,12 +137,15 @@ public class ServerListenExample implements ConnectionHandler {
 		final StringBuilder text = new StringBuilder(1024);
 
 		text.append("" + "Loads and runs the sample ddfplus server application.\n" + "Usage: java "
-				+ ServerListenExample.class.getCanonicalName() + " LISTEN_TCP|LISTEN_UDP address port <interface>\n"
+				+ ServerListenExample.class.getCanonicalName()
+				+ " LISTEN_TCP|LISTEN_UDP address port [interface] [-su user] [-sp password]\n"
 				+ "  LISTEN_TCP|LISTEN_UDP\tSpecify whether the inbound packets are TCP or UDP\n"
 				+ "  address  \tSpecify the Local Address to bind to. Use 0.0.0.0 for any.\n"
 				+ "  port     \tSpecify the port to bind to.\n"
-				+ "  interface\t(Optional) Only if address is a multicast address.\n" + "");
-		log.info("\n", text);
+				+ "  interface\t(Optional) Only if address is a multicast address.");
+		text.append("\n  -su user\tSnapshot User Name");
+		text.append("\n  -sp password\tSnapshot Password");
+		log.info(text.toString());
 	}
 
 	/**
@@ -136,12 +161,34 @@ public class ServerListenExample implements ConnectionHandler {
 	 * @param intf
 	 *            <code>InetAddress</code> The interface that we bind to for
 	 *            multicast.
+	 * @param snapshotPassword
+	 *            Snapshot/Refresh User Name
+	 * @param snapshotUser
+	 *            Snapshot/Refresh Password
 	 */
-	public ServerListenExample(ConnectionType connectionTupe, InetAddress address, int port, InetAddress intf) {
+	public ServerListenExample(ConnectionType connectionTupe, InetAddress address, int port, InetAddress intf,
+			String snapshotUser, String snapshotPassword) {
 
 		connection = new Connection(connectionTupe, address, port, intf);
 
 		connection.registerHandler(this);
+
+		if (snapshotUser != null && snapshotPassword != null) {
+			/*
+			 * Provides refresh of statistics (hi, low, etc..) and enables Quote
+			 * objects to be returned in the FeedEvent.
+			 */
+			// Look up via user settings
+			UserSettings snapshotUserSettings = userSettingsService.getUserSettings(snapshotUser, snapshotPassword);
+			if (snapshotUserSettings.getStreamPrimaryServer() == null) {
+				log.warn("Could not determine Snapshot/Refresh DDF server for user: " + snapshotUser
+						+ " will not have snapshots/refresh for quotes.");
+			}
+			// Add Feed Service to cache
+			feedService = new FeedServiceImpl(dataMaster, snapshotUserSettings);
+			dataMaster.setFeedService(feedService);
+			log.info("Activating Snapshot/Refresh for all symbols.");
+		}
 
 	}
 
@@ -156,6 +203,7 @@ public class ServerListenExample implements ConnectionHandler {
 		}
 	}
 
+	// -------------- ConnectionHandler ----------------------------
 	@Override
 	public void onConnectionEvent(final ConnectionEvent event) {
 		log.info("Con Event: ", event);
@@ -185,20 +233,20 @@ public class ServerListenExample implements ConnectionHandler {
 
 		if (fe != null) {
 			if (fe.isTimestamp()) {
-				log.info("TS:" + fe.getTimestamp());
+				log.info("< TS:" + fe.getTimestamp());
 			}
 			if (fe.isDdfMessage()) {
-				log.info("DDF:" + fe.getDdfMessage());
+				log.info("< DDF:" + fe.getDdfMessage());
 			}
 			if (fe.isQuote()) {
-				log.info("QUOTE:" + fe.getQuote());
+				log.info("< " + fe.getQuote().toXMLNode().toXMLString());
 			}
 			if (fe.isBookQuote()) {
-				log.info("BOOK:" + fe.getBook());
+				log.info("< BOOK:" + fe.getBook().toXMLNode().toXMLString());
 			}
 			if (fe.isMarketEvents()) {
 				for (MarketEvent me : fe.getMarketEvents()) {
-					log.info("MARKET EVENT:" + me);
+					log.info("< MARKET EVENT:" + me);
 				}
 			}
 		}
