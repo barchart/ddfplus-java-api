@@ -1,7 +1,8 @@
 
 DDF PLUS API
 -----------
-  This API provides access to the Barchart streaming market data services. 
+  This API provides access to the Barchart streaming market data services.  
+The GitHub URL is https://github.com/barchart/ddfplus-java-api.
 
 Contents
 -------- 
