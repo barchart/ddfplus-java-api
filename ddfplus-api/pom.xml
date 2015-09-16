@@ -27,14 +27,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- An SLF4J implementation must be provided by the user if they want to see library logging. -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<!-- Change to "compile" to see logging in development -->
-			<scope>compile</scope>
-		</dependency>
-
 		<!-- Web socket support in JDK 1.7 using Java 7 Asynchronous Channel API 
 		See Tyrus User Guide -->  
 		<dependency>
