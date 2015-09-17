@@ -391,7 +391,9 @@ public class DataMaster {
 
 			/* Don't set any flags, since we're in "yesterday" */
 			bDoNotSetFlag = true;
-			log.info("Previous session: " + msg);
+			if (log.isDebugEnabled()) {
+				log.debug("Previous session: " + msg);
+			}
 
 		} else if ((day2_dayFromMessage > day1_dayFromCurrentQuoteSession)
 				|| ((day1_dayFromCurrentQuoteSession - day2_dayFromMessage) > 5)) {
@@ -405,13 +407,17 @@ public class DataMaster {
 			 * day.
 			 */
 			if (quote._combinedSession.getLast() == 0.0f) {
-				log.info("New session, last == 0: " + msg);
+				if (log.isDebugEnabled()) {
+					log.debug("New session, last == 0: " + msg);
+				}
 				pCombinedSession = quote._combinedSession;
 				pPreviousSession = quote._previousSession;
 				pElectronicSession = quote._electronicSession;
 			} else {
 				// Current Session has a last price, start a new session
-				log.info("New session, last > 0: " + msg);
+				if (log.isDebugEnabled()) {
+					log.debug("New session, last > 0: " + msg);
+				}
 
 				Session pPrevious = quote._previousSession;
 				quote._previousSession = quote._combinedSession;
