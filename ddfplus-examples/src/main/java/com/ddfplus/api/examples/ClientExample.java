@@ -8,6 +8,7 @@ package com.ddfplus.api.examples;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +88,8 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 	public static void main(String[] args) throws Exception {
 
+		System.out.println("Starting ClientExample with args: " + Arrays.toString(args));
+
 		ClientConfig config = new ClientConfig();
 
 		String propFile = CLIENT_PROPS_FILE;
@@ -125,7 +128,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 				i++;
 			}
 			if (args[i].equals("-sp") && i + 1 < args.length) {
-				config.setSnapshotUser(args[i + 1]);
+				config.setSnapshotPassword(args[i + 1]);
 				i++;
 			}
 			if (args[i].equals("-l") && i + 1 < args.length) {
@@ -143,10 +146,14 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			}
 		}
 
-		// Check for properties in the current directory.
+		/*
+		 * Check for properties in the current directory, if arguments not used.
+		 * 
+		 */
 		Properties p = null;
 		File f = new File(propFile);
-		if (f.exists()) {
+		if (f.exists() && config.getUserName() == null && config.getPassword() == null
+				&& (config.getSymbols() == null || config.getExchangeCodes() == null)) {
 			System.out.println("\nReading DDF Client properties file: " + f);
 			p = new Properties();
 			p.load(new FileReader(f));

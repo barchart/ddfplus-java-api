@@ -130,6 +130,7 @@ public class DdfClientImpl implements DdfClient {
 	public void init() {
 		if (this.host == null) {
 			// Look up via user settings
+			log.info("Looking up user settings for: " + this.username);
 			userSettings = userSettingsService.getUserSettings(this.username, this.password);
 			this.host = userSettings.getStreamPrimaryServer();
 			if (this.host == null) {
@@ -149,6 +150,7 @@ public class DdfClientImpl implements DdfClient {
 		 */
 		if (snapshotUserName != null && snapshotPassword != null) {
 			// Look up via user settings
+			log.info("Looking up snaphot/refresh user settings for: " + snapshotUserName);
 			snapshotUserSettings = userSettingsService.getUserSettings(snapshotUserName, snapshotPassword);
 			if (snapshotUserSettings.getStreamPrimaryServer() == null) {
 				log.warn("Could not determine Snapshot DDF server for user: " + snapshotUserName

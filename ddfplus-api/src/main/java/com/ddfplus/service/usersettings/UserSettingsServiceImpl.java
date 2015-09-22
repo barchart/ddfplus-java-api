@@ -90,11 +90,11 @@ public class UserSettingsServiceImpl implements UserSettingsService {
 			log.info("User settings: " + userSettings);
 
 		} catch (ParserConfigurationException e) {
-			log.error(e.getMessage());
+			log.error("User settings parse configuration: " + e.getMessage());
 		} catch (SAXException e) {
-			log.error(e.getMessage());
+			log.error("User settings parse: " + e.getMessage());
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			log.error("User settings IO issue: " + e.getMessage());
 		}
 
 		return userSettings;

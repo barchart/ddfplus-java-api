@@ -133,28 +133,18 @@ public class ClientConfig {
 		this.connectionType = connectionType;
 	}
 
-	public String getSnapShotPassword() {
-		return snapShotPassword;
-	}
-
-	public void setSnapShotPassword(String snapShotPassword) {
-		this.snapShotPassword = snapShotPassword;
-	}
-
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Client Config: ");
 		sb.append("\n\tconnectionType: " + connectionType);
 		sb.append("\n\tuser: " + userName);
-		sb.append(" pass: " + password + "\n");
-		sb.append("\tsymbols: " + symbols);
-		sb.append(" exchangeCodes: " + exchangeCodes + "\n");
-		sb.append("\tlogMode: " + logMode);
-		sb.append(" server: " + primaryServer + "\n");
-		sb.append("\tdepthSubscriptions: " + depthSubscription);
-		sb.append(" snapshotUser: " + snapshotUser);
-		sb.append(" snapshotPassword: " + snapShotPassword + "\n");
-		sb.append("\tstoreMessages: " + storeMessages + "\n");
+		sb.append("\n\tsymbols: " + symbols);
+		sb.append("\n\texchangeCodes: " + exchangeCodes);
+		sb.append("\n\tlogMode: " + logMode);
+		sb.append("\n\tserver: " + primaryServer);
+		sb.append("\n\tdepthSubscriptions: " + depthSubscription);
+		sb.append("\n\tsnapshotUser: " + snapshotUser);
+		sb.append("\n\tstoreMessages: " + storeMessages);
 		sb.append("\n");
 		return sb.toString();
 	}

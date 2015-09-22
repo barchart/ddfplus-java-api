@@ -33,12 +33,13 @@ Run in "pull" mode for symbols IBM,ESU5
     - The "pull" mode provides the snapshot refresh automatically
     - "-l a" will log all messages
     
-Run in "push" mode for exchange NYSE (N) 
-  java -jar ddf-examples-<version>-exe.jar -u <feed user>  -p <pass>  -su <snapshot user> -sp <pass> -e N  -l a
+Run in "push" mode for exchange NYSE (N) with all logging enabled and background refresh enabled
+  java -jar ddf-examples-<version>-exe.jar -u <feed user> -p <pass> -e N -l a  -su <snaphot user> -sp <snapshot password>
 
    - Uses JERQ "STREAM LISTEN XXX" command
-   - The push mode requires the snapshot credentials for the background snapshot refresh/statistics
-   -su/-sp is the Snapshot User and password
+   - The "push" mode will call back the FeedHandler interface for every DDF message received.
+   - If the snapshot credentials are provided then a snapshot/refresh request will be sent in the background which will refresh the local caches 
+     and then call back the QuoteHandler interface
 
 
 How to run the Server example

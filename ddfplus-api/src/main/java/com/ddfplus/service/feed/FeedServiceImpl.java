@@ -86,7 +86,7 @@ public class FeedServiceImpl implements FeedService {
 		requestThread = new RequestThread(requestQ);
 		es.scheduleAtFixedRate(requestThread, REQUEST_THREAD_INITIAL_DELAY_MS, REQUEST_THREAD_TIMEOUT_MS,
 				TimeUnit.MILLISECONDS);
-		log.info("Snapshot/Refresh Feed using base url: " + baseUrl);
+		log.info("Snapshot/Refresh is enabled for user: " + userSettings.getUserName());
 	}
 
 	@Override
@@ -149,12 +149,11 @@ public class FeedServiceImpl implements FeedService {
 			}
 
 		} catch (ParserConfigurationException e) {
-			log.error(e.getMessage());
+			log.error("Parser configuration on snapshot/refresh request: " + e.getMessage());
 		} catch (SAXException e) {
-			log.error(e.getMessage());
+			log.error("Could not parse snapshot/refresh request: " + e.getMessage());
 		} catch (IOException e) {
-			log.error(e.getMessage());
-			e.printStackTrace();
+			log.error("IO issue with snaphost/refresh request: " + e.getMessage());
 		}
 	}
 
