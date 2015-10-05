@@ -452,7 +452,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 		String[] symbols = config.getSymbols().split(",");
 		for (String symbol : symbols) {
-			// Market Update/BBO
+			// Market Quote/BBO
 			QuoteHandler handler = new ClientQuoteHandler();
 			List<QuoteHandler> l = quoteHandlers.get(symbol);
 			if (l == null) {

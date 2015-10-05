@@ -104,6 +104,8 @@ public class DdfClientImpl implements DdfClient {
 	 */
 	private SymbolProvider symbolProvider;
 
+	private SymbolShortCuts symbolShortCuts = new SymbolShortCutsImpl();
+
 	public DdfClientImpl(final String username, final String password, final ConnectionType type, String host,
 			String secondaryHost, String bindInterface, SymbolProvider symbolProvider) throws Exception {
 		this.username = username;
@@ -266,20 +268,24 @@ public class DdfClientImpl implements DdfClient {
 
 	@Override
 	public void addQuoteHandler(String symbol, QuoteHandler handler) {
-		synchronized (quoteHandlers) {
-			CopyOnWriteArrayList<QuoteHandler> l = quoteHandlers.get(symbol);
-			if (l == null) {
-				// No subscription
-				l = new CopyOnWriteArrayList<QuoteHandler>();
-				quoteHandlers.put(symbol, l);
-				l.add(handler);
-				// Initial Subscription
-				subscribeQuote(symbol);
-			} else {
-				// We have a subscription
-				boolean added = l.addIfAbsent(handler);
-				if (added) {
-					sendQuoteFromCache(symbol, handler);
+
+		String[] realSymbols = symbolShortCuts.checkForShortCutNotation(symbol);
+		for (String s : realSymbols) {
+			synchronized (quoteHandlers) {
+				CopyOnWriteArrayList<QuoteHandler> l = quoteHandlers.get(s);
+				if (l == null) {
+					// No subscription
+					l = new CopyOnWriteArrayList<QuoteHandler>();
+					quoteHandlers.put(s, l);
+					l.add(handler);
+					// Initial Subscription
+					subscribeQuote(s);
+				} else {
+					// We have a subscription
+					boolean added = l.addIfAbsent(handler);
+					if (added) {
+						sendQuoteFromCache(s, handler);
+					}
 				}
 			}
 		}
@@ -481,7 +487,11 @@ public class DdfClientImpl implements DdfClient {
 							log.error("quote(" + array + ") failed on onMessage. " + e);
 						}
 					}
+				} else {
+					log.error("Quote handler not found for symbol: " + q.getSymbolInfo().getSymbol() + " msg: "
+							+ q.getMessage());
 				}
+
 				// Quote Exchange Handler for push (STREAM LISTEN command)
 				String ddfExchange = q.getDDFExchange();
 				QuoteHandler eh = quoteExchangeHandlers.get(ddfExchange);
