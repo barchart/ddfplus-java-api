@@ -1,0 +1,500 @@
+{
+	  "CL": {
+	    "root": "CL",
+	    "root_crb": "CL",
+	    "description": "Crude Oil WTI",
+	    "exchange": "NYMEX",
+	    "exchange_symbol": "CL",
+	    "futuresunit": 2,
+	    "optionsunit": 2,
+	    "category": "Energies",
+	    "openinterest": 1646897,
+	    "futuresvalue": "$1,000",
+	    "optionsvalue": "$1,000",
+	    "contracts": [
+	      {
+	        "month": "X",
+	        "year": 2015,
+	        "isnearest": true,
+	        "openinterest": 431407,
+	        "expires": 1445403599000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2015,
+	        "isnearest": false,
+	        "openinterest": 289994,
+	        "expires": 1448085599000
+	      },
+	      {
+	        "month": "F",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 120171,
+	        "expires": 1450763999000
+	      },
+	      {
+	        "month": "G",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 79243,
+	        "expires": 1453355999000
+	      },
+	      {
+	        "month": "H",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 112078,
+	        "expires": 1456207199000
+	      },
+	      {
+	        "month": "J",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 37568,
+	        "expires": 1458622799000
+	      },
+	      {
+	        "month": "K",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 27043,
+	        "expires": 1461214799000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 110818,
+	        "expires": 1463806799000
+	      },
+	      {
+	        "month": "N",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 27119,
+	        "expires": 1466571599000
+	      },
+	      {
+	        "month": "Q",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 22514,
+	        "expires": 1469077199000
+	      },
+	      {
+	        "month": "U",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 47680,
+	        "expires": 1471928399000
+	      },
+	      {
+	        "month": "V",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 19470,
+	        "expires": 1474433999000
+	      },
+	      {
+	        "month": "X",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 20454,
+	        "expires": 1477025999000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2016,
+	        "isnearest": false,
+	        "openinterest": 134089,
+	        "expires": 1479794399000
+	      },
+	      {
+	        "month": "F",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 16735,
+	        "expires": 1482299999000
+	      },
+	      {
+	        "month": "G",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 8723,
+	        "expires": 1484978399000
+	      },
+	      {
+	        "month": "H",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 10043,
+	        "expires": 1487743199000
+	      },
+	      {
+	        "month": "J",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 3825,
+	        "expires": 1490158799000
+	      },
+	      {
+	        "month": "K",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 3709,
+	        "expires": 1492750799000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 22943,
+	        "expires": 1495515599000
+	      },
+	      {
+	        "month": "N",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 3903,
+	        "expires": 1498021199000
+	      },
+	      {
+	        "month": "Q",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 1916,
+	        "expires": 1500613199000
+	      },
+	      {
+	        "month": "U",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 4605,
+	        "expires": 1503464399000
+	      },
+	      {
+	        "month": "V",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 1374,
+	        "expires": 1505969999000
+	      },
+	      {
+	        "month": "X",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 1441,
+	        "expires": 1508561999000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2017,
+	        "isnearest": false,
+	        "openinterest": 45758,
+	        "expires": 1511243999000
+	      },
+	      {
+	        "month": "F",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 1876,
+	        "expires": 1513749599000
+	      },
+	      {
+	        "month": "G",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 345,
+	        "expires": 1516687199000
+	      },
+	      {
+	        "month": "H",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 2688,
+	        "expires": 1519192799000
+	      },
+	      {
+	        "month": "J",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 63,
+	        "expires": 1521608399000
+	      },
+	      {
+	        "month": "K",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 266,
+	        "expires": 1524286799000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 3519,
+	        "expires": 1527051599000
+	      },
+	      {
+	        "month": "N",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 296,
+	        "expires": 1529557199000
+	      },
+	      {
+	        "month": "Q",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 61,
+	        "expires": 1532149199000
+	      },
+	      {
+	        "month": "U",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 561,
+	        "expires": 1534913999000
+	      },
+	      {
+	        "month": "V",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 61,
+	        "expires": 1537505999000
+	      },
+	      {
+	        "month": "X",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 311,
+	        "expires": 1540270799000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2018,
+	        "isnearest": false,
+	        "openinterest": 18844,
+	        "expires": 1542693599000
+	      },
+	      {
+	        "month": "F",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 204,
+	        "expires": 1545285599000
+	      },
+	      {
+	        "month": "G",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1548223199000
+	      },
+	      {
+	        "month": "H",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 504,
+	        "expires": 1550728799000
+	      },
+	      {
+	        "month": "J",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1553144399000
+	      },
+	      {
+	        "month": "K",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1555995599000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 1185,
+	        "expires": 1558501199000
+	      },
+	      {
+	        "month": "N",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 5,
+	        "expires": 1561093199000
+	      },
+	      {
+	        "month": "Q",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1563857999000
+	      },
+	      {
+	        "month": "U",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1566363599000
+	      },
+	      {
+	        "month": "V",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 4,
+	        "expires": 1569041999000
+	      },
+	      {
+	        "month": "X",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 104,
+	        "expires": 1571806799000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2019,
+	        "isnearest": false,
+	        "openinterest": 8054,
+	        "expires": 1574315999000
+	      },
+	      {
+	        "month": "F",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1576821599000
+	      },
+	      {
+	        "month": "G",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1579672799000
+	      },
+	      {
+	        "month": "H",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1582264799000
+	      },
+	      {
+	        "month": "J",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1584766799000
+	      },
+	      {
+	        "month": "K",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1587531599000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1589950799000
+	      },
+	      {
+	        "month": "N",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1592888399000
+	      },
+	      {
+	        "month": "Q",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1595393999000
+	      },
+	      {
+	        "month": "U",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1597985999000
+	      },
+	      {
+	        "month": "V",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1600837199000
+	      },
+	      {
+	        "month": "X",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1603256399000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2020,
+	        "isnearest": false,
+	        "openinterest": 2583,
+	        "expires": 1605938399000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2021,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1621573199000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2021,
+	        "isnearest": false,
+	        "openinterest": 545,
+	        "expires": 1637387999000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2022,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1653109199000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2022,
+	        "isnearest": false,
+	        "openinterest": 172,
+	        "expires": 1669096799000
+	      },
+	      {
+	        "month": "M",
+	        "year": 2023,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 1684817999000
+	      },
+	      {
+	        "month": "Z",
+	        "year": 2023,
+	        "isnearest": false,
+	        "openinterest": 3,
+	        "expires": 1700546399000
+	      },
+	      {
+	        "month": "Y",
+	        "year": 2100,
+	        "isnearest": false,
+	        "openinterest": 0,
+	        "expires": 4134002399000
+	      }
+	    ]
+	  }
+	}

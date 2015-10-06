@@ -18,7 +18,7 @@ public class SymbolShortCutsTest {
 	@Test
 	public void indexSymbol() throws Exception {
 
-		String[] symbols = shortCuts.checkForShortCutNotation("$ADDT");
+		String[] symbols = shortCuts.resolveShortCutSymbols("$ADDT");
 		assertEquals(1, symbols.length);
 		assertEquals("$ADDT" + "", symbols[0]);
 	}
@@ -26,7 +26,7 @@ public class SymbolShortCutsTest {
 	@Test
 	public void noShortCut() throws Exception {
 
-		String[] symbols = shortCuts.checkForShortCutNotation("RBX15");
+		String[] symbols = shortCuts.resolveShortCutSymbols("RBX15");
 		assertEquals(1, symbols.length);
 		assertEquals("RBX15", symbols[0]);
 	}
@@ -35,7 +35,7 @@ public class SymbolShortCutsTest {
 	@Ignore
 	public void allFutures() throws Exception {
 
-		String[] symbols = shortCuts.checkForShortCutNotation("CL^F");
+		String[] symbols = shortCuts.resolveShortCutSymbols("CL^F");
 		assertEquals(69, symbols.length);
 		assertEquals("CLX15", symbols[0]);
 	}
@@ -44,7 +44,7 @@ public class SymbolShortCutsTest {
 	@Ignore
 	public void allOptions() throws Exception {
 
-		String[] symbols = shortCuts.checkForShortCutNotation("CL^O");
+		String[] symbols = shortCuts.resolveShortCutSymbols("CL^O");
 		assertEquals(1, symbols.length);
 		assertEquals("RBX15", symbols[0]);
 	}
@@ -53,7 +53,7 @@ public class SymbolShortCutsTest {
 	@Ignore
 	public void allOptionsMonthYear() throws Exception {
 
-		String[] symbols = shortCuts.checkForShortCutNotation("CL^Z2011^OM");
+		String[] symbols = shortCuts.resolveShortCutSymbols("CL^Z2011^OM");
 		assertEquals(1, symbols.length);
 		assertEquals("RBX15", symbols[0]);
 	}

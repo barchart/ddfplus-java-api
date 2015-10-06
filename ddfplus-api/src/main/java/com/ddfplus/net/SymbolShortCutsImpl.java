@@ -19,7 +19,7 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 	private DefinitionService definitionService = new DefinitionServiceImpl();
 
 	@Override
-	public String[] checkForShortCutNotation(String symbol) {
+	public String[] resolveShortCutSymbols(String symbol) {
 		String[] ret = new String[] { symbol };
 		if (symbol.charAt(0) == INDEX) {
 			// index
@@ -57,7 +57,7 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 		if (i > 0) {
 			String s = getMonthSymbol(symbol, i);
 			if (s != null) {
-				// TODO
+				return new String[] { s };
 			}
 		}
 
@@ -68,12 +68,12 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 	String getMonthSymbol(String symbol, int i) {
 		String ret = null;
 		try {
-			int month = Integer.parseInt(symbol.substring(i));
+			int month = Integer.parseInt(symbol.substring(i + 1));
 			String root = symbol.substring(0, i);
 			ret = definitionService.getFuturesMonthSymbol(root, month);
 
 		} catch (NumberFormatException nfe) {
-			log.error("Invalid month identifier: " + symbol);
+			log.error("Invalid month identifier on symbol: " + symbol + " streaming not active.");
 		}
 		return ret;
 	}
