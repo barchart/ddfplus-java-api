@@ -23,14 +23,13 @@
 	</appender>
 
 
-	<logger name="com.ddfplus.net.IoChannelWSS" level="info">
-	</logger>
+	<logger name="com.ddfplus.net.IoChannelWSS" level="info"/>
 	
-	<logger name="com.ddfplus.db.DataMaster" level="info">
-	</logger>
+	<logger name="com.ddfplus.db.DataMaster" level="info"/>
 	
-	<logger name="com.ddfplus.service.feed" level="info">
-	</logger>
+	<logger name="com.ddfplus.service.feed" level="info"/>
+	
+	<logger name="DefinitionService" level="info"/>
 
 	<root level="info">
 		<appender-ref ref="console" />

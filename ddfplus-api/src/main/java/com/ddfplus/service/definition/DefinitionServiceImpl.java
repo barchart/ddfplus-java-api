@@ -2,7 +2,8 @@ package com.ddfplus.service.definition;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,9 +25,9 @@ public class DefinitionServiceImpl implements DefinitionService {
 	private static final String FUTURES_URL = BASE_URL + "/futures/?root=";
 	private static final String OPTIONS_URL = BASE_URL + "/options/?root=";
 
-	private static final Logger logger = LoggerFactory.getLogger(DefinitionServiceImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger("DefinitionService");
 
-	private final Map<String, FutureRoot> futureRoots = new ConcurrentHashMap<String, FutureRoot>();
+	private final Map<String, FuturesRoot> futureRoots = new ConcurrentHashMap<String, FuturesRoot>();
 	private final Map<String, OptionsRoot> optionsRoots = new ConcurrentHashMap<String, OptionsRoot>();
 	private final OkHttpClient httpClient;
 	private final Gson gson;
@@ -41,7 +42,7 @@ public class DefinitionServiceImpl implements DefinitionService {
 		String[] futures = new String[0];
 
 		// Look up in cache first
-		FutureRoot futureRoot = futureRoots.get(root);
+		FuturesRoot futureRoot = futureRoots.get(root);
 		if (futureRoot == null) {
 			futureRoot = buildFutureContractCache(root);
 		}
@@ -56,7 +57,7 @@ public class DefinitionServiceImpl implements DefinitionService {
 		String ret = null;
 
 		// Look up in cache first
-		FutureRoot futureRoot = futureRoots.get(root);
+		FuturesRoot futureRoot = futureRoots.get(root);
 		if (futureRoot == null) {
 			futureRoot = buildFutureContractCache(root);
 		}
@@ -73,27 +74,34 @@ public class DefinitionServiceImpl implements DefinitionService {
 	@Override
 	public String[] getAllOptionsSymbols(String root) {
 		String[] options = new String[0];
-		// TODO
 
 		OptionsRoot optionsRoot = optionsRoots.get(root);
 		if (optionsRoot == null) {
 			optionsRoot = buildOptionsContractCache(root);
 		}
 		if (optionsRoot != null) {
-			// futures = futureRoot.getContractSymbols();
+			options = optionsRoot.getAllStrikeSymbols();
 		}
 
 		return options;
 	}
 
 	@Override
-	public String[] getAllOptionsMonthYearSymbols(String root) {
-		// TODO
+	public String[] getAllOptionsMonthYearSymbols(String root, String monthYear) {
 		String[] options = new String[0];
+
+		OptionsRoot optionsRoot = optionsRoots.get(root);
+		if (optionsRoot == null) {
+			optionsRoot = buildOptionsContractCache(root);
+		}
+		if (optionsRoot != null) {
+			options = optionsRoot.getMonthYearStrikeSymbols(monthYear);
+		}
+
 		return options;
 	}
 
-	void processFutureRoot(String root, FutureRoot futureRoot) {
+	private void processFutureRoot(String root, FuturesRoot futureRoot) {
 		// Build all future symbols
 		for (FutureContract contract : futureRoot.getContracts()) {
 			if (contract.isnearest) {
@@ -110,25 +118,30 @@ public class DefinitionServiceImpl implements DefinitionService {
 			futureRoot.addContractSymbol(s);
 		}
 		// Store by root symbol
-		logger.info(futureRoot.toString());
+		if (logger.isInfoEnabled()) {
+			logger.info(futureRoot.toString());
+		}
 
 		futureRoots.put(root, futureRoot);
 	}
 
-	private FutureRoot buildFutureContractCache(String root) {
-		FutureRoot futureRoot = null;
+	private FuturesRoot buildFutureContractCache(String root) {
+		FuturesRoot futureRoot = null;
 		// Look up from web service
 		Request request = new Request.Builder().url(FUTURES_URL + root).build();
 		Response response;
 		try {
 			response = httpClient.newCall(request).execute();
 			if (response.isSuccessful()) {
+				String json = response.body().string();
+				if (logger.isDebugEnabled()) {
+					logger.debug("< " + json);
+				}
 				// A map is returned, so need collection type
-				Type collectionType = new TypeToken<Map<String, FutureRoot>>() {
+				Type collectionType = new TypeToken<Map<String, FuturesRoot>>() {
 				}.getType();
-				Map<String, FutureRoot> o = gson.fromJson(response.body().charStream(), collectionType);
-				futureRoot = o.get(root);
-				if (futureRoot != null) {
+				Map<String, FuturesRoot> o = gson.fromJson(json, collectionType);
+				if (o != null && (futureRoot = o.get(root)) != null) {
 					processFutureRoot(root, futureRoot);
 				} else {
 					logger.error("Could not find futures for root: " + root);
@@ -140,7 +153,6 @@ public class DefinitionServiceImpl implements DefinitionService {
 		return futureRoot;
 	}
 
-	// TODO wip
 	private OptionsRoot buildOptionsContractCache(String root) {
 		OptionsRoot optionsRoot = null;
 		// Look up from web service
@@ -149,15 +161,16 @@ public class DefinitionServiceImpl implements DefinitionService {
 		try {
 			response = httpClient.newCall(request).execute();
 			if (response.isSuccessful()) {
+				String json = response.body().string();
+				if (logger.isDebugEnabled()) {
+					logger.debug("< " + json);
+				}
 				// A map is returned, so need collection type
 				Type collectionType = new TypeToken<Map<String, OptionsRoot>>() {
 				}.getType();
-				Map<String, OptionsRoot> o = gson.fromJson(response.body().charStream(), collectionType);
+				Map<String, OptionsRoot> o = gson.fromJson(json, collectionType);
 				optionsRoot = o.get(root);
 				if (optionsRoot != null) {
-					Option option = optionsRoot.get("X2015");
-
-					// TODO
 					processOptionsRoot(root, optionsRoot);
 				} else {
 					logger.error("Could not find options for root: " + root);
@@ -170,17 +183,22 @@ public class DefinitionServiceImpl implements DefinitionService {
 	}
 
 	private void processOptionsRoot(String root, OptionsRoot optionsRoot) {
-		// TODO Auto-generated method stub
+		optionsRoot.setRoot(root);
+		optionsRoots.put(root, optionsRoot);
+		if (logger.isInfoEnabled()) {
+			logger.info(optionsRoot.toString());
+		}
 
 	}
 
-	static class FutureRoot {
+	static class FuturesRoot {
 		private String root;
 		private String root_crb;
 		private String description;
 		private String exchange;
 		private FutureContract[] contracts;
 		private FutureContract nearestContract;
+		// By Month Year
 		private List<String> contractSymbols = new ArrayList<String>();
 
 		public String getRoot() {
@@ -227,7 +245,7 @@ public class DefinitionServiceImpl implements DefinitionService {
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("Future: " + root + " desc: " + description);
+			StringBuilder sb = new StringBuilder("Futures: " + root + " desc: " + description);
 			sb.append(" nearest: " + nearestContract);
 			sb.append("\nsymbols: ");
 			for (int i = 0; i < contractSymbols.size(); i++) {
@@ -238,6 +256,9 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 	}
 
+	/*
+	 * By month and year
+	 */
 	static class FutureContract {
 		private String month;
 		private String year;
@@ -282,16 +303,84 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 	}
 
-	static class OptionsRoot extends HashMap<String, Option> {
+	/*
+	 * Option Month Year Symbol --> Option Month Year Object
+	 */
+	static class OptionsRoot extends LinkedHashMap<String, OptionMonthYear> {
+
+		private String root;
+
+		public String getRoot() {
+			return root;
+		}
+
+		public void setRoot(String root) {
+			this.root = root;
+		}
+
+		public String[] getAllMonthYearKeys() {
+			return keySet().toArray(new String[size()]);
+		}
+
+		/*
+		 * Return strikes for all Month Years
+		 */
+		public String[] getAllStrikeSymbols() {
+			List<String> symbols = new ArrayList<String>();
+			String[] allMonthYearKeys = getAllMonthYearKeys();
+			for (String key : allMonthYearKeys) {
+				OptionMonthYear optionMonthYear = get(key);
+				String[] strikes = optionMonthYear.getAllStrikeSymbols();
+				symbols.addAll(Arrays.asList(strikes));
+			}
+			return symbols.toArray(new String[symbols.size()]);
+		}
+
+		/*
+		 * Get strikes for a month and year.
+		 */
+		public String[] getMonthYearStrikeSymbols(String monthYear) {
+			String[] ret = new String[0];
+
+			OptionMonthYear optionMonthYear = get(monthYear);
+			if (optionMonthYear != null) {
+				ret = optionMonthYear.getAllStrikeSymbols();
+			}
+
+			return ret;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder("Options: " + root + " totalMonthYears: " + size());
+			int numStrikes = 0;
+			String tmp = null;
+			for (java.util.Map.Entry<String, OptionMonthYear> my : entrySet()) {
+				numStrikes += my.getValue().getAllStrikeSymbols().length;
+				tmp += my.getKey() + "=" + my.getValue().getAllStrikeSymbols().length + ", ";
+			}
+			sb.append(" totalStrikes: " + numStrikes + "\n");
+			sb.append(tmp);
+			return sb.toString();
+		}
+
 	}
 
-	static class Option {
+	static class OptionMonthYear {
+		// Key
+		private String monthYear;
+
 		private String expiration_date;
 		private String underlying_future;
 		private String days_to_expration;
 		private String month;
 		private String year;
+		// Strikes by Option Symbol, i.e. CLX1000C --> Strike data
 		private Map<String, OptionsStrike> strikes;
+
+		public String[] getAllStrikeSymbols() {
+			return strikes.keySet().toArray(new String[strikes.size()]);
+		}
 
 		public Map<String, OptionsStrike> getStrikes() {
 			return strikes;
@@ -335,6 +424,14 @@ public class DefinitionServiceImpl implements DefinitionService {
 
 		public void setYear(String year) {
 			this.year = year;
+		}
+
+		public String getMonthYear() {
+			return monthYear;
+		}
+
+		public void setMonthYear(String monthYear) {
+			this.monthYear = monthYear;
 		}
 
 	}

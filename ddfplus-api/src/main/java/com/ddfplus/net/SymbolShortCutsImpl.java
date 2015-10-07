@@ -13,17 +13,22 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 	private static final String ALL_OPTIONS = "^O";
 	private static final String ALL_OPTIONS_MONTH_YEAR = "^OM";
 	private static final String FUTURE_MONTH_SHORTCUT = "*";
+	private static final String CTRL = "^";
 
-	private static final Logger log = LoggerFactory.getLogger(SymbolShortCutsImpl.class);
+	private static final Logger log = LoggerFactory.getLogger("SymbolShortCuts");
 
 	private DefinitionService definitionService = new DefinitionServiceImpl();
 
 	@Override
 	public String[] resolveShortCutSymbols(String symbol) {
-		String[] ret = new String[] { symbol };
+		String[] noSymbol = new String[0];
+		if (symbol == null || symbol.isEmpty()) {
+			return noSymbol;
+		}
+
 		if (symbol.charAt(0) == INDEX) {
 			// index
-			return ret;
+			return new String[] { symbol };
 		}
 
 		String root = null;
@@ -34,22 +39,7 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 			if (symbols.length > 0) {
 				return symbols;
 			}
-		}
-
-		if (symbol.endsWith(ALL_OPTIONS)) {
-			root = symbol.substring(0, symbol.length() - ALL_OPTIONS.length());
-			String[] symbols = definitionService.getAllOptionsSymbols(root);
-			if (symbols.length > 0) {
-				return symbols;
-			}
-		}
-
-		if (symbol.endsWith(ALL_OPTIONS_MONTH_YEAR)) {
-			root = symbol.substring(0, symbol.length() - ALL_OPTIONS_MONTH_YEAR.length());
-			String[] symbols = definitionService.getAllOptionsMonthYearSymbols(root);
-			if (symbols.length > 0) {
-				return symbols;
-			}
+			return noSymbol;
 		}
 
 		// Futures months: the "* notation” is <root>*<number>
@@ -59,10 +49,40 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 			if (s != null) {
 				return new String[] { s };
 			}
+			return noSymbol;
+		}
+
+		if (symbol.endsWith(ALL_OPTIONS)) {
+			root = symbol.substring(0, symbol.length() - ALL_OPTIONS.length());
+			String[] symbols = definitionService.getAllOptionsSymbols(root);
+			if (symbols.length > 0) {
+				return symbols;
+			}
+			return noSymbol;
+		}
+
+		if (symbol.endsWith(ALL_OPTIONS_MONTH_YEAR)) {
+			// Example: ZC^Z2015^OM
+			String monthYear = null;
+			int first = symbol.indexOf(CTRL);
+			if (first > 0) {
+				root = symbol.substring(0, first);
+			}
+			int last = symbol.lastIndexOf(CTRL);
+			if (last > 0) {
+				monthYear = symbol.substring(first + 1, last);
+			}
+			if (root != null && monthYear != null) {
+				String[] symbols = definitionService.getAllOptionsMonthYearSymbols(root, monthYear);
+				if (symbols.length > 0) {
+					return symbols;
+				}
+			}
+			return noSymbol;
 		}
 
 		// No short cut just return the symbol
-		return ret;
+		return new String[] { symbol };
 	}
 
 	String getMonthSymbol(String symbol, int i) {

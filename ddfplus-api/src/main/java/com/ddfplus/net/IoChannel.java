@@ -49,7 +49,7 @@ abstract class IoChannel extends Thread {
 
 	protected SymbolProvider symbolProvider;
 
-	private BlockingQueue<Cmd> commandQ = new LinkedBlockingQueue<Cmd>(100);
+	private BlockingQueue<Cmd> commandQ = new LinkedBlockingQueue<Cmd>();
 
 	private ScheduledExecutorService es = Executors.newScheduledThreadPool(1);
 
@@ -203,6 +203,7 @@ abstract class IoChannel extends Thread {
 				try {
 					Cmd cmd = q.poll();
 					if (cmd != null) {
+
 						// Must be logged in
 						if (!cmd.getCmd().startsWith("LOGIN") && connState != ConnectionState.LoggedIn) {
 							log.warn("Not logined in, ignoring command: " + cmd);

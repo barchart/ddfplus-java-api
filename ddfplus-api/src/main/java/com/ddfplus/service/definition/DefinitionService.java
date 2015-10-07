@@ -1,5 +1,8 @@
 package com.ddfplus.service.definition;
 
+/*
+ * Lookups instrument metadata from Barchart's: http://extras.ddfplus.com
+ */
 public interface DefinitionService {
 
 	String[] getAllFutureSymbols(String root);
@@ -8,6 +11,6 @@ public interface DefinitionService {
 
 	String[] getAllOptionsSymbols(String root);
 
-	String[] getAllOptionsMonthYearSymbols(String root);
+	String[] getAllOptionsMonthYearSymbols(String root, String monthYear);
 
 }

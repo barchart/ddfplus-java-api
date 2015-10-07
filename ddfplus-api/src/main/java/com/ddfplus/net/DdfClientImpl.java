@@ -269,7 +269,11 @@ public class DdfClientImpl implements DdfClient {
 	@Override
 	public void addQuoteHandler(String symbol, QuoteHandler handler) {
 
-		String[] realSymbols = symbolShortCuts.resolveShortCutSymbols(symbol);
+		String[] realSymbols = symbolShortCuts.resolveShortCutSymbols(symbol.trim());
+		if (realSymbols.length == 0) {
+			log.error("Invalid Symbol, ignoring: " + symbol);
+			return;
+		}
 		for (String s : realSymbols) {
 			synchronized (quoteHandlers) {
 				CopyOnWriteArrayList<QuoteHandler> l = quoteHandlers.get(s);
