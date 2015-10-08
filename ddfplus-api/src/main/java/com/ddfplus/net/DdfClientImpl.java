@@ -271,7 +271,7 @@ public class DdfClientImpl implements DdfClient {
 
 		String[] realSymbols = symbolShortCuts.resolveShortCutSymbols(symbol.trim());
 		if (realSymbols.length == 0) {
-			log.error("Invalid Symbol, ignoring: " + symbol);
+			log.error("Invalid Symbol: " + symbol + " ignoring.");
 			return;
 		}
 		for (String s : realSymbols) {

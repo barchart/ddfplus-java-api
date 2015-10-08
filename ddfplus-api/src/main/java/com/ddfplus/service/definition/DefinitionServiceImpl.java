@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +30,13 @@ public class DefinitionServiceImpl implements DefinitionService {
 
 	private final Map<String, FuturesRoot> futureRoots = new ConcurrentHashMap<String, FuturesRoot>();
 	private final Map<String, OptionsRoot> optionsRoots = new ConcurrentHashMap<String, OptionsRoot>();
-	private final OkHttpClient httpClient;
 	private final Gson gson;
+	private OkHttpClient httpClient;
 
 	public DefinitionServiceImpl() {
 		httpClient = new OkHttpClient();
+		httpClient.setConnectTimeout(3, TimeUnit.SECONDS);
+		httpClient.setReadTimeout(20, TimeUnit.SECONDS);
 		gson = new GsonBuilder().create();
 	}
 
@@ -101,7 +104,40 @@ public class DefinitionServiceImpl implements DefinitionService {
 		return options;
 	}
 
-	private void processFutureRoot(String root, FuturesRoot futureRoot) {
+	private FuturesRoot buildFutureContractCache(String root) {
+		FuturesRoot futureRoot = null;
+		// Look up from web service
+		Request request = new Request.Builder().url(FUTURES_URL + root).build();
+		Response response;
+		try {
+			response = httpClient.newCall(request).execute();
+			if (response.isSuccessful()) {
+				String json = response.body().string();
+				if (logger.isDebugEnabled()) {
+					logger.debug("< " + json);
+				}
+				futureRoot = processFutureRoot(json, root);
+			}
+		} catch (Exception e) {
+			logger.error("Could not obtain futures definitions for: " + root + " error: " + e.getMessage());
+		}
+		return futureRoot;
+	}
+
+	FuturesRoot processFutureRoot(String json, String root) {
+		FuturesRoot futureRoot = null;
+		// A map is returned, so need collection type
+		Type collectionType = new TypeToken<Map<String, FuturesRoot>>() {
+		}.getType();
+		Map<String, FuturesRoot> o = gson.fromJson(json, collectionType);
+		if (o != null) {
+			futureRoot = o.get(root);
+		}
+		if (futureRoot == null) {
+			logger.error("Could not find futures for root: " + root);
+			return futureRoot;
+		}
+
 		// Build all future symbols
 		for (FutureContract contract : futureRoot.getContracts()) {
 			if (contract.isnearest) {
@@ -123,34 +159,9 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 
 		futureRoots.put(root, futureRoot);
-	}
 
-	private FuturesRoot buildFutureContractCache(String root) {
-		FuturesRoot futureRoot = null;
-		// Look up from web service
-		Request request = new Request.Builder().url(FUTURES_URL + root).build();
-		Response response;
-		try {
-			response = httpClient.newCall(request).execute();
-			if (response.isSuccessful()) {
-				String json = response.body().string();
-				if (logger.isDebugEnabled()) {
-					logger.debug("< " + json);
-				}
-				// A map is returned, so need collection type
-				Type collectionType = new TypeToken<Map<String, FuturesRoot>>() {
-				}.getType();
-				Map<String, FuturesRoot> o = gson.fromJson(json, collectionType);
-				if (o != null && (futureRoot = o.get(root)) != null) {
-					processFutureRoot(root, futureRoot);
-				} else {
-					logger.error("Could not find futures for root: " + root);
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Could not obtain futures definitions for: " + root + " error: " + e.getMessage());
-		}
 		return futureRoot;
+
 	}
 
 	private OptionsRoot buildOptionsContractCache(String root) {
@@ -165,16 +176,7 @@ public class DefinitionServiceImpl implements DefinitionService {
 				if (logger.isDebugEnabled()) {
 					logger.debug("< " + json);
 				}
-				// A map is returned, so need collection type
-				Type collectionType = new TypeToken<Map<String, OptionsRoot>>() {
-				}.getType();
-				Map<String, OptionsRoot> o = gson.fromJson(json, collectionType);
-				optionsRoot = o.get(root);
-				if (optionsRoot != null) {
-					processOptionsRoot(root, optionsRoot);
-				} else {
-					logger.error("Could not find options for root: " + root);
-				}
+				optionsRoot = processOptionsRoot(json, root);
 			}
 		} catch (Exception e) {
 			logger.error("Could not obtain futures definitions for: " + root + " error: " + e.getMessage());
@@ -182,13 +184,23 @@ public class DefinitionServiceImpl implements DefinitionService {
 		return optionsRoot;
 	}
 
-	private void processOptionsRoot(String root, OptionsRoot optionsRoot) {
-		optionsRoot.setRoot(root);
-		optionsRoots.put(root, optionsRoot);
-		if (logger.isInfoEnabled()) {
-			logger.info(optionsRoot.toString());
+	OptionsRoot processOptionsRoot(String json, String root) {
+		OptionsRoot optionsRoot = null;
+		// A map is returned, so need collection type
+		Type collectionType = new TypeToken<Map<String, OptionsRoot>>() {
+		}.getType();
+		Map<String, OptionsRoot> o = gson.fromJson(json, collectionType);
+		optionsRoot = o.get(root);
+		if (optionsRoot != null) {
+			optionsRoot.setRoot(root);
+			optionsRoots.put(root, optionsRoot);
+			if (logger.isInfoEnabled()) {
+				logger.info(optionsRoot.toString());
+			}
+		} else {
+			logger.error("Could not find options for root: " + root);
 		}
-
+		return optionsRoot;
 	}
 
 	static class FuturesRoot {
@@ -455,6 +467,14 @@ public class DefinitionServiceImpl implements DefinitionService {
 		public void setType(String type) {
 			this.type = type;
 		}
+	}
+
+	public FuturesRoot getFuturesRoot(String root) {
+		return futureRoots.get(root);
+	}
+
+	public OptionsRoot getOptionsRoot(String root) {
+		return optionsRoots.get(root);
 	}
 
 }

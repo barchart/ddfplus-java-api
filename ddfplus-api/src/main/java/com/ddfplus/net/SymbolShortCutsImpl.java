@@ -1,5 +1,10 @@
 package com.ddfplus.net;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +19,28 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 	private static final String ALL_OPTIONS_MONTH_YEAR = "^OM";
 	private static final String FUTURE_MONTH_SHORTCUT = "*";
 	private static final String CTRL = "^";
+	private static final Pattern DDF_SYMBOL_PATTERN = Pattern.compile("(\\D+)(\\D)(\\d+)");
 
 	private static final Logger log = LoggerFactory.getLogger("SymbolShortCuts");
 
 	private DefinitionService definitionService = new DefinitionServiceImpl();
+
+	private Map<Character, Character> farOutMonths = new HashMap<Character, Character>();
+
+	public SymbolShortCutsImpl() {
+		farOutMonths.put('F', 'A');
+		farOutMonths.put('G', 'B');
+		farOutMonths.put('H', 'C');
+		farOutMonths.put('J', 'D');
+		farOutMonths.put('K', 'E');
+		farOutMonths.put('M', 'I');
+		farOutMonths.put('N', 'L');
+		farOutMonths.put('Q', 'O');
+		farOutMonths.put('U', 'P');
+		farOutMonths.put('V', 'R');
+		farOutMonths.put('X', 'S');
+		farOutMonths.put('Z', 'T');
+	}
 
 	@Override
 	public String[] resolveShortCutSymbols(String symbol) {
@@ -81,8 +104,50 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 			return noSymbol;
 		}
 
+		// Convert symbols to DDF feed symbol if required.
+		String ddfFeedSymbol = convertToDdfFeedSymbol(symbol);
+		if (ddfFeedSymbol != null) {
+			return new String[] { ddfFeedSymbol };
+		}
+
 		// No short cut just return the symbol
 		return new String[] { symbol };
+	}
+
+	String convertToDdfFeedSymbol(String symbol) {
+		Matcher m = DDF_SYMBOL_PATTERN.matcher(symbol);
+		if (m.matches()) {
+			String s = m.group(1);
+			char month = m.group(2).charAt(0);
+			String yearString = m.group(3);
+			int year = Integer.parseInt(yearString);
+			int rawYear = year % 2000;
+			/**
+			 * <pre>
+			 * For Futures contracts, currently only Natural Gas (NG), that
+			 * trade out more than 10-years DDF will use alternate contract
+			 * months
+			 * 
+			 * 'A','B','C','D','E','I','L','O','P','R','S','T' = 'Jan' ... 'Dec'
+			 * 
+			 * For example using 2015 as the base year
+			 * NGV25 - Natural Gas Oct(V) 2015 
+			 * gt  0.0 - Natural Gas Oct(R) 2025
+			 * </pre>
+			 */
+			if (s.equals("NG") && rawYear >= 10) {
+				Character newMonth = farOutMonths.get(month);
+				if (newMonth != null) {
+					month = newMonth;
+				} else {
+					log.error("Lookup for far out month for symbol: " + symbol + " failed.");
+				}
+			}
+			// reduce the year to 1 digit, assumes the current year
+			String ddfSymbol = s + month + yearString.charAt(yearString.length() - 1);
+			return ddfSymbol;
+		}
+		return symbol;
 	}
 
 	String getMonthSymbol(String symbol, int i) {
@@ -96,6 +161,10 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 			log.error("Invalid month identifier on symbol: " + symbol + " streaming not active.");
 		}
 		return ret;
+	}
+
+	void setDefinitionService(DefinitionService definitionService) {
+		this.definitionService = definitionService;
 	}
 
 }
