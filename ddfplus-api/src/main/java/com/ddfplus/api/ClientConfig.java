@@ -4,7 +4,7 @@
  * This software is the proprietary information of Barchart.com, Inc.
  * Use is subject to license terms.
  */
-package com.ddfplus.api.examples;
+package com.ddfplus.api;
 
 import com.ddfplus.enums.ConnectionType;
 
@@ -22,6 +22,11 @@ public class ClientConfig {
 	private String userName;
 	private String password;
 	/*
+	 * Network interface to bind for socket. If null will bind to all
+	 * interfaces.
+	 */
+	private String bindInterface = null;
+	/*
 	 * Symbols to subscribe to, comma separated.
 	 * 
 	 * symbols = "YHOO,IBM,ESH6,YMH6,QQQQ,";
@@ -33,9 +38,28 @@ public class ClientConfig {
 	private boolean depthSubscription;
 	private String exchangeCodes;
 	private String snapshotUser;
-	private String snapShotPassword;
+	private String snapshotPassword;
 	private String logMode;
 	private boolean storeMessages;
+
+	// Definition refresh interval
+	private Long definitionRefreshIntervalSec;
+
+	public String getSnapshotPassword() {
+		return snapshotPassword;
+	}
+
+	public void setSnapshotPassword(String snapShotPassword) {
+		this.snapshotPassword = snapShotPassword;
+	}
+
+	public Long getDefinitionRefreshIntervalSec() {
+		return definitionRefreshIntervalSec;
+	}
+
+	public void setDefinitionRefreshIntervalSec(Long definitionRefreshPeriodSec) {
+		this.definitionRefreshIntervalSec = definitionRefreshPeriodSec;
+	}
 
 	public String getPrimaryServer() {
 		return primaryServer;
@@ -101,14 +125,6 @@ public class ClientConfig {
 		this.snapshotUser = sUser;
 	}
 
-	public String getSnapshotPassword() {
-		return snapShotPassword;
-	}
-
-	public void setSnapshotPassword(String sPassword) {
-		this.snapShotPassword = sPassword;
-	}
-
 	public String getLogMode() {
 		return logMode;
 	}
@@ -133,6 +149,14 @@ public class ClientConfig {
 		this.connectionType = connectionType;
 	}
 
+	public String getBindInterface() {
+		return bindInterface;
+	}
+
+	public void setBindInterface(String binInterface) {
+		bindInterface = bindInterface;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Client Config: ");
@@ -145,6 +169,7 @@ public class ClientConfig {
 		sb.append("\n\tdepthSubscriptions: " + depthSubscription);
 		sb.append("\n\tsnapshotUser: " + snapshotUser);
 		sb.append("\n\tstoreMessages: " + storeMessages);
+		sb.append("\n\tdefinitionRefreshIntervalSec: " + definitionRefreshIntervalSec);
 		sb.append("\n");
 		return sb.toString();
 	}

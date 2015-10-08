@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -21,6 +23,8 @@ import com.squareup.okhttp.Response;
 
 public class DefinitionServiceImpl implements DefinitionService {
 
+	// Every 12 hours
+	private static final int DEFAULT_DEFINITION_REFRESH_INTERVAL_SEC = 60 * 60 * 12;
 	private static final int NEAREST_MONTH = 0;
 	private static final String BASE_URL = "http://extras.ddfplus.com/json/";
 	private static final String FUTURES_URL = BASE_URL + "/futures/?root=";
@@ -32,12 +36,27 @@ public class DefinitionServiceImpl implements DefinitionService {
 	private final Map<String, OptionsRoot> optionsRoots = new ConcurrentHashMap<String, OptionsRoot>();
 	private final Gson gson;
 	private OkHttpClient httpClient;
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+	private long refreshIntervalSec = DEFAULT_DEFINITION_REFRESH_INTERVAL_SEC;
 
 	public DefinitionServiceImpl() {
 		httpClient = new OkHttpClient();
 		httpClient.setConnectTimeout(3, TimeUnit.SECONDS);
 		httpClient.setReadTimeout(20, TimeUnit.SECONDS);
 		gson = new GsonBuilder().create();
+	}
+
+	@Override
+	public void init(Long intervalSec) {
+		if (intervalSec != null) {
+			this.refreshIntervalSec = intervalSec;
+		}
+		/*
+		 * Start a refresh thread
+		 */
+		logger.info("Scheduling a symbol refresh every " + refreshIntervalSec + " seconds.");
+		RefreshThread refreshThread = new RefreshThread();
+		scheduler.scheduleAtFixedRate(refreshThread, refreshIntervalSec, refreshIntervalSec, TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -201,6 +220,22 @@ public class DefinitionServiceImpl implements DefinitionService {
 			logger.error("Could not find options for root: " + root);
 		}
 		return optionsRoot;
+	}
+
+	public FuturesRoot getFuturesRoot(String root) {
+		return futureRoots.get(root);
+	}
+
+	public OptionsRoot getOptionsRoot(String root) {
+		return optionsRoots.get(root);
+	}
+
+	public long getRefreshPeriodSec() {
+		return refreshIntervalSec;
+	}
+
+	public void setRefreshPeriodSec(long refreshPeriodSec) {
+		this.refreshIntervalSec = refreshPeriodSec;
 	}
 
 	static class FuturesRoot {
@@ -469,12 +504,21 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 	}
 
-	public FuturesRoot getFuturesRoot(String root) {
-		return futureRoots.get(root);
-	}
+	private class RefreshThread implements Runnable {
 
-	public OptionsRoot getOptionsRoot(String root) {
-		return optionsRoots.get(root);
+		@Override
+		public void run() {
+			logger.info("Running background symbol refresh..");
+			for (String root : futureRoots.keySet()) {
+				logger.info("Running symbol refresh for future root: " + root);
+				buildFutureContractCache(root);
+			}
+			for (String root : optionsRoots.keySet()) {
+				logger.info("Running symbol refresh for option root: " + root);
+				buildOptionsContractCache(root);
+			}
+
+		}
 	}
 
 }

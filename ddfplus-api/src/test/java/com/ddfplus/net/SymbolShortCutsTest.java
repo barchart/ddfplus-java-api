@@ -27,8 +27,7 @@ public class SymbolShortCutsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		shortCuts = new SymbolShortCutsImpl();
-		shortCuts.setDefinitionService(definitionService);
+		shortCuts = new SymbolShortCutsImpl(definitionService);
 	}
 
 	@Test

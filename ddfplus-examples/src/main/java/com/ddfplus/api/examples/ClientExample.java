@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ddfplus.api.BookQuoteHandler;
+import com.ddfplus.api.ClientConfig;
 import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
@@ -195,6 +196,11 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			if (p.getProperty("storeMessages") != null && !p.getProperty("storeMessages").isEmpty()) {
 				config.setStoreMessages(p.getProperty("storeMessages").equals("true") ? true : false);
 			}
+			if (p.getProperty("definitionRefreshIntervalSec") != null
+					&& !p.getProperty("definitionRefreshIntervalSec").isEmpty()) {
+				Long interval = new Long(p.getProperty("definitionRefreshIntervalSec"));
+				config.setDefinitionRefreshIntervalSec(interval);
+			}
 		}
 
 		// Validity Checks
@@ -266,8 +272,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			symbolProvider.setSymbols(config.getExchangeCodes());
 		}
 
-		client = new DdfClientImpl(config.getUserName(), config.getPassword(), config.getConnectionType(),
-				config.getPrimaryServer(), config.getSecondaryServer(), symbolProvider);
+		client = new DdfClientImpl(config, symbolProvider);
 
 		// Will activate snapshot refreshes for "push" mode (-e <exchangeCodes>
 		// are given)

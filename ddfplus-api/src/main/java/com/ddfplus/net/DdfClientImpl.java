@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ddfplus.api.BookQuoteHandler;
+import com.ddfplus.api.ClientConfig;
 import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
@@ -31,6 +32,8 @@ import com.ddfplus.db.MarketEvent;
 import com.ddfplus.db.MasterType;
 import com.ddfplus.db.Quote;
 import com.ddfplus.enums.ConnectionType;
+import com.ddfplus.service.definition.DefinitionService;
+import com.ddfplus.service.definition.DefinitionServiceImpl;
 import com.ddfplus.service.feed.FeedService;
 import com.ddfplus.service.feed.FeedServiceImpl;
 import com.ddfplus.service.usersettings.UserSettings;
@@ -81,10 +84,14 @@ public class DdfClientImpl implements DdfClient {
 
 	private static int instanceId = 0;
 
+	// Client Configuration
+	private ClientConfig config;
+
 	// Connection parameters
 	private String host;
 	private String secondaryHost;
 	private final ConnectionType type;
+	// will bind to all interfaces if null
 	private String bindInterface = null;
 	private int jerqVersion = NetConstants.JERQ_VERSION_DEFAULT;
 	// Jerq login credentials
@@ -104,28 +111,27 @@ public class DdfClientImpl implements DdfClient {
 	 */
 	private SymbolProvider symbolProvider;
 
-	private SymbolShortCuts symbolShortCuts = new SymbolShortCutsImpl();
+	private SymbolShortCuts symbolShortCuts;
+	private DefinitionService definitionService;
 
-	public DdfClientImpl(final String username, final String password, final ConnectionType type, String host,
-			String secondaryHost, String bindInterface, SymbolProvider symbolProvider) throws Exception {
-		this.username = username;
-		this.password = password;
+	public DdfClientImpl(ClientConfig config, SymbolProvider symbolProvider) {
+		this.config = config;
+		this.username = config.getUserName();
+		this.password = config.getPassword();
 		if (username == null || password == null) {
 			throw new IllegalArgumentException("username and password have to be set");
 		}
-		this.type = type;
-		this.bindInterface = bindInterface;
-		this.host = host;
-		this.secondaryHost = secondaryHost;
+		this.type = config.getConnectionType();
+		this.bindInterface = config.getBindInterface();
+		this.host = config.getPrimaryServer();
+		this.secondaryHost = config.getSecondaryServer();
 		this.symbolProvider = symbolProvider;
-	}
 
-	public DdfClientImpl(final String username, final String password, ConnectionType type, String host,
-			String secondaryHost, SymbolProvider symbolProvider) throws Exception {
-		/*
-		 * Will bind to all interface since bindInterface is null.
-		 */
-		this(username, password, type, host, secondaryHost, null, symbolProvider);
+		// Definition Service
+		definitionService = new DefinitionServiceImpl();
+		definitionService.init(config.getDefinitionRefreshIntervalSec());
+
+		symbolShortCuts = new SymbolShortCutsImpl(definitionService);
 	}
 
 	@Override

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.ddfplus.service.definition.DefinitionService;
-import com.ddfplus.service.definition.DefinitionServiceImpl;
 
 public class SymbolShortCutsImpl implements SymbolShortCuts {
 
@@ -23,11 +22,13 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 
 	private static final Logger log = LoggerFactory.getLogger("SymbolShortCuts");
 
-	private DefinitionService definitionService = new DefinitionServiceImpl();
+	private DefinitionService definitionService;
 
 	private Map<Character, Character> farOutMonths = new HashMap<Character, Character>();
 
-	public SymbolShortCutsImpl() {
+	public SymbolShortCutsImpl(DefinitionService definitionService) {
+		this.definitionService = definitionService;
+
 		farOutMonths.put('F', 'A');
 		farOutMonths.put('G', 'B');
 		farOutMonths.put('H', 'C');
@@ -40,6 +41,7 @@ public class SymbolShortCutsImpl implements SymbolShortCuts {
 		farOutMonths.put('V', 'R');
 		farOutMonths.put('X', 'S');
 		farOutMonths.put('Z', 'T');
+
 	}
 
 	@Override
