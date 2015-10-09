@@ -3,9 +3,9 @@ package com.ddfplus.net;
 /**
  * Resolves Barchart symbol shortcuts to actual symbol(s).
  * 
- * @see http://www.barchartmarketdata.com/client/protocol_symbol.php
+ * See http://www.barchartmarketdata.com/client/protocol_symbol.php
  * 
- *      <pre>
+ * <pre>
  * 
  * Logic for adjusting symbols, after shortcuts, to Jerq DDF feed symbol.  
  * Verify it's a numeric, then look for month code, then before that is the root.
@@ -24,7 +24,7 @@ package com.ddfplus.net;
  * 
  * NGZ0 - Natural Gas Dec 2010
  * NGT0 - Natural Gas Dec 2020
- *      </pre>
+ * </pre>
  */
 public interface SymbolShortCuts {
 	String[] resolveShortCutSymbols(String symbol);
