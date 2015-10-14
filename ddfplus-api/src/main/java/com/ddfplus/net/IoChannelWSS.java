@@ -27,6 +27,7 @@ import org.glassfish.tyrus.container.jdk.client.JdkClientContainer;
 
 import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventType;
+import com.ddfplus.enums.ConnectionType;
 import com.ddfplus.util.ASCII;
 
 /**
@@ -36,6 +37,8 @@ import com.ddfplus.util.ASCII;
 class IoChannelWSS extends IoChannel {
 
 	private static int READ_BUF_SIZE = 2000000;
+
+	private static final String WS_PREFIX = "ws://";
 
 	private static final String WSS_PREFIX = "wss://";
 
@@ -57,12 +60,82 @@ class IoChannelWSS extends IoChannel {
 
 	private WssMessageTextStreamHandler messageHandler;
 
+	private boolean reconnection;
+
 	public IoChannelWSS(Connection connection, SymbolProvider symbolProvider) {
 		super(connection);
 		if (symbolProvider == null) {
 			throw new IllegalArgumentException("Symbol Provider cannot be null");
 		}
 		this.symbolProvider = symbolProvider;
+
+		// Build Web Service URL
+		String addr = null;
+		if (connection.getConnectionType() == ConnectionType.WS) {
+			addr = WS_PREFIX + connection.primaryServer.getHostName() + ":" + connection.getPort() + WSS_POSTFIX;
+		} else {
+			addr = WSS_PREFIX + connection.primaryServer.getHostName() + WSS_POSTFIX;
+		}
+		try {
+			uri = new URI(addr);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Could not create Web Socket URI: " + e.getMessage());
+		}
+
+	}
+
+	@Override
+	protected void sendCommand(String cmd) {
+		endpoint.sendCmd(cmd);
+	}
+
+	@Override
+	public void disconnectAndShutdown() {
+		if (client != null) {
+			client.shutdown();
+			client = null;
+		}
+		running.set(false);
+		sessionFinishedLatch.countDown();
+	}
+
+	@Override
+	public void run() {
+
+		log.info("Started Jerq Web Socket Client to: " + connection.primaryServer);
+
+		while (running.get()) {
+			try {
+				sessionFinishedLatch = new CountDownLatch(1);
+				boolean ret = connectToServer();
+				if (ret == false || connState == ConnectionState.NotConnected) {
+
+					// Connect//login failed, retry
+					log.warn("WebSocket connection error, retrying in: " + RECONNECTION_INTERVAL_SEC + " seconds.");
+					sleep(RECONNECTION_INTERVAL_SEC * 1000);
+					continue;
+				}
+				// Connected, wait until session is closed.
+				sessionFinishedLatch.await();
+
+			} catch (Exception e) {
+				log.error("WebSocket error: ", e);
+			}
+		}
+
+		if (client != null) {
+			client.shutdown();
+		}
+
+		log.info("Stopped Jerq Web Socket Client to " + connection.primaryServer);
+
+	}
+
+	/*
+	 * Initializes web socket and attempts a connection.
+	 */
+	private boolean connectToServer()
+			throws URISyntaxException, DeploymentException, IOException, InterruptedException {
 
 		/*
 		 * Create WS client using built in Java Asynchronous Channel API (Not
@@ -86,74 +159,25 @@ class IoChannelWSS extends IoChannel {
 
 		endpoint = new JerqWssEndPoint(messageHandler);
 
-		// Build WSS URL
-		String addr = WSS_PREFIX + connection.primaryServer.getHostName() + WSS_POSTFIX;
-		try {
-			uri = new URI(addr);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Could not create Web Socket URI: " + e.getMessage());
-		}
-
-	}
-
-	@Override
-	protected void sendCommand(String cmd) {
-		endpoint.sendCmd(cmd);
-	}
-
-	@Override
-	public void disconnectAndShutdown() {
-		if (client != null) {
-			client.shutdown();
-			client = null;
-		}
-		running.set(false);
-		sessionFinishedLatch.countDown();
-
-	}
-
-	@Override
-	public void run() {
-
-		log.info("Started Jerq Web Socket Client to: " + connection.primaryServer);
-
-		while (running.get()) {
-			try {
-				sessionFinishedLatch = new CountDownLatch(1);
-				boolean ret = connectToServer();
-				if (ret == false || connState == ConnectionState.NotConnected) {
-					// Connect//login failed, retry
-					log.warn("WS connection error, retrying");
-					sleep(RECONNECTION_INTERVAL_MS);
-					continue;
-				}
-				// Connected, wait until session is closed.
-				sessionFinishedLatch.await();
-
-			} catch (Exception e) {
-				log.error("WS error: ", e);
-			}
-		}
-		if (client != null) {
-			client.shutdown();
-		}
-
-		log.info("Stopped Jerq Web Socket Client to " + connection.primaryServer);
-
-	}
-
-	private boolean connectToServer() throws URISyntaxException, DeploymentException, IOException, InterruptedException {
-
 		connectionLatch = new CountDownLatch(1);
-		// Connect
-		client.connectToServer(endpoint, clientEndpointConfig, uri);
 
+		// Attempt Connection
+		log.info("Starting connection to: " + uri);
+		try {
+			client.connectToServer(endpoint, clientEndpointConfig, uri);
+		} catch (javax.websocket.DeploymentException e) {
+			log.error("Could not connection to: " + uri + " reason: " + e.getMessage());
+			return false;
+		}
+
+		// TODO Review
 		boolean ret = connectionLatch.await(CONNECTION_TIMEOUT_SEC, TimeUnit.SECONDS);
 		return ret;
 	}
 
 	private void closeSession() {
-		running.set(false);
+		client.shutdown();
+		connState = ConnectionState.NotConnected;
 		sessionFinishedLatch.countDown();
 	}
 
@@ -169,7 +193,7 @@ class IoChannelWSS extends IoChannel {
 		@Override
 		public void onOpen(Session session, EndpointConfig config) {
 			this.session = session;
-			log.info("Connected to: " + uri);
+			log.info("Endpoint connected to: " + uri);
 
 			session.addMessageHandler(handler);
 			connState = ConnectionState.Connecting;
@@ -178,13 +202,14 @@ class IoChannelWSS extends IoChannel {
 
 		@Override
 		public void onClose(Session session, CloseReason closeReason) {
+			log.warn("Endpoint close, reason: " + closeReason);
 			// clean up
 			closeSession();
 		}
 
 		@Override
 		public void onError(Session session, Throwable thr) {
-			log.error("WS client error: ", thr);
+			log.error("Endpoint error: ", thr);
 			closeSession();
 		}
 

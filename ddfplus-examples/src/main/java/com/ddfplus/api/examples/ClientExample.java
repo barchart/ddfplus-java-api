@@ -96,7 +96,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		String propFile = CLIENT_PROPS_FILE;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-s") && i + 1 < args.length) {
-				config.setSecondaryServer(args[i + 1]);
+				config.setPrimaryServer(args[i + 1]);
 				i++;
 			}
 			if (args[i].equals("-u") && i + 1 < args.length) {
@@ -183,6 +183,9 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			}
 			if (p.getProperty("server.secondary") != null && !p.getProperty("server.secondary").isEmpty()) {
 				config.setSecondaryServer(p.getProperty("server.secondary"));
+			}
+			if (p.getProperty("server.port") != null && !p.getProperty("server.port").isEmpty()) {
+				config.setServerPort(Integer.parseInt(p.getProperty("server.port")));
 			}
 			if (p.getProperty("depthSubscriptions") != null && !p.getProperty("depthSubscriptions").isEmpty()) {
 				config.setDepthSubscription(p.getProperty("depthSubscriptions").equals("true") ? true : false);

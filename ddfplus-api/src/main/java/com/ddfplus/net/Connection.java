@@ -274,6 +274,7 @@ public class Connection {
 				// server
 				channel = new IoChannelListenTCP(this);
 				break;
+			case WS:
 			case WSS:
 				// Web socket client
 				channel = new IoChannelWSS(this, symbolProvider);
@@ -456,6 +457,14 @@ public class Connection {
 		} else {
 			channel.setName(name);
 		}
+	}
+
+	public ConnectionType getConnectionType() {
+		return type;
+	}
+
+	public int getPort() {
+		return port;
 	}
 
 	/**

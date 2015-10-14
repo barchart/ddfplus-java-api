@@ -195,8 +195,8 @@ public class DdfClientImpl implements DdfClient {
 
 			InetAddress ddfServer = InetAddress.getByName(userSettings.getStreamPrimaryServer());
 			InetAddress secondaryServer = InetAddress.getByName(userSettings.getStreamSecondaryServer());
-			if (type == ConnectionType.WSS) {
-				ddfServer = InetAddress.getByName(userSettings.getWSSServer());
+			if (type == ConnectionType.WS || type == ConnectionType.WSS) {
+				ddfServer = InetAddress.getByName(userSettings.getWssServer());
 			}
 
 			InetAddress intf = InetAddress.getByName(this.bindInterface);
@@ -205,7 +205,7 @@ public class DdfClientImpl implements DdfClient {
 					this.username, //
 					this.password, //
 					ddfServer, //
-					type.port, //
+					config.getServerPort() != null ? config.getServerPort() : type.port, //
 					intf, //
 					symbolProvider, //
 					secondaryServer);

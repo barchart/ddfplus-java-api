@@ -27,7 +27,7 @@ abstract class IoChannel extends Thread {
 
 	protected static final long CONNECTION_TIMEOUT_SEC = 60;
 
-	protected static final int RECONNECTION_INTERVAL_MS = 3000;
+	protected static final int RECONNECTION_INTERVAL_SEC = 3;
 
 	private static final int CMD_INITIAL_DELAY_MS = 100;
 

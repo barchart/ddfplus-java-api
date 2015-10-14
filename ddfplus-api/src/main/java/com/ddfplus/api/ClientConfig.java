@@ -19,6 +19,8 @@ public class ClientConfig {
 	// DDF Server
 	private String primaryServer;
 	private String secondaryServer;
+	private Integer serverPort;
+
 	private String userName;
 	private String password;
 	/*
@@ -157,6 +159,14 @@ public class ClientConfig {
 		bindInterface = bindInterface;
 	}
 
+	public Integer getServerPort() {
+		return serverPort;
+	}
+
+	public void setServerPort(Integer serverPort) {
+		this.serverPort = serverPort;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder("Client Config: ");
@@ -166,6 +176,8 @@ public class ClientConfig {
 		sb.append("\n\texchangeCodes: " + exchangeCodes);
 		sb.append("\n\tlogMode: " + logMode);
 		sb.append("\n\tserver: " + primaryServer);
+		sb.append("\n\tsecondaryServer: " + secondaryServer);
+		sb.append("\n\tserverPort: " + serverPort);
 		sb.append("\n\tdepthSubscriptions: " + depthSubscription);
 		sb.append("\n\tsnapshotUser: " + snapshotUser);
 		sb.append("\n\tstoreMessages: " + storeMessages);

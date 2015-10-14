@@ -56,12 +56,6 @@ public class UserSettings {
 		this.recoveryServer = server;
 	}
 
-	@Override
-	public String toString() {
-		return "user: " + userName + " primary: " + streamPrimaryServer + " secondary: " + streamSecondaryServer
-				+ " recovery: " + recoveryServer + " wss: " + wssServer;
-	}
-
 	public String getStreamSecondaryServer() {
 		return this.streamSecondaryServer;
 	}
@@ -70,14 +64,19 @@ public class UserSettings {
 		this.streamSecondaryServer = s;
 	}
 
-	public void setWSSServer(String s) {
+	public void setWssServer(String s) {
 		this.wssServer = s;
 
 	}
 
-	public String getWSSServer() {
+	public String getWssServer() {
 		return this.wssServer;
 
 	}
 
+	@Override
+	public String toString() {
+		return "user: " + userName + " primary: " + streamPrimaryServer + " secondary: " + streamSecondaryServer
+				+ " recovery: " + recoveryServer + " wss: " + wssServer;
+	}
 }

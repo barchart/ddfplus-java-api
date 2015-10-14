@@ -78,7 +78,12 @@ public enum ConnectionType {
 	/**
 	 * Web Socket Support.
 	 */
-	WSS(13, 80);
+	WS(13, 80),
+
+	/**
+	 * Web Socket Secure Support.
+	 */
+	WSS(14, 80);
 
 	public final int code;
 

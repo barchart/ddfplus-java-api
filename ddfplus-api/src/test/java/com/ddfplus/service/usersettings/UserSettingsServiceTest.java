@@ -1,10 +1,10 @@
 package com.ddfplus.service.usersettings;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class UserSettingsServiceTest {
 
@@ -27,7 +27,7 @@ public class UserSettingsServiceTest {
 		assertEquals("qs-us-e-01.aws.barchart.com", userSettings.getStreamPrimaryServer());
 		assertEquals("qs01.aws.ddfplus.com", userSettings.getStreamSecondaryServer());
 		assertEquals("qs02.aws.ddfplus.com", userSettings.getRecoveryServer());
-		assertEquals("qsws-us-e-01.aws.barchart.com", userSettings.getWSSServer());
+		assertEquals("qsws-us-e-01.aws.barchart.com", userSettings.getWssServer());
 	}
 
 }

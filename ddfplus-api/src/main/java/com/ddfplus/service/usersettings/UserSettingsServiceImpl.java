@@ -79,7 +79,7 @@ public class UserSettingsServiceImpl implements UserSettingsService {
 								}
 								n = attributes.getNamedItem("wss");
 								if (n != null) {
-									userSettings.setWSSServer(n.getTextContent());
+									userSettings.setWssServer(n.getTextContent());
 								}
 							}
 						}

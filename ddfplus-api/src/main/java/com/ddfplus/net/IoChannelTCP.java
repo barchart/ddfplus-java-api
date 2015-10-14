@@ -102,7 +102,7 @@ class IoChannelTCP extends IoChannel {
 				// We are not stopping so this is a re-connection.
 				try {
 					reconnection = true;
-					int reconnectionMs = RECONNECTION_INTERVAL_MS + ((int) (Math.random() * 10)) * 500;
+					int reconnectionMs = (RECONNECTION_INTERVAL_SEC * 1000) + ((int) (Math.random() * 10)) * 500;
 					log.info("Will attempt reconnection in " + reconnectionMs + " ms");
 					Thread.sleep(reconnectionMs);
 				} catch (Exception e) {
@@ -159,8 +159,8 @@ class IoChannelTCP extends IoChannel {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
 				log.info("[INF " + _id + " tid: " + Thread.currentThread().getId() + "] Connected to "
-						+ currentServerAddress + ":" + connection.port + " localAddr: " + socket.getLocalAddress()
-						+ ":" + socket.getLocalPort());
+						+ currentServerAddress + ":" + connection.port + " localAddr: " + socket.getLocalAddress() + ":"
+						+ socket.getLocalPort());
 
 				connState = ConnectionState.Connected;
 				connection.handleEvent(makeConnectionEvent(ConnectionEventType.CONNECTED, reconnection));
