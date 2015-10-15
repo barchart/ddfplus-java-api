@@ -25,7 +25,6 @@ import javax.websocket.Session;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.container.jdk.client.JdkClientContainer;
 
-import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventType;
 import com.ddfplus.enums.ConnectionType;
 import com.ddfplus.util.ASCII;
@@ -85,8 +84,40 @@ class IoChannelWSS extends IoChannel {
 	}
 
 	@Override
-	protected void sendCommand(String cmd) {
-		endpoint.sendCmd(cmd);
+	public void run() {
+
+		log.info("Started Jerq Web Socket Client to: " + connection.primaryServer);
+
+		while (running.get()) {
+			try {
+				sessionFinishedLatch = new CountDownLatch(1);
+				boolean ret = connectToServer();
+				if (ret == false || connState == ConnectionState.NotConnected) {
+
+					// Connect failed, retry
+					log.warn("WebSocket connection issue, retrying in: " + RECONNECTION_INTERVAL_SEC + " seconds.");
+					sleep(RECONNECTION_INTERVAL_SEC * 1000);
+					continue;
+				}
+				// Connected, wait until session is closed.
+				sessionFinishedLatch.await();
+				if (reconnection) {
+					log.warn("Awaiting " + RECONNECTION_INTERVAL_SEC + " seconds before reconnection.");
+					sleep(RECONNECTION_INTERVAL_SEC * 1000);
+				}
+
+			} catch (Exception e) {
+				log.error("WebSocket error: ", e);
+			}
+		}
+
+		if (client != null) {
+			client.shutdown();
+			client = null;
+		}
+
+		log.info("Stopped Jerq Web Socket Client to " + connection.primaryServer);
+
 	}
 
 	@Override
@@ -100,35 +131,8 @@ class IoChannelWSS extends IoChannel {
 	}
 
 	@Override
-	public void run() {
-
-		log.info("Started Jerq Web Socket Client to: " + connection.primaryServer);
-
-		while (running.get()) {
-			try {
-				sessionFinishedLatch = new CountDownLatch(1);
-				boolean ret = connectToServer();
-				if (ret == false || connState == ConnectionState.NotConnected) {
-
-					// Connect//login failed, retry
-					log.warn("WebSocket connection error, retrying in: " + RECONNECTION_INTERVAL_SEC + " seconds.");
-					sleep(RECONNECTION_INTERVAL_SEC * 1000);
-					continue;
-				}
-				// Connected, wait until session is closed.
-				sessionFinishedLatch.await();
-
-			} catch (Exception e) {
-				log.error("WebSocket error: ", e);
-			}
-		}
-
-		if (client != null) {
-			client.shutdown();
-		}
-
-		log.info("Stopped Jerq Web Socket Client to " + connection.primaryServer);
-
+	protected void sendCommand(String cmd) {
+		endpoint.sendCmd(cmd);
 	}
 
 	/*
@@ -166,11 +170,10 @@ class IoChannelWSS extends IoChannel {
 		try {
 			client.connectToServer(endpoint, clientEndpointConfig, uri);
 		} catch (javax.websocket.DeploymentException e) {
-			log.error("Could not connection to: " + uri + " reason: " + e.getMessage());
+			log.error("Could not connect to: " + uri + " reason: " + e.getMessage());
 			return false;
 		}
 
-		// TODO Review
 		boolean ret = connectionLatch.await(CONNECTION_TIMEOUT_SEC, TimeUnit.SECONDS);
 		return ret;
 	}
@@ -178,6 +181,12 @@ class IoChannelWSS extends IoChannel {
 	private void closeSession() {
 		client.shutdown();
 		connState = ConnectionState.NotConnected;
+		if (running.get()) {
+			/*
+			 * We are not shutting down, so reconnect.
+			 */
+			reconnection = true;
+		}
 		sessionFinishedLatch.countDown();
 	}
 
@@ -438,6 +447,7 @@ class IoChannelWSS extends IoChannel {
 				 * We have a valid header, Send Login Command
 				 */
 				connState = ConnectionState.Connected;
+				connection.handleEvent(makeConnectionEvent(ConnectionEventType.CONNECTED, reconnection));
 				String command = "LOGIN " + connection.username + ":" + connection.password + " VERSION="
 						+ connection.getVersion();
 				enqueueCommand(command);
@@ -449,12 +459,16 @@ class IoChannelWSS extends IoChannel {
 				// Login failed
 				connState = ConnectionState.NotConnected;
 				log.error("Jerq WS Client, the server reported an invalid login attempt: " + message);
-				connection.handleEvent(new ConnectionEvent(ConnectionEventType.LOGIN_FAILED));
+				connection.handleEvent(makeConnectionEvent(ConnectionEventType.LOGIN_FAILED, reconnection));
 			} else if (message.startsWith(JerqProtocol.JERQ_SUCCESSFUL_LOGIN)) {
 				// Successful login
 				log.info("Sucessful login for: " + connection.username);
 				connState = ConnectionState.LoggedIn;
-				connection.handleEvent(new ConnectionEvent(ConnectionEventType.LOGIN_SUCCESS));
+				connection.handleEvent(makeConnectionEvent(ConnectionEventType.LOGIN_SUCCESS, reconnection));
+				// On reconnection only
+				if (reconnection) {
+					resendSubscriptionsOnReconnection();
+				}
 			}
 			connectionLatch.countDown();
 		}
