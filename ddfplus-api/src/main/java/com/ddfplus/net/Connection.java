@@ -160,8 +160,7 @@ public class Connection {
 
 	/**
 	 * Adds your application listener to the Connection object. Once added, your
-	 * application will receive all live messages through the newDDFMessage
-	 * method.
+	 * application will receive all live messages through this handler.
 	 * 
 	 * @param handler
 	 *            Connection Handler
@@ -480,7 +479,7 @@ public class Connection {
 			try {
 				handler.onConnectionEvent(event);
 			} catch (Exception e) {
-				log.error("Connection.handleConnectionEvent(" + event + ")", e);
+				log.error("Connection.handleEvent(" + event + ")", e);
 			}
 
 		}

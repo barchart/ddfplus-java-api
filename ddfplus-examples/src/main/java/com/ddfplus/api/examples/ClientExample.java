@@ -43,7 +43,7 @@ import com.ddfplus.util.MessageStoreImpl;
 import com.ddfplus.util.StoreFeedHandler;
 
 /**
- * This is a sample DDF client program, illustrating the ddfplus API.
+ * This is a sample DDF client program, illustrating the DDF Plus API.
  * 
  * The actual DDF calls are very simple. Essentially, you need to do the
  * following to receive streaming data:
@@ -52,8 +52,7 @@ import com.ddfplus.util.StoreFeedHandler;
  * <li>Instantiate DdfClient
  * <li>Register a ClientHandler callback with the DdfClient, this will start the
  * communication with the DDF Server.
- * <li>Process the DDF messages as they are called back in the onMessage(...)
- * method.
+ * <li>Process the DDF messages via the Handler.
  * </ol>
  * 
  */
@@ -277,8 +276,10 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 		client = new DdfClientImpl(config, symbolProvider);
 
-		// Will activate snapshot refreshes for "push" mode (-e <exchangeCodes>
-		// are given)
+		/*
+		 * Will activate snapshot refreshes for pull by exchange mode (-e
+		 * <exchangeCodes> is given)
+		 */
 		if (config.getExchangeCodes() != null && config.getSnapshotUser() != null
 				&& config.getSnapshotPassword() != null) {
 			client.setSnapshotLogin(config.getSnapshotUser(), config.getSnapshotPassword());

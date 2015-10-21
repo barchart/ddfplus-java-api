@@ -21,29 +21,24 @@ import com.ddfplus.db.Quote;
  * DDF Client API. The DDF client can operate in one of two modes:
  * 
  * <ol>
- * <li>Pull Mode
- * <li>Push Mode
+ * <li>Pull By Symbol
+ * <li>Pull By Exchange
  * </ol>
  * 
- * How to activate "push" mode:
- * 
- * 
- * How to activate "pull" mode:
- *
  */
 public interface DdfClient {
 
 	void init();
 
 	/**
-	 * Sets the credentials for the snapshot web service login. Only used when
-	 * the API is used in "push" mode where all symbols for an exchange are
-	 * requested.
+	 * Sets the credentials for the refresh/snapshot web service login. Only
+	 * used when the API is used in pull by exchange mode where all symbols for
+	 * an exchange are requested.
 	 *
 	 * @see addQuoteExchangeHandler
 	 * 
 	 * @param username
-	 *            Snapshot web service login
+	 *            Refresh/Snapshot web service login
 	 * @param password
 	 *            Password
 	 */
@@ -108,7 +103,7 @@ public interface DdfClient {
 
 	/**
 	 * Add a quote handler for all symbols at the exchange. This is the callback
-	 * for the "push" mode.
+	 * for the pull by exchange mode.
 	 * 
 	 * @param exchangeCode
 	 *            DDF Exchange Code

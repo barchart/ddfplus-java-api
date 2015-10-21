@@ -29,14 +29,16 @@ import com.ddfplus.service.usersettings.UserSettingsService;
 import com.ddfplus.service.usersettings.UserSettingsServiceImpl;
 
 /**
+ * Server Push API example.
+ * 
  * The Server application is meant as a simple example on how to create a server
- * application that receives data from the ddfplus data servers via TCP or UDP.
+ * application that receives data from the DDF Plus data servers via TCP or UDP.
  * The Barchart servers will connect to this server and send DDF messages.
  * 
  * This class implements ConnectionHandler, which is the primary way of
  * receiving ddfplus messages. Once you receive the message, your application
  * must parse and process the message. There are a set of parser classes in the
- * ddf API which convert the ddfplus messages into a Java model, where you have
+ * DDF API which convert the ddfplus messages into a Java model, where you have
  * access to real floating point values for prices and ints for sizes, for
  * example.
  * 
@@ -171,6 +173,7 @@ public class ServerListenExample implements ConnectionHandler {
 
 		connection = new Connection(connectionTupe, address, port, intf);
 
+		// Register the message handler.
 		connection.registerHandler(this);
 
 		if (snapshotUser != null && snapshotPassword != null) {

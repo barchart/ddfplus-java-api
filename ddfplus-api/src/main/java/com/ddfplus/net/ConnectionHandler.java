@@ -10,7 +10,7 @@ package com.ddfplus.net;
 import com.ddfplus.api.ConnectionEvent;
 
 /**
- * The IConnectionListener is the primary interface for receiving raw data
+ * The ConnectionListener is the primary interface for receiving raw data
  * directly from the Connection object.
  * 
  * @see com.ddfplus.net.Connection
@@ -25,10 +25,9 @@ public interface ConnectionHandler {
 	public void onConnectionEvent(ConnectionEvent event);
 
 	/**
-	 * The newDDFMessage method is called whenever new data arrives. This is the
-	 * original ddf plus message. Your application should then process this
-	 * message, either using the <B>ddf.parser</B> package, with your own
-	 * equivalent.
+	 * This method is called whenever new data arrives. This is the original ddf
+	 * plus message. Your application should then process this message, either
+	 * using the <B>ddf.parser</B> package, with your own equivalent.
 	 * <P>
 	 * For more information on what exactly is contained in these ddfplus
 	 * messages, please refer to the ddfplus feed specifications.
