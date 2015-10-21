@@ -82,7 +82,7 @@ where:
 * Create a Java project in your favorite IDE
 * Add src/main/java to the source directories
 * Add all the jars in lib to the project classpath
-* If you want to see the API internal logging, add a SLF7 implementation such as logback-classic-<version>.jar
+* If you want to see the API internal logging, add a SLF7 implementation such as `logback-classic-<version>.jar`
 * The project should now build and run.
 
   If you do not have a SL4J implementation jar you will see an error similar to the one below.  The API will operate correctly just without internal logging.
