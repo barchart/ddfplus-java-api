@@ -720,25 +720,38 @@ public class DataMaster {
 
 		} else if (element == QuoteElement.Open.value()) {
 			// Opening of the Market
-
 			if (!bDoNotSetFlag)
 				quote.setFlag('\0');
 
 			if (pCombinedSession._open == 0.0f) {
-				// Not set before
+				/*
+				 * If ALL high, low, and last values are undefined (or zero)
+				 * then use open for the high, low, last
+				 * 
+				 * else if not all DEFINED just set the open only.
+				 * 
+				 */
 				if (session != null) {
-					session.setLast(f);
-					session._open = f;
-					session._high = f;
-					session._low = f;
+					if (session.getHigh() == 0.0f && session.getLow() == 0.0f && session.getLast() == 0.0f) {
+						session.setLast(f);
+						session._open = f;
+						session._high = f;
+						session._low = f;
+					} else {
+						session._open = f;
+					}
+				}
+				if (pCombinedSession.getHigh() == 0.0f && pCombinedSession.getLow() == 0.0f
+						&& pCombinedSession.getLast() == 0.0f) {
+					pCombinedSession.setLast(f);
+					pCombinedSession._open = f;
+					pCombinedSession._high = f;
+					pCombinedSession._low = f;
+				} else {
+					pCombinedSession._open = f;
 				}
 
-				pCombinedSession.setLast(f);
-				pCombinedSession._open = f;
-				pCombinedSession._high = f;
-				pCombinedSession._low = f;
-
-				// MarketEvent.Settlement
+				// MarketEvent.Settlement, only send if open value was undefined
 				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Open, quote.getSymbolInfo().getSymbol());
 				me.setOpen(f);
 				if (log.isDebugEnabled()) {
