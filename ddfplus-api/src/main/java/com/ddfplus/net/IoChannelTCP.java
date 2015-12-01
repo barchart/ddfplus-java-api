@@ -35,10 +35,12 @@ class IoChannelTCP extends IoChannel {
 	private boolean reconnection;
 	private InetAddress currentServerAddress;
 	private InetAddress backupServerAddress;
+	private String logPrefix;
 
 	public IoChannelTCP(Connection connection) {
 		super(connection);
 		_id = _nextId++;
+		logPrefix = "[INF " + _id + "] ";
 	}
 
 	public void run() {
@@ -87,7 +89,8 @@ class IoChannelTCP extends IoChannel {
 				if (socket != null) {
 					try {
 						socket.close();
-					} catch (IOException ignore) {
+					} catch (IOException io) {
+						log.error(logPrefix + " Socket close issue: " + io);
 					}
 					socket = null;
 				}
@@ -106,7 +109,7 @@ class IoChannelTCP extends IoChannel {
 					log.info("Will attempt reconnection in " + reconnectionMs + " ms");
 					Thread.sleep(reconnectionMs);
 				} catch (Exception e) {
-					;
+					log.error(logPrefix + " reconnection issue: " + e.getMessage());
 				}
 			}
 
@@ -150,7 +153,7 @@ class IoChannelTCP extends IoChannel {
 					backupServerAddress = temp;
 				}
 
-				log.warn("[INF " + _id + "] Connecting to " + currentServerAddress + ":" + connection.port);
+				log.warn("[INF " + _id + "] Connecting via TCP to " + currentServerAddress + ":" + connection.port);
 
 				socket = new Socket(currentServerAddress, connection.port);
 				socket.setSoTimeout(createReadTimeout());
