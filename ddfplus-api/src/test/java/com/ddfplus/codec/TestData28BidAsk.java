@@ -1,16 +1,15 @@
 package com.ddfplus.codec;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ddfplus.codec.Codec;
 import com.ddfplus.messages.Data28BidAsk;
-
-import static org.junit.Assert.assertEquals;
-
 
 public class TestData28BidAsk {
 
@@ -32,8 +31,7 @@ public class TestData28BidAsk {
 	@Test
 	public void testMessage28BidAsk1() {
 
-		final Data28BidAsk m1 = (Data28BidAsk) Codec
-				.parseMessage(ba1);
+		final Data28BidAsk m1 = (Data28BidAsk) Codec.parseMessage(ba1);
 
 		log.info("m1 : {}", m1);
 		// log.info("m1 : {}", m1.toStringAscii());
@@ -52,7 +50,18 @@ public class TestData28BidAsk {
 		assertEquals(m1._askSize, (Integer) 1);
 
 		assertEquals(m1._day, 'S');
+		assertEquals(m1._day, 'S');
 		assertEquals(m1._session, 'G');
+
+	}
+
+	@Test
+	public void message28Corrupted() {
+
+		byte[] msg = "\u00012COMM,8A".getBytes();
+
+		Data28BidAsk m1 = (Data28BidAsk) Codec.parseMessage(msg);
+		assertNull("should return null", m1);
 
 	}
 
