@@ -48,7 +48,9 @@ class IoChannelTCP extends IoChannel {
 		currentServerAddress = connection.primaryServer;
 		backupServerAddress = connection.secondaryServer;
 
-		log.info("[INF " + _id + "] Started JerqTCPListener (TCP Streaming mode) to " + currentServerAddress);
+		log.info("[INF " + _id
+				+ "] Started JerqTCPListener (TCP Streaming mode) to "
+				+ currentServerAddress);
 
 		while (!bDoStop.get()) {
 
@@ -69,20 +71,30 @@ class IoChannelTCP extends IoChannel {
 						}
 
 						if (line == null) {
+							log.info("Received end of stream, disconnecting.");
 							isRunning = false;
-						} else if (line.startsWith(JerqProtocol.JERQ_STOPPED_STREAM)) {
+						} else if (line
+								.startsWith(JerqProtocol.JERQ_STOPPED_STREAM)) {
+							log.warn("Server disconnected, connection will be re-established.");
 							isRunning = false;
-						} else if (line.startsWith(JerqProtocol.JERQ_INFO_START)) {
-							;
+						} else if (line
+								.startsWith(JerqProtocol.JERQ_INFO_START)) {
+							log.info("Server info: " + line);
 						} else {
 							connection.handleMessage(line);
 						}
 					} // end read loop
 
 				} catch (SocketException se) {
-					log.error("[ERR " + _id + "] JerqTCPListener.run(): communications error - " + se);
+					log.error("[ERR "
+							+ _id
+							+ "] JerqTCPListener.run(): communications error - "
+							+ se);
 				} catch (Exception e) {
-					log.error("[ERR " + _id + "] JerqTCPListener.run(): error streaming quotes - " + e);
+					log.error("[ERR "
+							+ _id
+							+ "] JerqTCPListener.run(): error streaming quotes - "
+							+ e);
 				}
 
 				// Some type of socket error, fall through to re-connection
@@ -97,25 +109,32 @@ class IoChannelTCP extends IoChannel {
 			}
 
 			// We are disconnected
-			connection.handleEvent(makeConnectionEvent(ConnectionEventType.DISCONNECTED, reconnection));
+			connection.handleEvent(makeConnectionEvent(
+					ConnectionEventType.DISCONNECTED, reconnection));
 
-			log.warn("[INF " + _id + "] Disconnected from " + currentServerAddress + ":" + connection.port);
+			log.warn("[INF " + _id + "] Disconnected from "
+					+ currentServerAddress + ":" + connection.port);
 
 			if (!bDoStop.get()) {
 				// We are not stopping so this is a re-connection.
 				try {
 					reconnection = true;
-					int reconnectionMs = (RECONNECTION_INTERVAL_SEC * 1000) + ((int) (Math.random() * 10)) * 500;
-					log.info("Will attempt reconnection in " + reconnectionMs + " ms");
+					int reconnectionMs = (RECONNECTION_INTERVAL_SEC * 1000)
+							+ ((int) (Math.random() * 10)) * 500;
+					log.info("Will attempt reconnection in " + reconnectionMs
+							+ " ms");
 					Thread.sleep(reconnectionMs);
 				} catch (Exception e) {
-					log.error(logPrefix + " reconnection issue: " + e.getMessage());
+					log.error(logPrefix + " reconnection issue: "
+							+ e.getMessage());
 				}
 			}
 
 		}
 
-		log.info("[INF " + _id + "] Stopped JerqTCPListener (TCP Streaming mode) to " + currentServerAddress);
+		log.info("[INF " + _id
+				+ "] Stopped JerqTCPListener (TCP Streaming mode) to "
+				+ currentServerAddress);
 	}
 
 	@Override
@@ -153,20 +172,25 @@ class IoChannelTCP extends IoChannel {
 					backupServerAddress = temp;
 				}
 
-				log.warn("[INF " + _id + "] Connecting via TCP to " + currentServerAddress + ":" + connection.port);
+				log.warn("[INF " + _id + "] Connecting via TCP to "
+						+ currentServerAddress + ":" + connection.port);
 
 				socket = new Socket(currentServerAddress, connection.port);
 				socket.setSoTimeout(createReadTimeout());
 				socket.setTcpNoDelay(true);
 
-				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				in = new BufferedReader(new InputStreamReader(
+						socket.getInputStream()));
 
-				log.info("[INF " + _id + " tid: " + Thread.currentThread().getId() + "] Connected to "
-						+ currentServerAddress + ":" + connection.port + " localAddr: " + socket.getLocalAddress() + ":"
+				log.info("[INF " + _id + " tid: "
+						+ Thread.currentThread().getId() + "] Connected to "
+						+ currentServerAddress + ":" + connection.port
+						+ " localAddr: " + socket.getLocalAddress() + ":"
 						+ socket.getLocalPort());
 
 				connState = ConnectionState.Connected;
-				connection.handleEvent(makeConnectionEvent(ConnectionEventType.CONNECTED, reconnection));
+				connection.handleEvent(makeConnectionEvent(
+						ConnectionEventType.CONNECTED, reconnection));
 
 				boolean isDone = false;
 
@@ -188,7 +212,8 @@ class IoChannelTCP extends IoChannel {
 				out = new PrintWriter(socket.getOutputStream());
 
 				// Send Login Command
-				String command = "LOGIN " + connection.username + ":" + connection.password + " VERSION="
+				String command = "LOGIN " + connection.username + ":"
+						+ connection.password + " VERSION="
 						+ connection.getVersion();
 				enqueueCommand(command);
 
@@ -196,15 +221,20 @@ class IoChannelTCP extends IoChannel {
 
 				log.info("line={}", line);
 
-				if ((line == null) || (line.startsWith(JerqProtocol.JERQ_ERROR_START))) {
+				if ((line == null)
+						|| (line.startsWith(JerqProtocol.JERQ_ERROR_START))) {
 					// Login failed
-					connection.handleEvent(makeConnectionEvent(ConnectionEventType.LOGIN_FAILED, reconnection));
-					log.error("JerqTCPListener[" + _id + "].run(): The server reported an invalid login attempt ("
+					connection.handleEvent(makeConnectionEvent(
+							ConnectionEventType.LOGIN_FAILED, reconnection));
+					log.error("JerqTCPListener["
+							+ _id
+							+ "].run(): The server reported an invalid login attempt ("
 							+ command + "): " + line);
 				} else {
 					// Successful login
 					connState = ConnectionState.LoggedIn;
-					connection.handleEvent(makeConnectionEvent(ConnectionEventType.LOGIN_SUCCESS, reconnection));
+					connection.handleEvent(makeConnectionEvent(
+							ConnectionEventType.LOGIN_SUCCESS, reconnection));
 					isSuccess = true;
 					// On reconnection only
 					if (reconnection) {
@@ -212,11 +242,19 @@ class IoChannelTCP extends IoChannel {
 					}
 				}
 			} catch (IOException ioe) {
-				log.error("JerqTCPListener[" + _id + "].run(): There was an error during connection: " + ioe);
-				connection.handleEvent(makeConnectionEvent(ConnectionEventType.CONNECTION_FAILED, reconnection));
+				log.error("JerqTCPListener[" + _id
+						+ "].run(): There was an error during connection: "
+						+ ioe);
+				connection.handleEvent(makeConnectionEvent(
+						ConnectionEventType.CONNECTION_FAILED, reconnection));
 			} catch (Exception e) {
-				log.error("JerqTCPListener[" + _id + "].run(): There was an uncaught exception during connection: ", e);
-				connection.handleEvent(makeConnectionEvent(ConnectionEventType.CONNECTION_FAILED, reconnection));
+				log.error(
+						"JerqTCPListener["
+								+ _id
+								+ "].run(): There was an uncaught exception during connection: ",
+						e);
+				connection.handleEvent(makeConnectionEvent(
+						ConnectionEventType.CONNECTION_FAILED, reconnection));
 			}
 
 			if (!isSuccess) {
@@ -260,12 +298,14 @@ class IoChannelTCP extends IoChannel {
 				sendCommand("LOGOFF");
 
 			} catch (Exception e) {
-				log.error("JerqTCPListener[" + _id + "].disconnectFromServer(): " + e);
+				log.error("JerqTCPListener[" + _id
+						+ "].disconnectFromServer(): " + e);
 			}
 
 			stopCommandThread();
 
-			connection.handleEvent(makeConnectionEvent(ConnectionEventType.DISCONNECTED, reconnection));
+			connection.handleEvent(makeConnectionEvent(
+					ConnectionEventType.DISCONNECTED, reconnection));
 
 			if (socket != null) {
 				try {

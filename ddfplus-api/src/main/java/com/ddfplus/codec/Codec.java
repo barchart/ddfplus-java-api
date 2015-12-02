@@ -91,9 +91,10 @@ public class Codec {
 	 * @throws NumberFormatException
 	 *             the number format exception
 	 */
-	public static float parseDDFPriceValue(byte[] ba, int start, int length, char unitcode)
-			throws NumberFormatException {
-		return Codec.parseDDFPriceValue(ba, start, length, SymbolInfo.ddfuc2bb(unitcode));
+	public static float parseDDFPriceValue(byte[] ba, int start, int length,
+			char unitcode) throws NumberFormatException {
+		return Codec.parseDDFPriceValue(ba, start, length,
+				SymbolInfo.ddfuc2bb(unitcode));
 	}
 
 	/**
@@ -113,11 +114,12 @@ public class Codec {
 	 *             the number format exception
 	 */
 
-	public static float parseDDFPriceValue(byte[] ba, int start, int length, int basecode) throws NumberFormatException {
+	public static float parseDDFPriceValue(byte[] ba, int start, int length,
+			int basecode) throws NumberFormatException {
 
 		if (start + length > ba.length)
-			throw new NumberFormatException("Index Out of Bounds array.length=" + ba.length + ", start=" + start
-					+ ", length=" + length);
+			throw new NumberFormatException("Index Out of Bounds array.length="
+					+ ba.length + ", start=" + start + ", length=" + length);
 
 		if (length == 0)
 			return 0;
@@ -170,10 +172,11 @@ public class Codec {
 	 * @throws NumberFormatException
 	 *             the number format exception
 	 */
-	public static int parseIntValue(byte[] ba, int start, int length) throws NumberFormatException {
+	public static int parseIntValue(byte[] ba, int start, int length)
+			throws NumberFormatException {
 		if (start + length > ba.length)
-			throw new NumberFormatException("Index Out of Bounds array.length=" + ba.length + ", start=" + start
-					+ ", length=" + length);
+			throw new NumberFormatException("Index Out of Bounds array.length="
+					+ ba.length + ", start=" + start + ", length=" + length);
 
 		int mult = 1;
 		if ((char) ba[start] == '-') {
@@ -280,7 +283,8 @@ public class Codec {
 					char subrecord = (char) array[pos + 1];
 					switch (subrecord) { // Subrecord
 					case '0': {
-						String symbol = Codec.parseStringValue(array, 2, pos - 2);
+						String symbol = Codec.parseStringValue(array, 2,
+								pos - 2);
 						char baseCode = (char) array[pos + 3];
 						char exchange = (char) array[pos + 4];
 						int delay = Codec.parseIntValue(array, pos + 5, 2);
@@ -294,15 +298,17 @@ public class Codec {
 							msg = new Data28BidAsk(array);
 							((Data28BidAsk) msg)._record = '2';
 							((Data28BidAsk) msg)._subrecord = '8';
-							((Data28BidAsk) msg)._ask = Codec.parseDDFPriceValue(array, pos + 7, pos2 - pos - 7,
-									baseCode);
+							((Data28BidAsk) msg)._ask = Codec
+									.parseDDFPriceValue(array, pos + 7, pos2
+											- pos - 7, baseCode);
 							break;
 						case '2': // Bid
 							msg = new Data28BidAsk(array);
 							((Data28BidAsk) msg)._record = '2';
 							((Data28BidAsk) msg)._subrecord = '8';
-							((Data28BidAsk) msg)._bid = Codec.parseDDFPriceValue(array, pos + 7, pos2 - pos - 7,
-									baseCode);
+							((Data28BidAsk) msg)._bid = Codec
+									.parseDDFPriceValue(array, pos + 7, pos2
+											- pos - 7, baseCode);
 							break;
 						default:
 							msg = Data20Parameter.Parse(array);
@@ -385,11 +391,12 @@ public class Codec {
 				}
 			}
 		} catch (Exception e) {
-			log.error("Failed to parse msg: " + new String(array) + " error: ", e);
+			log.error("Parse failed on message: " + new String(array)
+					+ " error: ", e);
 		}
 
 		if ((msg == null) && (showErrorMessage)) {
-			log.error("Unknown message: " + new String(array));
+			log.error("Could not parse message: " + new String(array));
 		}
 
 		return msg;
@@ -478,12 +485,14 @@ public class Codec {
 			ba3[2 + i] = (byte) sb.charAt(i);
 		}
 
-		System.arraycopy(ba2, 2 + symbol.length(), ba3, 2 + sb.length(), ba3.length - (2 + sb.length()));
+		System.arraycopy(ba2, 2 + symbol.length(), ba3, 2 + sb.length(),
+				ba3.length - (2 + sb.length()));
 
 		// String zzzzz = parseStringValue(ba3, 0, ba3.length);
 		// System.out.println(zzzzz);
 
-		return new Object[] { subrecord, spreadType, numberOfLegs, legs, ba2, ba3 };
+		return new Object[] { subrecord, spreadType, numberOfLegs, legs, ba2,
+				ba3 };
 	}
 
 }
