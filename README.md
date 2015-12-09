@@ -12,7 +12,7 @@ Releases are available on maven central as
 <dependency>
    <groupId>com.ddfplus.jaws</groupId>
    <artifactId>ddfplus-api</artifactId>
-   <version>1.0.2</version>
+   <version>1.0.3</version>
 </dependency>
 
 ## Latest Examples Distribution
@@ -21,6 +21,10 @@ Releases are available on maven central as
  
  
 ## Versions 
+
+### 1.0.3
+* TCP read timeouts correction to properly handle a failing connection.
+* Updated Web Socket library.
 
 ### 1.0.2
 * Updated documentation.
