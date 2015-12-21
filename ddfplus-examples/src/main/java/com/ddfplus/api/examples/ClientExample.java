@@ -139,6 +139,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			}
 			if (args[i].equals("-f") && i + 1 < args.length) {
 				propFile = args[i + 1];
+				i++;
 			}
 			if (args[i].equals("-h")) {
 				printHelp();
@@ -224,6 +225,11 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			System.exit(0);
 		}
 
+		/*
+		 * Log any un-handled exceptions
+		 */
+		Thread.setDefaultUncaughtExceptionHandler(new ApplicationUncaughtExceptionHandler());
+		
 		System.out.println("Starting DDF Client with " + config);
 
 		ClientExample client = new ClientExample(config);
@@ -565,9 +571,22 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 		@Override
 		public void run() {
+			log.warn("Executing shutdown hook, client application is exiting.");
 			app.shutdown();
 		}
 
 	}
+	
+	
+	private static class ApplicationUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			System.err.println("Uncaught exception for tid: "+t + " at: "+new DateTime() + " error: "+e);
+			e.printStackTrace();
+		}
+		
+	}
+	
 
 }

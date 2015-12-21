@@ -101,13 +101,14 @@ class IoChannelWSS extends IoChannel {
 				}
 				// Connected, wait until session is closed.
 				sessionFinishedLatch.await();
+				log.info("Web socket session has closed.");
 				if (reconnection) {
 					log.warn("Awaiting " + RECONNECTION_INTERVAL_SEC + " seconds before reconnection.");
 					sleep(RECONNECTION_INTERVAL_SEC * 1000);
 				}
 
 			} catch (Exception e) {
-				log.error("WebSocket error: ", e);
+				log.error("WebSocket error runState: "+running.get() + " error: ", e);
 			}
 		}
 
@@ -468,6 +469,7 @@ class IoChannelWSS extends IoChannel {
 				// On reconnection only
 				if (reconnection) {
 					resendSubscriptionsOnReconnection();
+					reconnection = false;
 				}
 			}
 			connectionLatch.countDown();
