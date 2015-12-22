@@ -23,6 +23,7 @@ import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
+import org.glassfish.tyrus.client.ClientProperties;
 import org.glassfish.tyrus.container.jdk.client.JdkClientContainer;
 
 import com.ddfplus.api.ConnectionEventType;
@@ -149,14 +150,16 @@ class IoChannelWSS extends IoChannel {
 		 */
 		client = ClientManager.createClient(JdkClientContainer.class.getName());
 
-		// Note: Did not work
+		// // Note: Did not work
 		// client.getProperties().put("org.glassfish.tyrus.server.tracingType",
 		// "ALL");
 		// client.getProperties().put("org.glassfish.tyrus.server.tracingThreshold",
 		// "TRACE");
 		// client.getProperties().put("org.glassfish.tyrus.incomingBufferSize",
 		// 6000000);
-		// client.getProperties().put(ClientProperties.LOG_HTTP_UPGRADE, true);
+		if (log.isDebugEnabled()) {
+			client.getProperties().put(ClientProperties.LOG_HTTP_UPGRADE, true);
+		}
 
 		clientEndpointConfig = ClientEndpointConfig.Builder.create().build();
 
@@ -170,8 +173,17 @@ class IoChannelWSS extends IoChannel {
 		log.info("Starting connection to: " + uri);
 		try {
 			client.connectToServer(endpoint, clientEndpointConfig, uri);
+			// Log Config
+			log.info("sendTimeout: " + client.getDefaultAsyncSendTimeout() + " binaryBufSize: "
+					+ client.getDefaultMaxBinaryMessageBufferSize() + " sessionIdleTimeOut: "
+					+ client.getDefaultMaxSessionIdleTimeout() + " textBufSize: "
+					+ client.getDefaultMaxTextMessageBufferSize());
+
 		} catch (javax.websocket.DeploymentException e) {
-			log.error("Could not connect to: " + uri + " reason: " + e.getMessage());
+			log.error("Deployment Exception: Could not connect to: " + uri + " reason: " + e.getMessage());
+			return false;
+		} catch (Exception e) {
+			log.error("Exception: Could not connect to: " + uri + " reason: " + e.getMessage());
 			return false;
 		}
 
@@ -219,7 +231,7 @@ class IoChannelWSS extends IoChannel {
 
 		@Override
 		public void onError(Session session, Throwable thr) {
-			log.error("Endpoint error: ", thr);
+			log.error("Endpoint error: " + session, thr);
 			closeSession();
 		}
 
