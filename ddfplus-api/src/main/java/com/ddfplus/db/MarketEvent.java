@@ -10,7 +10,7 @@ import com.ddfplus.messages.DdfMarketBase;
 
 public class MarketEvent {
 	public enum MarketEventType {
-		PreOpen, Open, High, Low, Close, PreSettlement, Settlement;
+		PreOpen, Open, High, Low, Close, PreSettlement, Settlement, TradingHalt, TradingResumption;
 	}
 
 	private MarketEventType type;

@@ -19,6 +19,7 @@ import com.ddfplus.db.MarketEvent.MarketEventType;
 import com.ddfplus.enums.DdfRecord;
 import com.ddfplus.enums.DdfSessionCode;
 import com.ddfplus.enums.DdfSubRecord;
+import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.enums.QuoteElement;
 import com.ddfplus.enums.QuoteElementModifiers;
 import com.ddfplus.messages.DdfMarketBase;
@@ -515,7 +516,16 @@ public class DataMaster {
 			// ////////////////////////////////////////////
 			// record 2, subrecord 9 Market Condition/Trading Status
 			// ///////////////////////////////////////////
-			quote.setMarketCondition(((DdfMarketCondition) msg).getMarketCondition());
+			MarketConditionType marketConditon = ((DdfMarketCondition) msg).getMarketCondition();
+			quote.setMarketCondition(marketConditon);
+			// Send Market Event
+			if (marketConditon == MarketConditionType.TRADING_HALT) {
+				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.TradingHalt,
+						quote.getSymbolInfo().getSymbol());
+			} else if (marketConditon == MarketConditionType.TRADING_RESUMTPION) {
+				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.TradingResumption,
+						quote.getSymbolInfo().getSymbol());
+			}
 		}
 	}
 
