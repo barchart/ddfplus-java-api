@@ -81,6 +81,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._high = _high;
 
 		s.lastArray = lastArray.clone();
+		s._settlement = _settlement;
 
 		s._low = _low;
 		s._open = _open;
