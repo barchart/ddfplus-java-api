@@ -162,7 +162,7 @@ class IoChannelTCP extends IoChannel {
 				log.warn("[INF " + _id + "] Connecting via TCP to " + currentServerAddress + ":" + connection.port);
 
 				socket = new Socket(currentServerAddress, connection.port);
-				socketReadTimeOutMs = createReadTimeout();
+				socketReadTimeOutMs = createReadTimeoutMs();
 				socket.setSoTimeout(socketReadTimeOutMs);
 				socket.setTcpNoDelay(true);
 

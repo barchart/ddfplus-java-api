@@ -45,7 +45,7 @@ class IoChannelUDP extends IoChannel {
 
 				socket = new DatagramSocket();
 
-				socket.setSoTimeout(createReadTimeout());
+				socket.setSoTimeout(createReadTimeoutMs());
 
 				/*
 				 * Build Connection UDP Packet (header)

@@ -54,7 +54,7 @@ class IoChannelWSS extends IoChannel {
 
 	private URI uri;
 
-	private ClientManager client;
+	private ClientManager clientManager;
 
 	private ClientEndpointConfig clientEndpointConfig;
 
@@ -109,13 +109,13 @@ class IoChannelWSS extends IoChannel {
 				}
 
 			} catch (Exception e) {
-				log.error("WebSocket error runState: "+running.get() + " error: ", e);
+				log.error("WebSocket error runState: " + running.get() + " error: ", e);
 			}
 		}
 
-		if (client != null) {
-			client.shutdown();
-			client = null;
+		if (clientManager != null) {
+			clientManager.shutdown();
+			clientManager = null;
 		}
 
 		log.info("Stopped Jerq Web Socket Client to " + connection.primaryServer);
@@ -124,9 +124,9 @@ class IoChannelWSS extends IoChannel {
 
 	@Override
 	public void disconnectAndShutdown() {
-		if (client != null) {
-			client.shutdown();
-			client = null;
+		if (clientManager != null) {
+			clientManager.shutdown();
+			clientManager = null;
 		}
 		running.set(false);
 		sessionFinishedLatch.countDown();
@@ -148,7 +148,10 @@ class IoChannelWSS extends IoChannel {
 		 * Grizzly container). Just call createClient() if you want the default
 		 * Grizzly implementation.
 		 */
-		client = ClientManager.createClient(JdkClientContainer.class.getName());
+		clientManager = ClientManager.createClient(JdkClientContainer.class.getName());
+
+		int idleTimeOutMs = createReadTimeoutMs();
+		clientManager.setDefaultMaxSessionIdleTimeout(idleTimeOutMs);
 
 		// // Note: Did not work
 		// client.getProperties().put("org.glassfish.tyrus.server.tracingType",
@@ -158,7 +161,7 @@ class IoChannelWSS extends IoChannel {
 		// client.getProperties().put("org.glassfish.tyrus.incomingBufferSize",
 		// 6000000);
 		if (log.isDebugEnabled()) {
-			client.getProperties().put(ClientProperties.LOG_HTTP_UPGRADE, true);
+			clientManager.getProperties().put(ClientProperties.LOG_HTTP_UPGRADE, true);
 		}
 
 		clientEndpointConfig = ClientEndpointConfig.Builder.create().build();
@@ -172,12 +175,12 @@ class IoChannelWSS extends IoChannel {
 		// Attempt Connection
 		log.info("Starting connection to: " + uri);
 		try {
-			client.connectToServer(endpoint, clientEndpointConfig, uri);
+			Session session = clientManager.connectToServer(endpoint, clientEndpointConfig, uri);
 			// Log Config
-			log.info("sendTimeout: " + client.getDefaultAsyncSendTimeout() + " binaryBufSize: "
-					+ client.getDefaultMaxBinaryMessageBufferSize() + " sessionIdleTimeOut: "
-					+ client.getDefaultMaxSessionIdleTimeout() + " textBufSize: "
-					+ client.getDefaultMaxTextMessageBufferSize());
+			log.info("Endpoint: sendTimeout: " + clientManager.getDefaultAsyncSendTimeout() + " binaryBufSize: "
+					+ clientManager.getDefaultMaxBinaryMessageBufferSize() + " sessionIdleTimeOutMs: "
+					+ clientManager.getDefaultMaxSessionIdleTimeout() + " textBufSize: "
+					+ clientManager.getDefaultMaxTextMessageBufferSize());
 
 		} catch (javax.websocket.DeploymentException e) {
 			log.error("Deployment Exception: Could not connect to: " + uri + " reason: " + e.getMessage());
@@ -192,7 +195,7 @@ class IoChannelWSS extends IoChannel {
 	}
 
 	private void closeSession() {
-		client.shutdown();
+		clientManager.shutdown();
 		connState = ConnectionState.NotConnected;
 		if (running.get()) {
 			/*

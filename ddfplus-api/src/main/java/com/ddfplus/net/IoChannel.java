@@ -94,7 +94,7 @@ abstract class IoChannel extends Thread {
 		commandQ.offer(cmd);
 	}
 
-	public int createReadTimeout() {
+	public int createReadTimeoutMs() {
 		return (25000 + ((int) (Math.random() * 10) * 1000));
 	}
 
