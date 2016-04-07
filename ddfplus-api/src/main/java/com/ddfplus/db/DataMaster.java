@@ -662,6 +662,9 @@ public class DataMaster {
 			// MarketEvent.Settlement
 			MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Settlement, quote.getSymbolInfo().getSymbol());
 			me.setSettlement(f);
+			// Reset market condition to normal
+			quote.setMarketCondition(MarketConditionType.NORMAL);
+
 			if (log.isDebugEnabled()) {
 				log.debug(me.toString());
 			}
@@ -764,6 +767,9 @@ public class DataMaster {
 				// MarketEvent.Settlement, only send if open value was undefined
 				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Open, quote.getSymbolInfo().getSymbol());
 				me.setOpen(f);
+				// Reset market condition to normal
+				quote.setMarketCondition(MarketConditionType.NORMAL);
+
 				if (log.isDebugEnabled()) {
 					log.debug(me.toString());
 				}
@@ -919,6 +925,9 @@ public class DataMaster {
 					MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Settlement,
 							quote.getSymbolInfo().getSymbol());
 					me.setSettlement(f);
+					// Reset market condition to normal
+					quote.setMarketCondition(MarketConditionType.NORMAL);
+
 					if (log.isDebugEnabled()) {
 						log.debug(me.toString());
 					}
@@ -973,6 +982,9 @@ public class DataMaster {
 				// MarketEvent.Open
 				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.Open, quote.getSymbolInfo().getSymbol());
 				me.setOpen(f);
+				// Reset market condition to normal
+				quote.setMarketCondition(MarketConditionType.NORMAL);
+
 				if (log.isDebugEnabled()) {
 					log.debug(me.toString());
 				}
