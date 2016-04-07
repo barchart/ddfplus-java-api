@@ -30,9 +30,13 @@ public enum MarketConditionType {
 
 	OPENING_DELAY('1'), //
 
-	NO_OPEN_RESUME('4');
-
-	;
+	NO_OPEN_RESUME('4'),
+	//
+	NoRegSHOShortSaleRestriction('0'),
+	//
+	RegSHOShortSalePriceRestrictionInEffect('1'),
+	//
+	RegSHOShortSalePriceRestrictionRemainsInEffect('2');
 
 	static final private MarketConditionType[] ENUM_VALS = values();
 
