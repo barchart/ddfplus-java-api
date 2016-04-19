@@ -28,15 +28,15 @@ public enum MarketConditionType {
 
 	END_POST_SESSION('Q'), //
 
-	OPENING_DELAY('1'), //
+	OPENING_DELAY('1'), // NYSE, AMEX only
 
-	NO_OPEN_RESUME('4'),
+	NO_OPEN_RESUME('4'), // NYSE, AMEX only
 	//
-	NoRegSHOShortSaleRestriction('0'),
+	NoRegSHOShortSaleRestriction('0'), // NASDAQ Only
 	//
-	RegSHOShortSalePriceRestrictionInEffect('1'),
+	RegSHOShortSalePriceRestrictionInEffect('9'), // NASDAQ Only
 	//
-	RegSHOShortSalePriceRestrictionRemainsInEffect('2');
+	RegSHOShortSalePriceRestrictionRemainsInEffect('2'); // NASDAQ Only
 
 	static final private MarketConditionType[] ENUM_VALS = values();
 
