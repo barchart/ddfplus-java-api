@@ -53,6 +53,11 @@ public class DataMaster {
 
 	private final Map<String, Quote> quoteMap;
 
+	/*
+	 * Symbols not know to the system, with time received.
+	 */
+	private final Map<String, Long> unrecoginzedSymbols;
+
 	private volatile long millisCST = 0L; // If single cloud source
 
 	private final MasterType _type;
@@ -76,6 +81,7 @@ public class DataMaster {
 		bookMap = new ConcurrentHashMap<String, BookQuote>();
 		_cumulativeVolumeTable = new ConcurrentHashMap<String, CumulativeVolume>();
 		quoteMap = new ConcurrentHashMap<String, Quote>();
+		unrecoginzedSymbols = new ConcurrentHashMap<String, Long>();
 	}
 
 	/**
@@ -137,6 +143,20 @@ public class DataMaster {
 			return fe;
 		}
 
+		/*
+		 * Mark as an unknown symbol until we receive the refresh quote.
+		 */
+		if (msg.getSymbol() != null && msg.getSymbol().length() > 0) {
+			String s = msg.getSymbol();
+			Quote quote = getQuote(s);
+			if (quote == null) {
+				unrecoginzedSymbols.put(s, System.currentTimeMillis());
+			} else if (unrecoginzedSymbols.containsKey(s)) {
+				// We have the quote, pull from the unrecognized list
+				unrecoginzedSymbols.remove(s);
+			}
+		}
+
 		// //////////////////////////////////////////////////////////
 		// //////////////////////////////////////////////////////////
 		// Process based on Record Type (Message Type)
@@ -150,7 +170,6 @@ public class DataMaster {
 			millisCST = ((DdfTimestamp) msg).getMillisCST();
 			Date d = new Date(millisCST);
 			fe.setDate(d);
-			return fe;
 
 		} else if (msg.getRecord() == DdfRecord.RefreshOld.value()) {
 			// /////////////////////////////////////////////////////////
@@ -162,7 +181,6 @@ public class DataMaster {
 			// format
 			// ///////////////////////////////////////////////////////////
 			recordX_marketRefresh(msg, fe);
-			return fe;
 
 		} else if (msg.getRecord() == DdfRecord.Prices.value()) {
 			// /////////////////////////////////////////////////////////
@@ -181,7 +199,10 @@ public class DataMaster {
 				}
 				return fe;
 			}
-			// Process record 2
+			/*
+			 * Process record 2, since the symbol is in the system and we have
+			 * the refresh quote
+			 */
 			record2_liveprices(msg, quote, fe);
 			fe.setQuote(quote);
 			return fe;
@@ -192,10 +213,10 @@ public class DataMaster {
 			// ///////////////////////////////////////////
 			BookQuote b = record3_book_eod(msg);
 			fe.setBook(b);
-			return fe;
+		} else {
+			log.warn("Unrecognized DDF Message: " + msg);
 		}
 
-		log.warn("Unrecognized DDF Message: " + msg);
 		return fe;
 	}
 
@@ -1301,6 +1322,20 @@ public class DataMaster {
 			}
 		} else
 			return -1;
+	}
+
+	public void addSubscribedSymbol(String symbol) {
+		// Assume it is not a known symbol.
+		unrecoginzedSymbols.put(symbol, System.currentTimeMillis());
+	}
+
+	public void removeSubscribedSymbol(String symbol) {
+		unrecoginzedSymbols.remove(symbol);
+	}
+
+	public String[] getUnknownSymbols() {
+		return unrecoginzedSymbols.keySet().toArray(new String[unrecoginzedSymbols.size()]);
+
 	}
 
 }

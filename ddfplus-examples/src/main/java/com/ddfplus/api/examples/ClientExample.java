@@ -204,6 +204,11 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 				Long interval = new Long(p.getProperty("definitionRefreshIntervalSec"));
 				config.setDefinitionRefreshIntervalSec(interval);
 			}
+			if (p.getProperty("unknownSymbolIntervalSec") != null
+					&& !p.getProperty("unknownSymbolIntervalSec").isEmpty()) {
+				Long interval = new Long(p.getProperty("unknownSymbolIntervalSec"));
+				config.setUnknownSymbolInterval(interval);
+			}
 		}
 
 		// Validity Checks
@@ -229,7 +234,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		 * Log any un-handled exceptions
 		 */
 		Thread.setDefaultUncaughtExceptionHandler(new ApplicationUncaughtExceptionHandler());
-		
+
 		System.out.println("Starting DDF Client with " + config);
 
 		ClientExample client = new ClientExample(config);
@@ -576,17 +581,15 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		}
 
 	}
-	
-	
+
 	private static class ApplicationUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
 
 		@Override
 		public void uncaughtException(Thread t, Throwable e) {
-			System.err.println("Uncaught exception for tid: "+t + " at: "+new DateTime() + " error: "+e);
+			System.err.println("Uncaught exception for tid: " + t + " at: " + new DateTime() + " error: " + e);
 			e.printStackTrace();
 		}
-		
+
 	}
-	
 
 }

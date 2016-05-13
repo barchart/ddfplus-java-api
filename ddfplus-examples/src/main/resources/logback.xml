@@ -23,6 +23,10 @@
 	</appender>
 
 
+	<logger name="ccom.ddfplus.net.Connection" level="info"/>
+	
+	<logger name="ccom.ddfplus.net.DdfClientImpl" level="info"/>
+	
 	<logger name="com.ddfplus.net.IoChannelWSS" level="info"/>
 	
 	<logger name="com.ddfplus.db.DataMaster" level="info"/>

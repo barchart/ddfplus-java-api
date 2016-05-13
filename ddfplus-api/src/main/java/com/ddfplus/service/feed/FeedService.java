@@ -10,7 +10,8 @@ package com.ddfplus.service.feed;
  * Provides the following feed services:
  * 
  * <ul>
- * <li>Background snapshot/refresh, used when push mode is active
+ * <li>Background snapshot/refresh, used when push mode is active. This uses the
+ * Jerq web service.
  * </ul>
  *
  */

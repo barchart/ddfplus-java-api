@@ -47,6 +47,10 @@ public class ClientConfig {
 	// Definition refresh interval
 	private Long definitionRefreshIntervalSec;
 
+	// Unknown Symbol interval
+	private long unknownSymbolIntervalSec = 60 * 60;
+	private long unknownSymbolDelay = 60;
+
 	public String getSnapshotPassword() {
 		return snapshotPassword;
 	}
@@ -182,8 +186,22 @@ public class ClientConfig {
 		sb.append("\n\tsnapshotUser: " + snapshotUser);
 		sb.append("\n\tstoreMessages: " + storeMessages);
 		sb.append("\n\tdefinitionRefreshIntervalSec: " + definitionRefreshIntervalSec);
+		sb.append("\n\tunknownSymbolIntervalSec: " + unknownSymbolIntervalSec);
+		sb.append("\n\tunknownSymbolDelay: " + unknownSymbolDelay);
 		sb.append("\n");
 		return sb.toString();
+	}
+
+	public long getUnknownSymbolInterval() {
+		return unknownSymbolIntervalSec;
+	}
+
+	public void setUnknownSymbolInterval(long sec) {
+		unknownSymbolIntervalSec = sec;
+	}
+
+	public long getUnknownSymbolDeplay() {
+		return unknownSymbolDelay;
 	}
 
 }

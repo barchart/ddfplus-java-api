@@ -179,7 +179,8 @@ public class Connection {
 	}
 
 	/**
-	 * Sends quote subscription for symbol.
+	 * Sends quote subscription for symbol which includes updates, refresh, and
+	 * volume
 	 * 
 	 * @param symbol
 	 *            Symbol
@@ -196,6 +197,17 @@ public class Connection {
 	 */
 	public void unsubscribeQuote(String symbol) {
 		Cmd cmd = new Cmd("STOP", symbol, "Ss");
+		channel.enqueueCommand(cmd);
+	}
+
+	/**
+	 * Sends quote subscription for snapshot/refresh only
+	 * 
+	 * @param symbol
+	 *            Symbol
+	 */
+	public void subscribeQuoteSnapshot(String symbol) {
+		Cmd cmd = new Cmd("GO", symbol, "s");
 		channel.enqueueCommand(cmd);
 	}
 

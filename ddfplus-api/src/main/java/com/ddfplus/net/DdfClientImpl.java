@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +116,11 @@ public class DdfClientImpl implements DdfClient {
 
 	private SymbolShortCuts symbolShortCuts;
 	private DefinitionService definitionService;
+	private final ScheduledExecutorService unknownSymbolScheduler = Executors.newScheduledThreadPool(1);
+
+	/*
+	 * Unknown Symbol Thread
+	 */
 
 	public DdfClientImpl(ClientConfig config, SymbolProvider symbolProvider) {
 		this.config = config;
@@ -170,6 +178,16 @@ public class DdfClientImpl implements DdfClient {
 			feedService = new FeedServiceImpl(dataMaster, snapshotUserSettings, quoteExchangeHandlers);
 			dataMaster.setFeedService(feedService);
 		}
+
+		/*
+		 * Start a background task to subscribe to unknown symbols (Symbols
+		 * which do not have quotes), in order to see if the symbol has been
+		 * added to the back end system.
+		 */
+		log.info("Scheduling an unknown symbol lookup " + config.getUnknownSymbolInterval() + " every seconds.");
+		UnknownSymbolThread unknownSymbolThread = new UnknownSymbolThread();
+		unknownSymbolScheduler.scheduleAtFixedRate(unknownSymbolThread, config.getUnknownSymbolDeplay(),
+				config.getUnknownSymbolInterval(), TimeUnit.SECONDS);
 	}
 
 	@Override
@@ -412,11 +430,13 @@ public class DdfClientImpl implements DdfClient {
 
 	private void subscribeDepth(String symbol) {
 		connection.subscribeDepth(symbol);
+		// For tracking unknown symbols
+		dataMaster.addSubscribedSymbol(symbol);
 	}
 
 	private void unsubscribeDepth(String symbol) {
 		connection.unsubscribeDepth(symbol);
-
+		dataMaster.removeSubscribedSymbol(symbol);
 	}
 
 	private void sendDepthFromCache(String symbol, BookQuoteHandler handler) {
@@ -429,11 +449,13 @@ public class DdfClientImpl implements DdfClient {
 
 	private void subscribeQuote(String symbol) {
 		connection.subscribeQuote(symbol);
+		// For tracking unknown symbols
+		dataMaster.addSubscribedSymbol(symbol);
 	}
 
 	private void unsubscribeQuote(String symbol) {
 		connection.unsubscribeQuote(symbol);
-
+		dataMaster.removeSubscribedSymbol(symbol);
 	}
 
 	private void subscribeQuoteExchange(String exchangeCode) {
@@ -561,6 +583,23 @@ public class DdfClientImpl implements DdfClient {
 
 		}
 
+	}
+
+	private class UnknownSymbolThread implements Runnable {
+
+		@Override
+		public void run() {
+			if (log.isDebugEnabled()) {
+				log.debug("Running unknown symbol thread.");
+			}
+			for (String s : dataMaster.getUnknownSymbols()) {
+				/*
+				 * Subscribe for snapshot only, which will return the refresh if
+				 * the symbol is known.
+				 */
+				connection.subscribeQuoteSnapshot(s);
+			}
+		}
 	}
 
 }
