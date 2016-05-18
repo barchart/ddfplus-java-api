@@ -5,11 +5,11 @@
 
  1. Pull by Symbol      - Subscribes by individual symbol
  2. Pull by Exchange    - Subscribes for all symbols on an exchange
- 3. Server Push         - Pushes all symbols for an exchange to a customer's server.
+ 3. Server Push         - Pushes all symbols for an exchange to a customer's server
 
 
 ## Pull Mode Provisioning Requirements
-  The pull modes require a user login and password.  The pull by exchange mode requires a refresh/snapshot user and password, so the API can refresh the symbol state via a web service.
+  The pull modes require a user login and password, please contact Barchart for credentials.  The pull by exchange mode requires a refresh/snapshot user and password, so the API can refresh the symbol state via a web service.
 
 ## Server Push Provisioning Requirements
  The server push mode requires Barchart to push market data to the customer's server and requires the following:
@@ -17,7 +17,7 @@
  * Static IP
  * Static Port
 
- The server push mode does not require a login or password.
+ The server push mode does not require a login or password.  Please contact Barchart for provisioning.
 
 ## API Requirements
   The API requires Java 7 or higher.
@@ -25,12 +25,12 @@
 ## Contents
 
 * `ddplus-examples-<version>-exe.jar`    - Runnable jar for example code
-* `src/**/*.java`                        - Example source code
-* `doc/api`                              - JavaDoc for the API
-* `lib/ddplus-api-<version>.jar`         - API jar
-* `lib/slf4j-api-1.7.6.jar`              - Required dependency
-* `lib/joda-time-2.3.jar`                - Required dependency
-* `lib/logback*.jar`                     - SL4J implementation, optional, required if you want to see internal API logging, will default to nop logging
+* `src/**/*.java`                           - Example source code
+* `doc/api`                                  - JavaDoc for the API
+* `lib/ddplus-api-<version>.jar`          - API jar
+* `lib/slf4j-api-1.7.6.jar`                - Required dependency
+* `lib/joda-time-2.3.jar`                  - Required dependency
+* `lib/logback*.jar`                        - SL4J implementation, optional, required if you want to see internal API logging, will default to nop logging
 
 
 ## How to run the Client example
@@ -87,8 +87,50 @@ where:
 
   If you do not have a SL4J implementation jar you will see an error similar to the one below.  The API will operate correctly just without internal logging.
 
-```  
-SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-SLF4J: Defaulting to no-operation (NOP) logger implementation
-SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-```
+> SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+> SLF4J: Defaulting to no-operation (NOP) logger implementation
+>  SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+
+
+## How to build from source
+
+* Clone the Github project
+* Load JDK 1.7
+* Load Maven 3.2.5++
+* mvn clean install
+
+
+
+# Using the API
+
+Please see ClientExample.java for a running example of using the API.
+
+## Getting Started
+ Please look at the ClientExample constructor for initialization.
+ 
+ 1. Create a ClientConfig class
+   * Set the username and password
+   * Set the snapshot/refresh user name and password is using the Pull by Exchange mode.
+ 2.  Create the DdfClientImpl
+ 3. Call the DdfClientImpl.init() method
+ 4. Add response handlers as required, normally you would add the following:
+  * ConnectionEventHandler 
+  * TimestampHandler
+  * FeedHandlerImpl
+  * MarketEventHandlerImpl
+ 5. Call the DdfClientImpl.connect() method
+ 6. On the connection event handler LOGIN_SUCESS callback add response handlers for each symbol or exchange
+   * Create a new ClientQuoteHandler()
+   * Add the handler to the client using DdfClientImpl.addQuoteHandler(symbol,quoteHandler)
+ 7. The Quote Handlers will be called back as data arrives. 
+
+
+## Type of Response Handlers
+
+## Subscribing to market data by symbol
+
+## Subscribing to market data by exchange
+
+
+
+

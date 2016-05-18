@@ -285,7 +285,21 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			symbolProvider.setSymbols(config.getExchangeCodes());
 		}
 
-		client = new DdfClientImpl(config, symbolProvider);
+		/*
+		 * Symbol provider is not required for the TCP or Web Socket transport,
+		 * it is required for the following ConnectionType transports:
+		 *
+		 * UDP, HTTP, HTTPSTREAM
+		 * 
+		 * @see ConnectionType
+		 * 
+		 */
+		if (config.getConnectionType() == ConnectionType.TCP || config.getConnectionType() == ConnectionType.WS
+				|| config.getConnectionType() == ConnectionType.WSS) {
+			client = new DdfClientImpl(config);
+		} else {
+			client = new DdfClientImpl(config, symbolProvider);
+		}
 
 		/*
 		 * Will activate snapshot refreshes for pull by exchange mode (-e

@@ -288,7 +288,7 @@ public class Connection {
 			case WS:
 			case WSS:
 				// Web socket client
-				channel = new IoChannelWSS(this, symbolProvider);
+				channel = new IoChannelWSS(this);
 				break;
 			default:
 				// client

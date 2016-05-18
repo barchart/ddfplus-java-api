@@ -20,7 +20,7 @@ public class IoChannelWSSTest {
 		InetAddress address = InetAddress.getByName("qsws-us-e-01.aws.barchart.com");
 		connection = new Connection(ConnectionType.WSS, "ddftest", "pass", address, 80, null, symbolProvider, null);
 		connection.setVersion(NetConstants.JERQ_VERSION_DEFAULT);
-		channel = new IoChannelWSS(connection, symbolProvider);
+		channel = new IoChannelWSS(connection);
 	}
 
 	@Test

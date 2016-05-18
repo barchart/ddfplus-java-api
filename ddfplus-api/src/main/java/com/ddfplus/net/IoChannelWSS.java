@@ -62,12 +62,11 @@ class IoChannelWSS extends IoChannel {
 
 	private boolean reconnection;
 
-	public IoChannelWSS(Connection connection, SymbolProvider symbolProvider) {
+	public IoChannelWSS(Connection connection) {
 		super(connection);
 		if (symbolProvider == null) {
 			throw new IllegalArgumentException("Symbol Provider cannot be null");
 		}
-		this.symbolProvider = symbolProvider;
 
 		// Build Web Service URL
 		String addr = null;

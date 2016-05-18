@@ -7,20 +7,27 @@ Please see [ddfplus-examples/README.md](ddfplus-examples/README.md)
 
 ## Latest API Release
 
-Releases are available on maven central as
+Releases are available on maven central.
+
+#### Core Library
 
 <dependency>
    <groupId>com.ddfplus.jaws</groupId>
    <artifactId>ddfplus-api</artifactId>
-   <version>1.0.3</version>
+   <version>1.0.9</version>
 </dependency>
 
-## Latest Examples Distribution
 
- The API with examples can be down loaded from maven central by searching on "ddfplus-examples" and downloading the *dist.zip file.
- 
- 
-## Versions 
+#### Examples Distribution
+
+<dependency>
+   <groupId>com.ddfplus.jaws</groupId>
+   <artifactId>ddfplus-examples</artifactId>
+   <version>1.0.9</version>
+</dependency>
+
+
+## Version History 
 
 ### 1.0.9
 * Added support for .F symbols as FOREX

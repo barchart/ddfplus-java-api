@@ -118,9 +118,9 @@ public class DdfClientImpl implements DdfClient {
 	private DefinitionService definitionService;
 	private final ScheduledExecutorService unknownSymbolScheduler = Executors.newScheduledThreadPool(1);
 
-	/*
-	 * Unknown Symbol Thread
-	 */
+	public DdfClientImpl(ClientConfig config) {
+		this(config, new SymbolProviderImpl());
+	}
 
 	public DdfClientImpl(ClientConfig config, SymbolProvider symbolProvider) {
 		this.config = config;
