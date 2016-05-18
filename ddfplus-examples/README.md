@@ -161,10 +161,10 @@ client.addQuoteHandler(symbol, handler);
 
   1. ConnectionEventHandler - Connection Events, see ConnectonEvent.java
   2. TimestampHandler - Callback on time stamps sent by the server
-	3. FeedHandler - Callback on each DDF message
-	4. QuoteHandler - Callback with Quote which contains BBO plus other statistics
-	5. MarketEventHandler - Callback for market events such as Open, High, etc.. See MarketEvent.java
-	6. BookQuoteHandler - Callback for Depth messages.
+  3. FeedHandler - Callback on each DDF message
+  4. QuoteHandler - Callback with Quote which contains BBO plus other statistics
+  5. MarketEventHandler - Callback for market events such as Open, High, etc.. See MarketEvent.java
+  6. BookQuoteHandler - Callback for Depth messages.
 
 
 ## Subscribing to market data by symbol
