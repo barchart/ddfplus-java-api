@@ -109,9 +109,9 @@ Please see ClientExample.java for a running example of using the API.
  Please look at the ClientExample constructor for initialization.
  
  1. Create a ClientConfig class
-   * Set the username and password
-   * Set the snapshot/refresh user name and password is using the Pull by Exchange mode.
- 2.  Create the DdfClientImpl
+   * Set the user name and password
+   * Set the snapshot/refresh user name and password if using the Pull by Exchange mode.
+ 2. Create the DdfClientImpl
  3. Call the DdfClientImpl.init() method
  4. Add response handlers as required, normally you would add the following:
   * ConnectionEventHandler 
@@ -119,18 +119,63 @@ Please see ClientExample.java for a running example of using the API.
   * FeedHandlerImpl
   * MarketEventHandlerImpl
  5. Call the DdfClientImpl.connect() method
- 6. On the connection event handler LOGIN_SUCESS callback add response handlers for each symbol or exchange
+ 6. On the connection event handler LOGIN_SUCESS callback add response handlers for each symbol or exchange.
    * Create a new ClientQuoteHandler()
    * Add the handler to the client using DdfClientImpl.addQuoteHandler(symbol,quoteHandler)
- 7. The Quote Handlers will be called back as data arrives. 
+ 7. The handlers will be called back as data arrives. 
 
 
-## Type of Response Handlers
+```Java
+
+ClientConfig config = new ClientConfig();
+config.setUserName("username");
+config.setPassword("password");
+
+// Use TCP
+DdfClient client = new DdfClientImpl(config);
+
+// Init
+client.init();
+
+// Add Handlers, assuming enclosing class implements the handlers
+client.addConnectionEventHandler(this);
+client.addTimestampHandler(this);
+client.addFeedHandler(this);
+client.addMarketEventHandler(this);
+
+// Connection
+client.connect();
+
+
+/* On the ConnectionEventHandler.onEvent() LOGIN_SUCESS subscribe
+to symbols as desired
+*/
+QuoteHandler handler = new ClientQuoteHandler();
+// This will request quotes if client does not have a subscription
+// to the symbol
+client.addQuoteHandler(symbol, handler);
+
+```
+
+## Available Response Handlers
+
+  1. ConnectionEventHandler - Connection Events, see ConnectonEvent.java
+  2. TimestampHandler - Callback on time stamps sent by the server
+	3. FeedHandler - Callback on each DDF message
+	4. QuoteHandler - Callback with Quote which contains BBO plus other statistics
+	5. MarketEventHandler - Callback for market events such as Open, High, etc.. See MarketEvent.java
+	6. BookQuoteHandler - Callback for Depth messages.
+
 
 ## Subscribing to market data by symbol
 
+	1. Create a ClientQuoteHandler()
+	2. Add to client by calling DdfClientImpl.addQuoteHandler(symbol, handler)
+
+
 ## Subscribing to market data by exchange
 
-
+	1. Create a ClientQuoteExchangeHandler(String exchangeCode)
+	2. Add to client by calling DdfClientImpl.addQuoteExchangeHandler(exchangeCode, handler)
 
 
