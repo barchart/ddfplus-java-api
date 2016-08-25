@@ -81,4 +81,56 @@ public class DataMasterTest {
 
 	}
 
+	@Test
+	public void process2ZSaleConditionShouldBeSet() {
+		// 2HEUS,ZbAA152591,100,NMc
+		final byte[] msg = "\u00012HEUS,Z\u0002A152591,100,NA\u0003".getBytes();
+
+		symbolInfo = new SymbolInfo("HEUS", "HEUS", "G", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		// Set existing volume to 500
+		quote._combinedSession._volume = 500;
+		dataMaster.putQuote(quote);
+		FeedEvent fe = dataMaster.processMessage(msg);
+		assertNotNull(fe);
+		Quote update = fe.getQuote();
+		assertNotNull(update);
+		Session session = update.getCombinedSession();
+		assertEquals("Volume should be set", 500 + 100, session.getVolume(), 0.0);
+
+	}
+
+	@Test
+	public void process2ZSaleConditionShouldNotBeSet() {
+		// 2HEUS,ZbAA152591,100,NMc
+		byte[] msg = "\u00012HEUS,Z\u0002A152591,100,NM\u0003".getBytes();
+
+		symbolInfo = new SymbolInfo("HEUS", "HEUS", "G", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		// Set existing volume to 500
+		quote._combinedSession._volume = 500;
+		dataMaster.putQuote(quote);
+		FeedEvent fe = dataMaster.processMessage(msg);
+		Quote update = fe.getQuote();
+		Session session = update.getCombinedSession();
+		assertEquals("Volume not set", 500, session.getVolume(), 0.0);
+
+		// Q sale condition
+		msg = "\u00012HEUS,Z\u0002A152591,100,NQ\u0003".getBytes();
+		dataMaster.putQuote(quote);
+		fe = dataMaster.processMessage(msg);
+		update = fe.getQuote();
+		session = update.getCombinedSession();
+		assertEquals("Volume not set", 500, session.getVolume(), 0.0);
+
+		// 9 sale condition
+		msg = "\u00012HEUS,Z\u0002A152591,100,N9\u0003".getBytes();
+		dataMaster.putQuote(quote);
+		fe = dataMaster.processMessage(msg);
+		update = fe.getQuote();
+		session = update.getCombinedSession();
+		assertEquals("Volume not set", 500, session.getVolume(), 0.0);
+
+	}
+
 }

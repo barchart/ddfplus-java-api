@@ -1114,11 +1114,21 @@ public class DataMaster {
 
 	void record2_subrecord7Z(DdfMarketBase msg, final Quote quote, boolean bDoNotSetFlag, CumulativeVolume cv,
 			Session pCombinedSession, Session session) {
+		DdfMarketTrade trade = (DdfMarketTrade) msg;
 		if (msg.getSubRecord() == 'Z') {
-			if (session != null)
-				session._volume += ((DdfMarketTrade) msg).getTradeSize();
-			pCombinedSession._volume += ((DdfMarketTrade) msg).getTradeSize();
+			char saleCondition = trade.getSession();
+			if (saleCondition == 'M' || saleCondition == 'Q' || saleCondition == '9') {
+				/*
+				 * NASDAQ, NYSE: Do not set volume on these sale conditions.
+				 */
+				return;
+			}
+			if (session != null) {
+				session._volume += trade.getTradeSize();
+			}
+			pCombinedSession._volume += trade.getTradeSize();
 		} else {
+			// 2.7 message
 			if (session != null) {
 				session.setLast(((DdfMarketTrade) msg).getTradePrice());
 				session._tradeSize = ((DdfMarketTrade) msg).getTradeSize();
