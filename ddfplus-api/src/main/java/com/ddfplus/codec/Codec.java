@@ -91,7 +91,7 @@ public class Codec {
 	 * @throws NumberFormatException
 	 *             the number format exception
 	 */
-	public static float parseDDFPriceValue(byte[] ba, int start, int length, char unitcode)
+	public static Float parseDDFPriceValue(byte[] ba, int start, int length, char unitcode)
 			throws NumberFormatException {
 		return Codec.parseDDFPriceValue(ba, start, length, SymbolInfo.ddfuc2bb(unitcode));
 	}
@@ -113,18 +113,21 @@ public class Codec {
 	 *             the number format exception
 	 */
 
-	public static float parseDDFPriceValue(byte[] ba, int start, int length, int basecode)
+	public static Float parseDDFPriceValue(byte[] ba, int start, int length, int basecode)
 			throws NumberFormatException {
 
 		if (start + length > ba.length)
 			throw new NumberFormatException(
 					"Index Out of Bounds array.length=" + ba.length + ", start=" + start + ", length=" + length);
 
-		if (length == 0)
-			return 0;
+		if (length == 0) {
+			return 0F;
+		}
 
-		if (((char) ba[start] == '-') && (length == 1))
-			return 0;
+		if (((char) ba[start] == '-') && (length == 1)) {
+			// Nov 1, 2016 Null out prices for '-'
+			return null;
+		}
 
 		int ival = Codec.parseIntValue(ba, start, length);
 
