@@ -453,7 +453,20 @@ public class Quote implements Cloneable, Serializable {
 				+ ((this._previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
 						: this._previousSession.getOpenInterest())
 				+ ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + session.getPriceVolume());
+		
+		Session previous_session = this._previousSession;
 
+		sb.append(", " + "\"previous_session\" : { ");
+		sb.append("\"last\": " + ((previous_session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previous_session.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+		sb.append(((previous_session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previous_session.getOpen(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+		sb.append(((previous_session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previous_session.getHigh(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+		sb.append(((previous_session.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previous_session.getLow(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+		sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+		sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
+		sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
+		
+		sb.append(" }");
+		
 		sb.append(" }");
 		return sb.toString();
 	}
