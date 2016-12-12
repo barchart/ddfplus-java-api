@@ -247,6 +247,15 @@ public class DdfClientImpl implements DdfClient {
 		if (connection != null) {
 			log.info("Stopping DdfClient#" + ++instanceId + " Version = " + connection.getVersion());
 			connection.stopDataStream();
+			connection = null;
+			// Clear handlers
+			adminHandlers.clear();
+			feedHandlers.clear();
+			marketEventHandlers.clear();
+			timestampHandlers.clear();
+			quoteHandlers.clear();
+			quoteExchangeHandlers.clear();
+			bookQuoteHandlers.clear();
 		}
 	}
 

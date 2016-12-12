@@ -55,6 +55,15 @@ import com.ddfplus.util.StoreFeedHandler;
  * <li>Process the DDF messages via the Handler.
  * </ol>
  * 
+ * To perform a client restart in process, the DdfClient must be re-initialized
+ * completely.
+ * <ol>
+ * <li>client.disconnect()
+ * <li>client.init();
+ * <li>client.connect();
+ * </ol>
+ *
+ * 
  */
 public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
@@ -64,7 +73,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 	private final ClientConfig config;
 	private SymbolProvider symbolProvider;
-	private final DdfClient client;
+	private DdfClient client;
 
 	private Map<String, List<QuoteHandler>> quoteHandlers = new HashMap<String, List<QuoteHandler>>();
 
@@ -242,6 +251,8 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		ShutdownHook shutdownThread = new ShutdownHook(client);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
 
+		// Start the client
+		client.init();
 		client.start();
 
 	}
@@ -278,6 +289,9 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		this.config = config;
 		parseLogModes(config.getLogMode());
 
+	}
+
+	public void init() {
 		symbolProvider = new SymbolProviderImpl();
 		if (config.getSymbols() != null) {
 			symbolProvider.setSymbols(config.getSymbols());
@@ -331,13 +345,11 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		// Add Market Event Handler
 		marketEventHandler = new MarketEventHandlerImpl();
 		client.addMarketEventHandler(marketEventHandler);
-
 	}
 
 	public void start() throws Exception {
 		// Will log in to DDF Server and start processing messages.
 		client.connect();
-
 	}
 
 	public void shutdown() {
