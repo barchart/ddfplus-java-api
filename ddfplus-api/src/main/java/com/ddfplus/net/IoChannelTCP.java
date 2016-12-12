@@ -97,8 +97,8 @@ class IoChannelTCP extends IoChannel {
 					} catch (IOException io) {
 						log.error(logPrefix + " Socket close issue: " + io);
 					}
-					socket = null;
 				}
+				socket = null;
 			}
 
 			// We are disconnected
@@ -279,8 +279,8 @@ class IoChannelTCP extends IoChannel {
 					socket.close();
 				} catch (IOException ignore) {
 				}
-				socket = null;
 			}
+			socket = null;
 			log.info("[INF " + _id + "] JerqTCPListener Closed.");
 		}
 	}
