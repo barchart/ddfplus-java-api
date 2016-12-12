@@ -55,11 +55,12 @@ import com.ddfplus.util.StoreFeedHandler;
  * <li>Process the DDF messages via the Handler.
  * </ol>
  * 
- * To perform a client restart in process, the DdfClient must be re-initialized
- * completely.
+ * To perform a programmatic client restart, the DdfClient must be
+ * re-initialized completely and the subscriptions re-initialized.
  * <ol>
  * <li>client.disconnect()
  * <li>client.init();
+ * <li>add new subscriptions here.....
  * <li>client.connect();
  * </ol>
  *
