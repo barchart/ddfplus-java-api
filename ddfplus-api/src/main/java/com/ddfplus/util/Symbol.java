@@ -96,10 +96,10 @@ public class Symbol {
 				return SymbolType.Index;
 			else if (ca[0] == '^')
 				return SymbolType.Forex;
+			else if ((symbol.length() == 8) && (ca[6] == '.'))
+				return SymbolType.Forex;
 			else if (ca[0] == '-')
 				return SymbolType.Equity_US; // Actually a Sector.
-			else if (symbol.endsWith(".F"))
-				return SymbolType.Forex;
 			else if (symbol.endsWith(".AX"))
 				return SymbolType.Equity_AX;
 			else if ((symbol.endsWith(".TO")) || (symbol.endsWith(".VN")) || (symbol.endsWith(".CN")))
