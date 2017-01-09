@@ -26,6 +26,10 @@ public class TestData27Trade {
 
 	// 2,8
 	final byte[] ba1 = "\u00012HOZ9,7\u0002CJ1021371,5,SG\u0003".getBytes();
+	
+//	final byte[] ba1 = "\u00012BRK.A,7\u0002CN152440610001,1,5@\u0003".getBytes();
+	
+	
 
 	@Test
 	public void testMessage27Trade() {
@@ -33,6 +37,7 @@ public class TestData27Trade {
 		final Data27Trade m1 = (Data27Trade) Codec
 				.parseMessage(ba1);
 
+		log.info("t: {}", m1.getTradePrice());
 		log.info("m1 : {}", m1);
 		// log.info("m1 : {}", m1.toStringAscii());
 		// log.info("m1 : {}", m1.toStringHex());

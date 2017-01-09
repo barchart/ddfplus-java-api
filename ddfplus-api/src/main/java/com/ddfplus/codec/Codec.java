@@ -126,13 +126,15 @@ public class Codec {
 		if (((char) ba[start] == '-') && (length == 1))
 			return 0;
 
-		int ival = Codec.parseIntValue(ba, start, length);
-
-		float f = 0;
 
 		if (basecode >= 0) {
-			f = (float) ((float) ival / (float) Math.pow(10, basecode));
-		} else {
+			long lval = Codec.parseLongValue(ba, start, length);
+			double d = (double) ((double) lval / (double) Math.pow(10, basecode));
+			return (float) d;
+		}
+		else {
+			float f = 0;
+			int ival = Codec.parseIntValue(ba, start, length);
 			switch (basecode) {
 			case -1:
 				f = (ival / 10) + ((float) (ival % 10) / 8);
@@ -153,9 +155,8 @@ public class Codec {
 				f = (ival / 1000) + ((float) (ival % 1000) / 256);
 				break;
 			}
+			return f;
 		}
-
-		return f;
 	}
 
 	/**
@@ -206,6 +207,13 @@ public class Codec {
 	 * @return the long
 	 */
 	public static long parseLongValue(byte[] ba, int start, int length) {
+		long mult = 1;
+		if ((char) ba[start] == '-') {
+			mult = -1;
+			start++;
+			length--;
+		}
+		
 		// [2, 0, 0, 4]
 		long value = 0L;
 		int base = 1;
