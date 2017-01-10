@@ -34,11 +34,14 @@ public class ClientConfig {
 	 * symbols = "YHOO,IBM,ESH6,YMH6,QQQQ,";
 	 */
 	private String symbols;
+	private boolean addDdfHandler;
 	/**
 	 * Activate depth subscriptions.
 	 */
 	private boolean depthSubscription;
 	private String exchangeCodes;
+	private boolean addExchangeQuoteHandler;
+	private boolean addExchangeTradeHandler;
 	private String snapshotUser;
 	private String snapshotPassword;
 	private String logMode;
@@ -177,7 +180,10 @@ public class ClientConfig {
 		sb.append("\n\tconnectionType: " + connectionType);
 		sb.append("\n\tuser: " + userName);
 		sb.append("\n\tsymbols: " + symbols);
+		sb.append("\n\taddDdfHandler: " + addDdfHandler);
 		sb.append("\n\texchangeCodes: " + exchangeCodes);
+		sb.append("\n\taddExchangeQuoteHandler: " + addExchangeQuoteHandler);
+		sb.append("\n\taddExchangeTradeHandler: " + addExchangeTradeHandler);
 		sb.append("\n\tlogMode: " + logMode);
 		sb.append("\n\tserver: " + primaryServer);
 		sb.append("\n\tsecondaryServer: " + secondaryServer);
@@ -202,6 +208,30 @@ public class ClientConfig {
 
 	public long getUnknownSymbolDeplay() {
 		return unknownSymbolDelay;
+	}
+
+	public void setAddDdfHandler(boolean b) {
+		this.addDdfHandler = b;
+	}
+
+	public boolean isAddDdfHandler() {
+		return this.addDdfHandler;
+	}
+
+	public void setAddExchangeQuoteHandler(boolean b) {
+		this.addExchangeQuoteHandler = b;
+	}
+
+	public boolean isAddExchangeQuoteHandler() {
+		return this.addExchangeQuoteHandler;
+	}
+
+	public void setAddExchangeTradeHandler(boolean b) {
+		this.addExchangeTradeHandler = b;
+	}
+
+	public boolean isAddExchangeTradeHandler() {
+		return this.addExchangeTradeHandler;
 	}
 
 }

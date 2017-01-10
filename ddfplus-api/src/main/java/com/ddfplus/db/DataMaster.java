@@ -201,7 +201,7 @@ public class DataMaster {
 			}
 			/*
 			 * Process record 2, since the symbol is in the system and we have
-			 * the refresh quote
+			 * the refresh quote. The Quote object will be updated.
 			 */
 			record2_liveprices(msg, quote, fe);
 			fe.setQuote(quote);
@@ -362,6 +362,9 @@ public class DataMaster {
 		}
 	}
 
+	/*
+	 * Handle 2 records and update the Quote object as required.
+	 */
 	void record2_liveprices(DdfMarketBase msg, Quote quote, FeedEvent fe) {
 		// /////////////////////////////////////////////////////////
 		// record = 2 Exchange live quote messages

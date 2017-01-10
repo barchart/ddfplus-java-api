@@ -29,10 +29,12 @@ import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
+import com.ddfplus.api.TradeHandler;
 import com.ddfplus.db.BookQuote;
 import com.ddfplus.db.MarketEvent;
 import com.ddfplus.db.Quote;
 import com.ddfplus.enums.ConnectionType;
+import com.ddfplus.messages.DdfMarketTrade;
 import com.ddfplus.messages.DdfMessageBase;
 import com.ddfplus.net.DdfClient;
 import com.ddfplus.net.DdfClientImpl;
@@ -81,6 +83,9 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 	// Quote Exchange Handlers, one per exchange code
 	private Map<String, QuoteHandler> quoteExchangeHandlers = new HashMap<String, QuoteHandler>();
 
+	// Trade Exchange Handlers, one per exchange code
+	private Map<String, TradeHandler> tradeExchangeHandlers = new HashMap<String, TradeHandler>();
+
 	private Map<String, List<BookQuoteHandler>> depthHandlers = new HashMap<String, List<BookQuoteHandler>>();
 
 	// log modes
@@ -90,6 +95,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 	private boolean logDdf;
 	private boolean logBook;
 	private boolean logQuoteExchange;
+	private boolean logTradeExchange;
 
 	private FeedHandlerImpl feedHandler;
 	private MarketEventHandlerImpl marketEventHandler;
@@ -120,9 +126,18 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 				config.setSymbols(args[i + 1]);
 				i++;
 			}
+			if (args[i].equals("-ddf")) {
+				config.setAddDdfHandler(true);
+			}
 			if (args[i].equals("-e") && i + 1 < args.length) {
 				config.setExchangeCodes(args[i + 1]);
 				i++;
+			}
+			if (args[i].equals("-eq")) {
+				config.setAddExchangeQuoteHandler(true);
+			}
+			if (args[i].equals("-et")) {
+				config.setAddExchangeTradeHandler(true);
 			}
 			if (args[i].equals("-t") && i + 1 < args.length) {
 				String v = args[i + 1].trim().toUpperCase();
@@ -177,8 +192,20 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
 				config.setSymbols(p.getProperty("symbols"));
 			}
+			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
+				config.setSymbols(p.getProperty("symbols"));
+			}
+			if (p.getProperty("ddf") != null && !p.getProperty("ddf").isEmpty()) {
+				config.setAddDdfHandler(true);
+			}
 			if (p.getProperty("exchangeCodes") != null && !p.getProperty("exchangeCodes").isEmpty()) {
 				config.setExchangeCodes(p.getProperty("exchangeCodes"));
+			}
+			if (p.getProperty("eq") != null && !p.getProperty("eq").isEmpty()) {
+				config.setAddExchangeQuoteHandler(true);
+			}
+			if (p.getProperty("et") != null && !p.getProperty("et").isEmpty()) {
+				config.setAddExchangeTradeHandler(true);
 			}
 			if (p.getProperty("connectionType") != null && !p.getProperty("connectionType").isEmpty()) {
 				String v = p.getProperty("connectionType").toUpperCase();
@@ -271,14 +298,17 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		text.append("\n-u user             - User Name");
 		text.append("\n-p password         - Password");
 		text.append("\n-sym symbols        - Symbols, comma separated. Required if -e not used.");
-		text.append("\n-e exchangeCodes    - Subscribe for quotes for all symbols at the given exchanges");
+		text.append("\n-ddf                - Add DDF Feed Handler");
+		text.append("\n-e exchangeCodes    - Subscribe for all symbols at the given exchanges");
+		text.append("\n-eq                 - Add Exchange Quote Handler");
+		text.append("\n-et                 - Add Exchange Trade Handler");
 		text.append("\n-t connection type  - Connection Type, TCP,HTTP,HTTPSTREAM,WSS, defaults to TCP");
 		text.append("\n-s server           - DDF Server, otherwise it defaults to the server assigned to the user.");
 		text.append("\n-d                  - Activate depth subscriptions");
 		text.append("\n-su user            - Snapshot User Name");
 		text.append("\n-sp password        - Snapshot Password");
 		text.append(
-				"\n-l a,ts,d,me,q,qe,b - Logs messages: a=all,ts=timetamp,d=ddf messages,me=market events,q=quotes,qe=all exchange quotes,b=book/depth");
+				"\n-l a,ts,d,me,q,qe,te,b - Logs messages: a=all,ts=timetamp,d=ddf messages,me=market events,q=quotes,qe=all exchange quotes,te=all exchange trades,b=book/depth");
 		text.append("\n-sm                 - Stores DDF messages to a binary file in the current directory.");
 		text.append("\n-f <prop filename>  - Use property file instead of the default: " + CLIENT_PROPS_FILE);
 		System.out.println(text);
@@ -332,9 +362,12 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		client.addConnectionEventHandler(this);
 		client.addTimestampHandler(this);
 
-		// Add Raw Message Handler
-		feedHandler = new FeedHandlerImpl();
-		client.addFeedHandler(feedHandler);
+		if (config.isAddDdfHandler()) {
+			// Add Raw Message Handler
+			feedHandler = new FeedHandlerImpl();
+			client.addFeedHandler(feedHandler);
+		}
+
 		// Add DDF store handler
 		if (config.isStoreMessages()) {
 			messageStore = new MessageStoreImpl();
@@ -432,8 +465,10 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 					logBook = true;
 				} else if (m.equals("qe")) {
 					logQuoteExchange = true;
+				} else if (m.equals("te")) {
+					logTradeExchange = true;
 				} else if (m.equals("a")) {
-					logTS = logQuote = logMarketEvent = logDdf = logBook = logQuoteExchange = true;
+					logTS = logQuote = logMarketEvent = logDdf = logBook = logQuoteExchange = logTradeExchange = true;
 				}
 			}
 		}
@@ -473,6 +508,12 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			client.removeQuoteExchangeHandler(exchangeCode);
 		}
 		quoteExchangeHandlers.clear();
+		// Trade Exchange
+		exchangeCodes = tradeExchangeHandlers.keySet();
+		for (String exchangeCode : exchangeCodes) {
+			client.removeTradeExchangeHandler(exchangeCode);
+		}
+		tradeExchangeHandlers.clear();
 
 	}
 
@@ -486,10 +527,18 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			 */
 			String[] codes = config.getExchangeCodes().split(",");
 			for (String exchangeCode : codes) {
-				log.info("Adding exchange handler for exchange: " + exchangeCode);
-				ClientQuoteExchangeHandler h = new ClientQuoteExchangeHandler(exchangeCode);
-				quoteExchangeHandlers.put(exchangeCode, h);
-				client.addQuoteExchangeHandler(exchangeCode, h);
+				if (config.isAddExchangeQuoteHandler()) {
+					log.info("Adding quote handler for exchange: " + exchangeCode);
+					QuoteExchangeHandler h = new QuoteExchangeHandler(exchangeCode);
+					quoteExchangeHandlers.put(exchangeCode, h);
+					client.addQuoteExchangeHandler(exchangeCode, h);
+				}
+				if (config.isAddExchangeTradeHandler()) {
+					log.info("Adding trade handler for exchange: " + exchangeCode);
+					TradeExchangeHandler th = new TradeExchangeHandler(exchangeCode);
+					tradeExchangeHandlers.put(exchangeCode, th);
+					client.addTradeExchangeHandler(exchangeCode, th);
+				}
 			}
 		}
 
@@ -563,18 +612,43 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 	}
 
-	private class ClientQuoteExchangeHandler implements QuoteHandler {
+	/**
+	 * Pull by exchange Quote handler
+	 *
+	 */
+	private class QuoteExchangeHandler implements QuoteHandler {
 
 		private String exchange;
 
-		public ClientQuoteExchangeHandler(String exchange) {
+		public QuoteExchangeHandler(String exchange) {
 			this.exchange = exchange;
 		}
 
 		@Override
 		public void onQuote(Quote quote) {
 			if (logQuoteExchange) {
-				log.info("EXCH QUOTE(" + exchange + "): " + quote.toXMLNode().toXMLString());
+				log.info("EXCH Quote(" + exchange + "): " + quote.toXMLNode().toXMLString());
+			}
+		}
+
+	}
+
+	/**
+	 * Pull by exchange Trade handler
+	 *
+	 */
+	private class TradeExchangeHandler implements TradeHandler {
+
+		private String exchange;
+
+		public TradeExchangeHandler(String exchange) {
+			this.exchange = exchange;
+		}
+
+		@Override
+		public void onTrade(DdfMarketTrade trade) {
+			if (logTradeExchange) {
+				log.info("EXCH Trade(" + exchange + "): " + trade);
 			}
 		}
 

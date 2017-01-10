@@ -36,6 +36,8 @@ import com.ddfplus.db.MarketEvent;
 import com.ddfplus.db.MasterType;
 import com.ddfplus.db.Quote;
 import com.ddfplus.enums.ConnectionType;
+import com.ddfplus.messages.DdfMarketBase;
+import com.ddfplus.messages.DdfMarketTrade;
 import com.ddfplus.service.definition.DefinitionService;
 import com.ddfplus.service.definition.DefinitionServiceImpl;
 import com.ddfplus.service.feed.FeedService;
@@ -391,7 +393,10 @@ public class DdfClientImpl implements DdfClient {
 				// No subscription
 				quoteExchangeHandlers.put(exchangeCode, handler);
 				// Initial Stream Subscription
-				subscribeQuoteExchange(exchangeCode);
+				if (!tradeExchangeHandlers.containsKey(exchangeCode)) {
+					// Only subscribe once
+					subscribeExchange(exchangeCode);
+				}
 			} else {
 				/*
 				 * We already have a subscription and only one Exchange handler
@@ -408,6 +413,39 @@ public class DdfClientImpl implements DdfClient {
 	public void removeQuoteExchangeHandler(String exchangeCode) {
 		synchronized (quoteExchangeHandlers) {
 			quoteExchangeHandlers.remove(exchangeCode);
+		}
+	}
+
+	@Override
+	public void addTradeExchangeHandler(String exchangeCode, TradeHandler handler) {
+		synchronized (tradeExchangeHandlers) {
+
+			TradeHandler h = tradeExchangeHandlers.get(exchangeCode);
+			if (h == null) {
+				// No subscription
+				tradeExchangeHandlers.put(exchangeCode, handler);
+				// Initial Stream Subscription
+				if (!quoteExchangeHandlers.containsKey(exchangeCode)) {
+					// only subscribe once
+					subscribeExchange(exchangeCode);
+				}
+			} else {
+				/*
+				 * We already have a subscription and only one Exchange handler
+				 * is allowed.
+				 */
+				log.warn(
+						"An exchange trade subscription was already active, only 1 handler is allowed per exchange, exchange: "
+								+ exchangeCode);
+			}
+		}
+
+	}
+
+	@Override
+	public void removeTradeExchangeHandler(String exchangeCode) {
+		synchronized (tradeExchangeHandlers) {
+			tradeExchangeHandlers.remove(exchangeCode);
 		}
 	}
 
@@ -472,8 +510,8 @@ public class DdfClientImpl implements DdfClient {
 		dataMaster.removeSubscribedSymbol(symbol);
 	}
 
-	private void subscribeQuoteExchange(String exchangeCode) {
-		connection.subscribeQuoteExchange(exchangeCode);
+	private void subscribeExchange(String exchangeCode) {
+		connection.subscribeExchange(exchangeCode);
 
 	}
 
@@ -518,8 +556,12 @@ public class DdfClientImpl implements DdfClient {
 				}
 			}
 
-			// Quote
+			/*
+			 * Quote is updated for all DDF record 2 messages.
+			 * 
+			 */
 			if (fe.isQuote()) {
+
 				Quote q = fe.getQuote();
 				String symbol = q.getSymbolInfo().getSymbol();
 
@@ -534,8 +576,8 @@ public class DdfClientImpl implements DdfClient {
 						}
 					}
 				} else {
-					log.error("Quote handler not found for symbol: " + q.getSymbolInfo().getSymbol() + " msg: "
-							+ q.getMessage());
+					log.debug("Quote handler not found for symbol: {} msg: {}", q.getSymbolInfo().getSymbol(),
+							q.getMessage());
 				}
 
 				// Quote Exchange Handler for push (STREAM LISTEN command)
@@ -549,7 +591,23 @@ public class DdfClientImpl implements DdfClient {
 					}
 				}
 
+				// Trade Exchange Handler for push (STREAM LISTEN command)
+				TradeHandler tradeExchangeHandler = tradeExchangeHandlers.get(ddfExchange);
+				if (tradeExchangeHandler != null) {
+					try {
+						DdfMarketBase ddf = q.getMessage();
+						if (ddf instanceof DdfMarketTrade) {
+							DdfMarketTrade trade = (DdfMarketTrade) ddf;
+							char sessionCondition = trade.getSession();
+							tradeExchangeHandler.onTrade(trade);
+						}
+					} catch (Exception e) {
+						log.error("exchangeTrade(" + array + ") failed on onMessage. " + e);
+					}
+				}
+
 			}
+
 			// Book/Depth
 			if (fe.isBookQuote()) {
 				BookQuote bq = fe.getBook();
@@ -613,37 +671,6 @@ public class DdfClientImpl implements DdfClient {
 				 */
 				connection.subscribeQuoteSnapshot(s);
 			}
-		}
-	}
-
-	@Override
-	public void addTradeExchangeHandler(String exchangeCode, TradeHandler handler) {
-		synchronized (tradeExchangeHandlers) {
-
-			TradeHandler h = tradeExchangeHandlers.get(exchangeCode);
-			if (h == null) {
-				// No subscription
-				tradeExchangeHandlers.put(exchangeCode, handler);
-				// Initial Stream Subscription
-				// TODO review
-				subscribeQuoteExchange(exchangeCode);
-			} else {
-				/*
-				 * We already have a subscription and only one Exchange handler
-				 * is allowed.
-				 */
-				log.warn(
-						"An exchange trade subscription was already active, only 1 handler is allowed per exchange, exchange: "
-								+ exchangeCode);
-			}
-		}
-
-	}
-
-	@Override
-	public void removeTradeExchangeHandler(String exchangeCode) {
-		synchronized (tradeExchangeHandlers) {
-			tradeExchangeHandlers.remove(exchangeCode);
 		}
 	}
 

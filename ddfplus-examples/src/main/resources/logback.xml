@@ -35,7 +35,7 @@
 	
 	<logger name="DefinitionService" level="info"/>
 
-	<root level="debug">
+	<root level="info">
 		<appender-ref ref="console" />
 		<appender-ref ref="LOG" />
 	</root>

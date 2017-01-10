@@ -239,7 +239,7 @@ public class Connection {
 	 * @param exchangeCode
 	 *            DDF Exchange Code
 	 */
-	public void subscribeQuoteExchange(String exchangeCode) {
+	public void subscribeExchange(String exchangeCode) {
 		Cmd cmd = new Cmd("STR", exchangeCode);
 		channel.enqueueCommand(cmd);
 	}

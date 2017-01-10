@@ -96,26 +96,6 @@ public interface DdfClient {
 	void removeQuoteHandler(String symbol, QuoteHandler handler);
 
 	/**
-	 * Add a trade handler for all symbols at the exchange. This is the callback
-	 * for the pull by exchange mode.
-	 * 
-	 * @param exchangeCode
-	 *            DDF Exchange Code
-	 * 
-	 * @param handler
-	 *            Trade Handler for all symbols at the exchange
-	 */
-	void addTradeExchangeHandler(String exchangeCode, TradeHandler handler);
-
-	/**
-	 * Removes the trade handler for the exchange
-	 * 
-	 * @param exchangeCode
-	 *            DDF Exchange Code
-	 */
-	void removeTradeExchangeHandler(String exchangeCode);
-
-	/**
 	 * Market Depth Handler
 	 */
 	void addBookQuoteHandler(String symbol, BookQuoteHandler handler);
@@ -140,6 +120,26 @@ public interface DdfClient {
 	 * @param exchangeCode
 	 */
 	void removeQuoteExchangeHandler(String exchangeCode);
+
+	/**
+	 * Add a trade handler for all symbols at the exchange. This is the trade
+	 * callback for the pull by exchange mode.
+	 * 
+	 * @param exchangeCode
+	 *            DDF Exchange Code
+	 * 
+	 * @param handler
+	 *            Trade Handler for all symbols at the exchange
+	 */
+	void addTradeExchangeHandler(String exchangeCode, TradeHandler handler);
+
+	/**
+	 * Removes the trade handler for the exchange
+	 * 
+	 * @param exchangeCode
+	 *            DDF Exchange Code
+	 */
+	void removeTradeExchangeHandler(String exchangeCode);
 
 	/**
 	 * Retrieves a Quote from the embedded DataManager object.
