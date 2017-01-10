@@ -27,6 +27,7 @@ import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
+import com.ddfplus.api.TradeHandler;
 import com.ddfplus.db.BookQuote;
 import com.ddfplus.db.CumulativeVolume;
 import com.ddfplus.db.DataMaster;
@@ -81,6 +82,9 @@ public class DdfClientImpl implements DdfClient {
 
 	// Quote/Market Update by Exchange (ExchangeCode ==> Handler)
 	private static final Map<String, QuoteHandler> quoteExchangeHandlers = new ConcurrentHashMap<String, QuoteHandler>();
+
+	// Trades by Exchange (ExchangeCode ==> Handler)
+	private static final Map<String, TradeHandler> tradeExchangeHandlers = new ConcurrentHashMap<String, TradeHandler>();
 
 	// Market Depth/Book Quote
 	private static final Map<String, CopyOnWriteArrayList<BookQuoteHandler>> bookQuoteHandlers = new ConcurrentHashMap<String, CopyOnWriteArrayList<BookQuoteHandler>>();
@@ -255,6 +259,7 @@ public class DdfClientImpl implements DdfClient {
 			timestampHandlers.clear();
 			quoteHandlers.clear();
 			quoteExchangeHandlers.clear();
+			tradeExchangeHandlers.clear();
 			bookQuoteHandlers.clear();
 		}
 	}
@@ -608,6 +613,37 @@ public class DdfClientImpl implements DdfClient {
 				 */
 				connection.subscribeQuoteSnapshot(s);
 			}
+		}
+	}
+
+	@Override
+	public void addTradeExchangeHandler(String exchangeCode, TradeHandler handler) {
+		synchronized (tradeExchangeHandlers) {
+
+			TradeHandler h = tradeExchangeHandlers.get(exchangeCode);
+			if (h == null) {
+				// No subscription
+				tradeExchangeHandlers.put(exchangeCode, handler);
+				// Initial Stream Subscription
+				// TODO review
+				subscribeQuoteExchange(exchangeCode);
+			} else {
+				/*
+				 * We already have a subscription and only one Exchange handler
+				 * is allowed.
+				 */
+				log.warn(
+						"An exchange trade subscription was already active, only 1 handler is allowed per exchange, exchange: "
+								+ exchangeCode);
+			}
+		}
+
+	}
+
+	@Override
+	public void removeTradeExchangeHandler(String exchangeCode) {
+		synchronized (tradeExchangeHandlers) {
+			tradeExchangeHandlers.remove(exchangeCode);
 		}
 	}
 

@@ -12,6 +12,7 @@ import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
+import com.ddfplus.api.TradeHandler;
 import com.ddfplus.db.BookQuote;
 import com.ddfplus.db.CumulativeVolume;
 import com.ddfplus.db.MarketEvent;
@@ -93,6 +94,26 @@ public interface DdfClient {
 	void addQuoteHandler(String symbol, QuoteHandler handler);
 
 	void removeQuoteHandler(String symbol, QuoteHandler handler);
+
+	/**
+	 * Add a trade handler for all symbols at the exchange. This is the callback
+	 * for the pull by exchange mode.
+	 * 
+	 * @param exchangeCode
+	 *            DDF Exchange Code
+	 * 
+	 * @param handler
+	 *            Trade Handler for all symbols at the exchange
+	 */
+	void addTradeExchangeHandler(String exchangeCode, TradeHandler handler);
+
+	/**
+	 * Removes the trade handler for the exchange
+	 * 
+	 * @param exchangeCode
+	 *            DDF Exchange Code
+	 */
+	void removeTradeExchangeHandler(String exchangeCode);
 
 	/**
 	 * Market Depth Handler
