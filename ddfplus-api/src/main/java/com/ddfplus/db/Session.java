@@ -8,6 +8,7 @@
 package com.ddfplus.db;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
 
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
@@ -40,7 +41,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	protected volatile float _close = 0.0f;
 	protected volatile float _close2 = 0.0f;
-	protected volatile char _day;
+	private char _day;
+	private LocalDate _dayAsLocalDate;
+	
 	protected volatile float _high = 0.0f;
 	// protected volatile float _last = 0.0f;
 	protected volatile float _low = 0.0f;
@@ -69,6 +72,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		this._parentQuote = parent;
 		this._day = dayCode;
 		this._session = sessionCode;
+		
+		this._dayAsLocalDate = DDFDate.getLocalDateFromDayCode(dayCode);
 	}
 
 	@Override
@@ -109,6 +114,12 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _close;
 	}
 
+	
+	public LocalDate getDayAsLocalDate() {
+		return this._dayAsLocalDate;
+	}
+	
+	
 	public void setClose(float v) {
 		this._close = v;
 	}
@@ -136,6 +147,11 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _timestamp;
 	}
 
+	
+	public LocalDate getDate() {
+		return this._dayAsLocalDate;
+	}
+	
 	/**
 	 * @return <B>char</B> The Day Code
 	 */
@@ -144,8 +160,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _day;
 	}
 
-	public void setDayCode(char code) {
+	protected void setDayCode(char code) {
 		this._day = code;
+		this._dayAsLocalDate = DDFDate.getLocalDateFromDayCode(code);
 	}
 
 	/**

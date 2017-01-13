@@ -8,6 +8,8 @@
 package com.ddfplus.db;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -30,7 +32,8 @@ public class Quote implements Cloneable, Serializable {
 	// By defining the serialVersionUID we can keep Object Serialization
 	// consistent.
 	private static final long serialVersionUID = 9094149815858170620L;
-
+	
+	
 	private volatile String _ddfExchange = "";
 	private final SymbolInfo _symbolInfo;
 	// Prices
@@ -383,6 +386,9 @@ public class Quote implements Cloneable, Serializable {
 	}
 
 	public String toJSONString() {
+		Session session = this._combinedSession;
+		Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
+
 		StringBuilder sb = new StringBuilder("\"" + this._symbolInfo.getSymbol() + "\": { " + "\"symbol\": \""
 				+ this._symbolInfo.getSymbol() + "\"" + ", \"name\": \""
 				+ this._symbolInfo.getName().replaceAll("\"", "\\\\\"") + "\"" + ", \"exchange\": \""
@@ -391,6 +397,8 @@ public class Quote implements Cloneable, Serializable {
 				+ this._symbolInfo.getTickIncrement() + ", \"ddfexchange\": "
 				+ (((this._ddfExchange == null) || (this._ddfExchange.length() == 0)) ? "null"
 						: "\"" + this._ddfExchange + "\"")
+				+ ", \"day\": \"" + session.getDayCode() + "\""
+				+ ", \"date\": \"" + session.getDayAsLocalDate().format(DateTimeFormatter.ISO_DATE) + "\""
 				+ ", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null") + ", \"lastupdate\": "
 				+ ((this._lastUpdated != null) ? (new DDFDate(_lastUpdated)).toDDFString() : "0"));
 
@@ -406,8 +414,6 @@ public class Quote implements Cloneable, Serializable {
 										ParserHelper.PURE_DECIMAL))
 						+ ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _askSize * 100));
 
-		Session session = this._combinedSession;
-		Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
 
 		sb.append(", " + "\"open\": "
 				+ ((session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "null"
@@ -465,6 +471,8 @@ public class Quote implements Cloneable, Serializable {
 		sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
 		sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
 		sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
+		sb.append(",\"day\": \"" + previous_session.getDayCode() + "\"");
+		sb.append(",\"date\": \"" + previous_session.getDayAsLocalDate().format(DateTimeFormatter.ISO_DATE) + "\"");
 		
 		sb.append(" }");
 		

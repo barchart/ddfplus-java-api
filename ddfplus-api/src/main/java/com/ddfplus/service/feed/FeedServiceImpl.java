@@ -40,6 +40,7 @@ import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.service.usersettings.UserSettings;
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
+import com.ddfplus.util.XMLNode;
 import com.ddfplus.util.XmlUtil;
 
 /**
@@ -118,7 +119,12 @@ public class FeedServiceImpl implements FeedService {
 			for (int i = 0; i < list.getLength(); i++) {
 				try {
 					Node node = list.item(i);
-					Quote q = processQuote(node);
+					XMLNode n = XMLNode.fromElement((Element)node);
+					Quote q = Quote.fromXMLNode(n);
+
+					// Update the Cache
+					datamaster.putQuote(q);
+					
 					/*
 					 * We have the snapshot now, callback the handler
 					 */
@@ -165,160 +171,6 @@ public class FeedServiceImpl implements FeedService {
 
 	}
 
-	private Quote processQuote(Node node) {
-		Element element = (Element) node;
-		SymbolInfo symbolInfo = new SymbolInfo(element.getAttribute("symbol"), //
-				element.getAttribute("name"), //
-				element.getAttribute("exchange"), //
-				element.getAttribute("basecode").charAt(0), //
-				((element.getAttribute("pointvalue").length() > 0)
-						? Float.parseFloat(element.getAttribute("pointvalue")) : 1.0f),
-				((element.getAttribute("tickincrement").length() > 0)
-						? Integer.parseInt(element.getAttribute("tickincrement")) : 1));
-
-		Quote q = new Quote(symbolInfo);
-
-		String s = element.getAttribute("ddfexchange");
-		if (s.length() > 0)
-			q.setDDFExchange(s);
-
-		s = element.getAttribute("flag");
-		if (s.length() > 0)
-			q.setFlag(s.charAt(0));
-
-		s = element.getAttribute("marketcondition");
-		if ((s != null) && (s.length() > 0))
-			q.setMarketCondition(MarketConditionType.getByCode(s.charAt(0)));
-
-		s = element.getAttribute("lastupdate");
-		if (s.length() > 0)
-			q.setLastUpdated(new DateTime(DDFDate.fromDDFString(s).getMillisCST()));
-
-		s = element.getAttribute("bid");
-		if (s.length() > 0)
-			q.setBid(ParserHelper.string2float(s, q.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("bidsize");
-		if (s.length() > 0)
-			q.setBidSize(ParserHelper.string2int(s));
-
-		s = element.getAttribute("ask");
-		if (s.length() > 0)
-			q.setAsk(ParserHelper.string2float(s, q.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("asksize");
-		if (s.length() > 0)
-			q.setAskSize(ParserHelper.string2int(s));
-
-		s = element.getAttribute("mode");
-		if (s.length() > 0)
-			q.setPermission(s.charAt(0));
-
-		// Sessions
-		NodeList sessions = element.getElementsByTagName("SESSION");
-		for (int i = 0; i < sessions.getLength(); i++) {
-			Element el = (Element) sessions.item(i);
-			Session session = new Session(q);
-			parseSession(session, q, el);
-			if (el.getAttribute("id").equals("combined")) {
-				q.setCombinedSession(session);
-			} else if (el.getAttribute("id").equals("previous")) {
-				q.setPreviousSession(session);
-			}
-		}
-
-		// Update the Cache
-		datamaster.putQuote(q);
-
-		return q;
-	}
-
-	private void parseSession(Session session, Quote parent, Element element) {
-		String s = element.getAttribute("day");
-		if (s.length() > 0)
-			session.setDayCode(s.charAt(0));
-
-		s = element.getAttribute("session");
-		if (s.length() > 0)
-			session.setSessionCode(s.charAt(0));
-
-		s = element.getAttribute("timestamp");
-		if (s.length() > 0)
-			session.setTimeInMillis(DDFDate.fromDDFString(s).getMillisCST());
-
-		s = element.getAttribute("tradetime");
-		if (s.length() > 0)
-			session.setTradeTimestamp(DDFDate.fromDDFString(s).getMillisCST());
-
-		s = element.getAttribute("open");
-		if (s.length() > 0)
-			session.setOpen(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("open2");
-		if (s.length() > 0)
-			session.setOpen2(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("high");
-		if (s.length() > 0)
-			session.setHigh(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("low");
-		if (s.length() > 0)
-			session.setLow(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("last");
-		if (s.length() > 0)
-			session.setLast(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("close");
-		if (s.length() > 0)
-			session.setClose(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("close2");
-		if (s.length() > 0)
-			session.setClose2(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("previous");
-		if (s.length() > 0)
-			session.setPrevious(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("settlement");
-		if (s.length() > 0)
-			session.setSettlement(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-
-		s = element.getAttribute("tradesize");
-		if (s.length() > 0)
-			session.setLastSize(ParserHelper.string2int(s));
-
-		s = element.getAttribute("openinterest");
-		if (s.length() > 0)
-			session.setOpenInterest(ParserHelper.string2int(s));
-
-		s = element.getAttribute("volume");
-		if (s.length() > 0)
-			session.setVolume(ParserHelper.string2int(s));
-
-		s = element.getAttribute("numtrades");
-		if (s != null)
-			session.setNumberOfTrades(ParserHelper.string2int(s));
-
-		s = element.getAttribute("pricevolume");
-		try {
-			if (s != null)
-				session.setPriceVolume(Double.parseDouble(s));
-		} catch (Exception e) {
-			;
-		}
-
-		s = element.getAttribute("vwap");
-		try {
-			if ((s != null) && (s.length() > 0))
-				session.setVWAP(ParserHelper.string2float(s, parent.getSymbolInfo().getBaseCode()));
-		} catch (Exception e) {
-			;
-		}
-
-	}
 
 	private String buildQueryString(List<String> symbols) {
 		// for testing only

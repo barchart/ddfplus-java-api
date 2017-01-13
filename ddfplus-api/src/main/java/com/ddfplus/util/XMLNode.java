@@ -11,6 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 /**
  * The XMLNode class is intended to be a simple XML parser for single line
  * XML-like entries. It is NOT intended to be a full featured XML parser. For
@@ -160,6 +166,32 @@ public class XMLNode {
 		s = s.replaceAll("\\&nbsp;", " ");
 		return s;
 	}
+	
+	
+	public static XMLNode fromElement(Element element) {
+		XMLNode result = new XMLNode(element.getTagName());
+		NamedNodeMap attrs = element.getAttributes();
+		for (int i = 0; i < attrs.getLength(); i++) {
+			Attr a = (Attr)attrs.item(i);
+			result.setAttribute(a.getName(), a.getValue());
+		}
+		
+		NodeList children = element.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node n = children.item(i);
+			if (n instanceof Element) {
+				XMLNode node2 = XMLNode.fromElement((Element)n);
+				result.addNode(node2);
+			}
+		}
+
+//		if (result.getName().equals("QUOTE"))
+//			System.out.println(result);	
+
+		return result;
+	}
+	
+	
 
 	/**
 	 * Parses an individual tag for the name and attributes. This will not parse

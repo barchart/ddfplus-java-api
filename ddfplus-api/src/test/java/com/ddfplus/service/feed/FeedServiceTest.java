@@ -46,7 +46,7 @@ public class FeedServiceTest {
 		service.getQuotes(s);
 
 		// quote 1
-		Quote quote = dataMaster.getQuote("ESZ2125C");
+		Quote quote = dataMaster.getQuote("ESZ2125C");		
 		assertNotNull(quote);
 		assertEquals("M", quote.getDDFExchange());
 		assertEquals("ESZ2125C", quote.getSymbolInfo().getSymbol());

@@ -7,6 +7,8 @@
 
 package com.ddfplus.util;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 import org.joda.time.DateTime;
@@ -93,6 +95,9 @@ public class DDFDate {
 	 */
 
 	public static int convertDayCodeToNumber(char daycode) {
+		if (daycode == '\0')
+			return 0;
+		
 		if ((daycode >= '1') && (daycode <= '9'))
 			return (daycode - '0');
 		else if (daycode == '0')
@@ -193,4 +198,40 @@ public class DDFDate {
 		return millisUTC + offsetCST - offsetLOC;
 	}
 
+	
+	
+	public static final LocalDate getLocalDateFromDayCode(char dayCode) {
+		// Get today, in Chicago
+		LocalDate chicago = LocalDate.now(ZoneId.of("America/Chicago"));
+		int year = chicago.getYear();
+		int month = chicago.getMonth().getValue(); // 1 - 12
+		int day = chicago.getDayOfMonth();
+
+		
+		// Determine Day from DayCode
+		int daynum = convertDayCodeToNumber(dayCode);
+		
+		// If the day code is greater than today pkus a few days, it must have been for last month ;)
+		if (daynum > (day + 5)) {
+			month--;
+			if (month == 0) {
+				year--;
+				month = 12;
+			}
+		}
+		
+		if (daynum == 0)
+			daynum = 1;
+		
+		LocalDate date;
+		
+		try {
+			date = LocalDate.of(year, month, daynum);
+		}
+		catch (Exception e) {
+			date = chicago;
+		}
+
+		return date;
+	}
 }

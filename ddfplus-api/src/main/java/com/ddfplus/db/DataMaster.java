@@ -392,11 +392,11 @@ public class DataMaster {
 		 * Set current session to the message's "day", probably first message of
 		 * the day.
 		 */
-		if (quote._combinedSession._day == '\0') {
-			quote._combinedSession._day = msg.getDay();
+		if (quote._combinedSession.getDayCode() == '\0') {
+			quote._combinedSession.setDayCode(msg.getDay());
 		}
 
-		int day1_dayFromCurrentQuoteSession = DDFDate.convertDayCodeToNumber(quote._combinedSession._day);
+		int day1_dayFromCurrentQuoteSession = DDFDate.convertDayCodeToNumber(quote._combinedSession.getDayCode());
 		int day2_dayFromMessage = DDFDate.convertDayCodeToNumber(msg.getDay());
 
 		if (day1_dayFromCurrentQuoteSession == day2_dayFromMessage) {
@@ -406,7 +406,7 @@ public class DataMaster {
 			pCombinedSession = quote._combinedSession;
 			pPreviousSession = quote._previousSession;
 			pElectronicSession = quote._electronicSession;
-		} else if (msg.getDay() == quote._previousSession._day) {
+		} else if (msg.getDay() == quote._previousSession.getDayCode()) {
 			/*
 			 * Message is for the previous session
 			 */
