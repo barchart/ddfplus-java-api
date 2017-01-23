@@ -461,9 +461,18 @@ public class Quote implements Cloneable, Serializable {
 				+ ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + session.getPriceVolume()
 				+ ", \"timestamp\": " + session.getTimeInMillis());
 		
+		if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
+			sb.append(", \"t_session\" : { ");
+			sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL));
+			sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
+			sb.append(", \"tradetimestamp\": " + session_t.getTradeTimestamp());
+			sb.append(", \"timestamp\": " + session_t.getTimeInMillis());
+			sb.append("}");
+		}		
+		
 		Session previous_session = this._previousSession;
 
-		sb.append(", " + "\"previous_session\" : { ");
+		sb.append(", " + "\"previous_session\": { ");
 		sb.append("\"last\": " + ((previous_session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previous_session.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
 		sb.append(((previous_session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previous_session.getOpen(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
 		sb.append(((previous_session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previous_session.getHigh(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
