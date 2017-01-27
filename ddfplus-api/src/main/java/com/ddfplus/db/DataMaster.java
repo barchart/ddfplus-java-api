@@ -385,7 +385,6 @@ public class DataMaster {
 		CumulativeVolume cv = getCumulativeVolume(msg.getSymbol());
 
 		Session pCombinedSession = null;
-		Session pElectronicSession = null;
 		Session pPreviousSession = null;
 
 		/*
@@ -405,14 +404,12 @@ public class DataMaster {
 			 */
 			pCombinedSession = quote._combinedSession;
 			pPreviousSession = quote._previousSession;
-			pElectronicSession = quote._electronicSession;
 		} else if (msg.getDay() == quote._previousSession.getDayCode()) {
 			/*
 			 * Message is for the previous session
 			 */
 			pCombinedSession = quote._previousSession;
 			pPreviousSession = new Session(quote);
-			pElectronicSession = new Session(quote);
 
 			/* Don't set any flags, since we're in "yesterday" */
 			bDoNotSetFlag = true;
@@ -437,7 +434,6 @@ public class DataMaster {
 				}
 				pCombinedSession = quote._combinedSession;
 				pPreviousSession = quote._previousSession;
-				pElectronicSession = quote._electronicSession;
 			} else {
 				// Current Session has a last price, start a new session
 				if (log.isDebugEnabled()) {
@@ -446,11 +442,6 @@ public class DataMaster {
 
 				Session pPrevious = quote._previousSession;
 				quote._previousSession = quote._combinedSession;
-				/*
-				 * A 'T' session is for pre and post equities. These trades
-				 * normally do not affect the statistics (hi, low, etc..)
-				 */
-				quote._electronicSession = new Session(quote, msg.getDay(), 'T');
 				// Create new current session
 				quote._combinedSession = new Session(quote, msg.getDay(), msg.getSession());
 				quote.setFlag('p');
@@ -471,12 +462,11 @@ public class DataMaster {
 				}
 				pCombinedSession = quote._combinedSession;
 				pPreviousSession = quote._previousSession;
-				pElectronicSession = quote._electronicSession;
 
 				if (cv != null) {
 					// It is a new session clear the cumulative volume for this
 					// session
-					DDFDate d = DDFDate.fromDayCode(msg.getDay(), cv.getDate());
+					DDFDate d = DDFDate.fromDayCode(msg.getDay());
 					cv.setDate(d.getMillisCST());
 					cv.getData().clear();
 				}
@@ -522,7 +512,13 @@ public class DataMaster {
 			// record 2, subrecord 7,T
 			// Electronic (Form-T) Trade
 			// ///////////////////////////////////////////
-			record2_subrecord7T(msg, pCombinedSession, pElectronicSession, session);
+			/*
+			 * A 'T' session is for pre and post equities. These trades
+			 * normally do not affect the statistics (hi, low, etc..)
+			 */
+			Session s2 = quote.createSession(pCombinedSession.getDayCode(), 'T');
+			
+			record2_subrecord7T(msg, pCombinedSession, s2, session);
 
 		} else if (msg instanceof DdfMarketTrade) {
 			// ////////////////////////////////////////////

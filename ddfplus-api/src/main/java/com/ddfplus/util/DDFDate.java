@@ -7,15 +7,13 @@
 
 package com.ddfplus.util;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.MutableDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 /**
  * The DDFDate class encapsulates a date and provides some utility functions,
@@ -23,21 +21,18 @@ import org.joda.time.format.DateTimeFormatter;
  */
 
 public class DDFDate {
-
-	// default; futures
 	public static final DateTimeZone TIME_ZONE_CHICAGO = DateTimeZone.forID("America/Chicago");
+	
+	public static final ZoneId _zoneChicago = ZoneId.of("America/Chicago");
+	private static final DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(_zoneChicago);
+	
+	private final ZonedDateTime _zdt;
+	private final char _dayCode;
+	
 
-	// equities, indexes
-	public static final DateTimeZone TIME_ZONE_NEWYORK = DateTimeZone.forID("America/New_York");
-
-	// XXX TIME!ZONE no time zone info
-	private static final DateTimeFormatter _formatter = DateTimeFormat.forPattern("YYYYMMddHHmmss").withZone(
-			TIME_ZONE_CHICAGO);
-
-	private final DateTime _dateTime;
-
-	public DDFDate(DateTime dt) {
-		_dateTime = dt;
+	public DDFDate(ZonedDateTime zdt) {
+		_zdt = zdt;
+		_dayCode = DDFDate.convertNumberToDayCode(_zdt.getDayOfMonth());
 	}
 
 	/**
@@ -47,8 +42,20 @@ public class DDFDate {
 
 	// XXX TIME!ZONE : assume millis are UTC
 	public DDFDate(long millis) {
-		_dateTime = new DateTime(millis, TIME_ZONE_CHICAGO);
+		_zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), _zoneChicago);
+		_dayCode = DDFDate.convertNumberToDayCode(_zdt.getDayOfMonth());
 	}
+	
+	
+	/**	 * 
+	 * @return The <code>ZonedDateTime</code> representing the date.
+	 */
+	
+	public ZonedDateTime getDate() {
+		return _zdt;
+	}
+	
+	
 
 	/**
 	 * Returns the ddfplus day code for this object.
@@ -57,8 +64,7 @@ public class DDFDate {
 	 */
 
 	public char getDayCode() {
-		int day = _dateTime.getDayOfMonth();
-		return DDFDate.convertNumberToDayCode(day);
+		return this._dayCode;
 	}
 
 	/**
@@ -68,7 +74,7 @@ public class DDFDate {
 	 */
 	// XXX TIME!ZONE
 	public long getMillisCST() {
-		return millisCST(_dateTime);
+		return _zdt.withZoneSameInstant(_zoneChicago).toInstant().toEpochMilli();
 	}
 
 	/**
@@ -76,12 +82,12 @@ public class DDFDate {
 	 */
 
 	public String toDDFString() {
-		return _formatter.print(_dateTime);
+		return _zdt.format(_formatter);
 	}
 
 	@Override
 	public String toString() {
-		return ((new Date(_dateTime.getMillis())).toString());
+		return Long.toString(_zdt.toInstant().toEpochMilli());
 	}
 
 	/**
@@ -136,41 +142,22 @@ public class DDFDate {
 
 	// XXX TIME!ZONE millis UTC -> CST
 	public static DDFDate fromDayCode(final char daycode) {
-
-		long millis = millisCST(new DateTime(TIME_ZONE_CHICAGO));
-
-		return fromDayCode(daycode, millis);
-
+		int day = DDFDate.convertDayCodeToNumber(daycode);
+		
+		if ((day < 1) || (day > 31))
+			return null;
+		
+		ZonedDateTime zdt1 = ZonedDateTime.now(_zoneChicago);		
+		ZonedDateTime zdt2 = ZonedDateTime.of(zdt1.getYear(), zdt1.getMonthValue(), day, 0, 0, 0, 0, _zoneChicago);
+			
+		if (day < zdt1.getDayOfMonth() - 25) // next month
+			zdt2 = zdt2.plusMonths(1);
+		else if (day > zdt1.getDayOfMonth() + 5) // last month
+			zdt2 = zdt2.minusMonths(1);
+		
+		return new DDFDate(zdt2);
 	}
 
-	/**
-	 * Creates a new <code>DDFDate</code> object with the given reference point.
-	 * The method rolls the underlying calendar value forward, so that if the
-	 * reference point is the 31st of March, and the daycode passed in is a '1',
-	 * then the result will be April 1st.
-	 * 
-	 * @param daycode
-	 *            The <code>char</code> ddfplus day code
-	 * @param reference
-	 *            The reference date passed in milliseconds as a
-	 *            <code>long</code>.
-	 */
-
-	public static DDFDate fromDayCode(char daycode, long reference) {
-
-		MutableDateTime dt = new MutableDateTime(reference);
-
-		int day = convertDayCodeToNumber(daycode);
-		int cday = dt.getDayOfMonth();
-
-		dt.setDayOfMonth(day);
-
-		if (day > cday)
-			dt.addMonths(1);
-
-		return new DDFDate(dt.getMillis());
-
-	}
 
 	/**
 	 * Parses a date in the format YYYYMMDDHHNNSS
@@ -180,8 +167,8 @@ public class DDFDate {
 
 	public static DDFDate fromDDFString(String s) {
 		try {
-			long millis = _formatter.parseMillis(s);
-			return new DDFDate(millis);
+			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatter);
+			return new DDFDate(zdt);
 		} catch (Exception e) {
 			;
 		}
@@ -196,42 +183,5 @@ public class DDFDate {
 		final long offsetCST = TIME_ZONE_CHICAGO.getOffset(dateTime);
 		final long offsetLOC = DateTimeZone.getDefault().getOffset(dateTime);
 		return millisUTC + offsetCST - offsetLOC;
-	}
-
-	
-	
-	public static final LocalDate getLocalDateFromDayCode(char dayCode) {
-		// Get today, in Chicago
-		LocalDate chicago = LocalDate.now(ZoneId.of("America/Chicago"));
-		int year = chicago.getYear();
-		int month = chicago.getMonth().getValue(); // 1 - 12
-		int day = chicago.getDayOfMonth();
-
-		
-		// Determine Day from DayCode
-		int daynum = convertDayCodeToNumber(dayCode);
-		
-		// If the day code is greater than today pkus a few days, it must have been for last month ;)
-		if (daynum > (day + 5)) {
-			month--;
-			if (month == 0) {
-				year--;
-				month = 12;
-			}
-		}
-		
-		if (daynum == 0)
-			daynum = 1;
-		
-		LocalDate date;
-		
-		try {
-			date = LocalDate.of(year, month, daynum);
-		}
-		catch (Exception e) {
-			date = chicago;
-		}
-
-		return date;
 	}
 }

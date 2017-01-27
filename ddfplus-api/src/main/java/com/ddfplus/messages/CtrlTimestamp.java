@@ -7,7 +7,8 @@
 
 package com.ddfplus.messages;
 
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class CtrlTimestamp extends AbstractMsgBaseMarket implements DdfTimestamp
 	private static final Logger LOG = LoggerFactory.getLogger(CtrlTimestamp.class);
 
 	/** The _date time. */
-	protected volatile DateTime _dateTime = null;
+	protected volatile ZonedDateTime _dateTime = null;
 
 	/** The _year. */
 	protected volatile int _year = 0;
@@ -46,14 +47,16 @@ public class CtrlTimestamp extends AbstractMsgBaseMarket implements DdfTimestamp
 
 	/** The _second. */
 	protected volatile int _second = 0;
+	
+	
 
 	public CtrlTimestamp(byte[] message) {
 		super(message);
 	}
 
-	public DateTime getDateTime() {
-		return _dateTime;
-	}
+//-	public DateTime getDateTime() {
+//-		return _dateTime;
+//-	}
 
 	/**
 	 * Returns the time data in parts, as an <code>int[]</code>.<BR>
@@ -102,14 +105,9 @@ public class CtrlTimestamp extends AbstractMsgBaseMarket implements DdfTimestamp
 
 			// XXX TIME!ZONE
 			// DDF control time stamp message has hard coded time zone of CST
-			final DateTime dateTime = new DateTime(message._year, message._month + 1, message._date, message._hour,
-					message._minute, message._second, 0, DDFDate.TIME_ZONE_CHICAGO);
-
-			message._dateTime = dateTime;
-
-			// XXX
-			message.millisCST = DDFDate.millisCST(dateTime);
-
+			
+			message._dateTime = ZonedDateTime.of(message._year,  message._month + 1, message._date, message._hour, message._minute, message._second, 0, DDFDate._zoneChicago);
+			message.millisCST = message._dateTime.toInstant().toEpochMilli();
 			return message;
 
 		} catch (Exception e) {

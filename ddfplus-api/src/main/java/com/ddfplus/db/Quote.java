@@ -8,13 +8,10 @@
 package com.ddfplus.db;
 
 import java.io.Serializable;
-import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.messages.DdfMarketBase;
@@ -45,24 +42,24 @@ public class Quote implements Cloneable, Serializable {
 	// Sessions
 	protected volatile Session _combinedSession = new Session(this);
 	protected volatile Session _previousSession = new Session(this);
-	protected volatile Session _electronicSession = new Session(this);
 	private final List<Session> _sessions = new CopyOnWriteArrayList<Session>();
 
 	private volatile char _flag = '\0';
 	private volatile MarketConditionType _marketCondition = MarketConditionType.NORMAL;
-	protected volatile DateTime _lastUpdated = null;
+	protected volatile long _lastUpdated = 0;	
+	
 
 	// Original DDF Message
 	private volatile DdfMarketBase _message = null;
 	private volatile char _permission = '\0';
 
 	public Quote(SymbolInfo symbolInfo) {
-		this._symbolInfo = symbolInfo;
+		this._symbolInfo = symbolInfo;	
 	}
 
 	/**
 	 * Clones the Quote object. This creates a copy of the Quote object (as
-	 * opposed to just a ponter reference. Useful if you implementing delay
+	 * opposed to just a pointer reference. Useful if you implementing delay
 	 * queues, or anything that requires a second physical copy of the Quote.
 	 */
 	@Override
@@ -76,13 +73,13 @@ public class Quote implements Cloneable, Serializable {
 		q._bidSize = _bidSize;
 		q._ddfExchange = _ddfExchange;
 		q._flag = _flag;
+		q._lastUpdated = this._lastUpdated;
 		q._marketCondition = _marketCondition;
 
 		q._message = _message;
 		q._permission = _permission;
 
 		q._combinedSession = (Session) _combinedSession.clone();
-		q._electronicSession = (Session) _electronicSession.clone();
 		q._previousSession = (Session) _previousSession.clone();
 
 		q._sessions.addAll(_sessions);
@@ -195,19 +192,6 @@ public class Quote implements Cloneable, Serializable {
 		return _ddfExchange;
 	}
 
-	/**
-	 * Returns the electronic trading session for the Quote. The electronic
-	 * session has different interpretaions, based on the exchange. Some
-	 * exchanges do not offer electronic data.
-	 * 
-	 * @return <code>Session</code> The electronic session object.
-	 * @deprecated
-	 */
-
-	@Deprecated
-	public Session getElectronicSession() {
-		return _electronicSession;
-	}
 
 	/**
 	 * Returns the flag (if any) associated with the quote. Flags could be 'c'
@@ -225,12 +209,20 @@ public class Quote implements Cloneable, Serializable {
 	 * @return update time in ms.
 	 */
 	public long getLastUpdated() {
-		return (_lastUpdated == null) ? 0 : _lastUpdated.getMillis();
+		return _lastUpdated;
 	}
 
-	public void setLastUpdated(DateTime dt) {
-		_lastUpdated = dt;
+	/**
+	 * Gets the Market Condition for the symbol.
+	 * 
+	 * @return Market Condition
+	 */
+	
+	public MarketConditionType getMarketCondition() {
+		return _marketCondition;
 	}
+	
+	
 
 	/**
 	 * Returns the last Message object that influenced this Quote.
@@ -273,6 +265,7 @@ public class Quote implements Cloneable, Serializable {
 	 * 
 	 * @return Session
 	 */
+	
 	public Session getSession(char dayCode, char sessionCode) {
 		for (Session session : _sessions) {
 			if ((session.getDayCode() == dayCode) && (session.getSessionCode() == sessionCode))
@@ -308,16 +301,6 @@ public class Quote implements Cloneable, Serializable {
 		_bidSize = value;
 	}
 
-	/**
-	 * Sets the ddf exchange code.
-	 * 
-	 * @param value
-	 *            <code>String</code> The ddf exchange
-	 */
-
-	public void setDDFExchange(String value) {
-		_ddfExchange = value;
-	}
 
 	/**
 	 * Sets the flag.
@@ -330,21 +313,21 @@ public class Quote implements Cloneable, Serializable {
 		_flag = value;
 	}
 
-	/**
-	 * Gets the Market Condition for the symbol.
-	 * 
-	 * @return Market Condition
-	 */
-	public MarketConditionType getMarketCondition() {
-		return _marketCondition;
-	}
 
+	
+	public void setCombinedSession(Session session) {
+		_combinedSession = session;
+	}
+	
+	
+	
 	/**
 	 * Sets the Market Condition for the symbol.
 	 * 
 	 * @param value
 	 *            <code>char</code> The Market Condition
 	 */
+	
 	public void setMarketCondition(MarketConditionType value) {
 		_marketCondition = value;
 	}
@@ -363,14 +346,24 @@ public class Quote implements Cloneable, Serializable {
 			_ddfExchange = "" + _message.getExchange();
 	}
 
+
+	/**
+	 * Sets the ddf exchange code.
+	 * 
+	 * @param value
+	 *            <code>String</code> The ddf exchange
+	 */
+
+	public void setDDFExchange(String value) {
+		_ddfExchange = value;
+	}
+	
+
 	public void setPermission(char c) {
 		_permission = c;
 	}
-
-	public void setCombinedSession(Session session) {
-		_combinedSession = session;
-	}
-
+	
+	
 	public void setPreviousSession(Session session) {
 		_previousSession = session;
 	}
@@ -381,9 +374,14 @@ public class Quote implements Cloneable, Serializable {
 	 */
 
 	public void updateLastUpdated() {
-		// XXX TIME!ZONE
-		_lastUpdated = new DateTime(DateTimeZone.UTC);
+		_lastUpdated = System.currentTimeMillis();
 	}
+	
+	
+	public void updateLastUpdated(long millis) {
+		_lastUpdated = millis;
+	}
+	
 
 	public String toJSONString() {
 		Session session = this._combinedSession;
@@ -397,10 +395,19 @@ public class Quote implements Cloneable, Serializable {
 				+ this._symbolInfo.getTickIncrement() + ", \"ddfexchange\": "
 				+ (((this._ddfExchange == null) || (this._ddfExchange.length() == 0)) ? "null"
 						: "\"" + this._ddfExchange + "\"")
-				+ ", \"day\": \"" + session.getDayCode() + "\""
-				+ ", \"date\": \"" + session.getDayAsLocalDate().format(DateTimeFormatter.ISO_DATE) + "\""
-				+ ", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null") + ", \"lastupdate\": "
-				+ ((this._lastUpdated != null) ? (new DDFDate(_lastUpdated)).toDDFString() : "0"));
+		);
+		
+		if (session.getDay() != null) {
+			sb.append(
+					", \"day\": \"" + session.getDayCode() + "\""
+					+ ", \"date\": \"" + LocalDate.from(session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""
+			);
+		}
+		
+		sb.append(
+				", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null") +
+				", \"lastupdate\": " + (new DDFDate(_lastUpdated).toDDFString())
+		);
 
 		sb.append(
 				", \"bid\": "
@@ -480,19 +487,21 @@ public class Quote implements Cloneable, Serializable {
 		sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
 		sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
 		sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
-		sb.append(",\"day\": \"" + previous_session.getDayCode() + "\"");
-		sb.append(",\"date\": \"" + previous_session.getDayAsLocalDate().format(DateTimeFormatter.ISO_DATE) + "\"");
+		sb.append(",\"day\": " + ((previous_session.getDayCode() == '\0') ? "null" : "\"" + previous_session.getDayCode() + "\""));
+		sb.append(",\"date\": " + ((previous_session.getDay() == null) ? "null" : "\"" + LocalDate.from(previous_session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
 		
 		sb.append(" }");
 		
-		sb.append(" }");
+		sb.append("}");
 		return sb.toString();
 	}
 
+	
 	public XMLNode toXMLNode() {
 		return toXMLNode(true);
 	}
 
+	
 	/**
 	 * Converts the Quote object into an XMLNode, which can then be used to
 	 * bring the Quote into a textual form.
@@ -501,6 +510,7 @@ public class Quote implements Cloneable, Serializable {
 	 *            Will add bid and ask in the Object
 	 * @return <code>XMLNode</code> The XMLNode representing this Quote.
 	 */
+	
 	public XMLNode toXMLNode(boolean showBidAsk) {
 		XMLNode node = new XMLNode("QUOTE");
 		node.setAttribute("symbol", _symbolInfo.getSymbol());
@@ -519,11 +529,10 @@ public class Quote implements Cloneable, Serializable {
 		if (_marketCondition != MarketConditionType.NORMAL)
 			node.setAttribute("marketcondition", "" + _marketCondition.getCode());
 
-		if (_lastUpdated != null) {
-			DDFDate d = new DDFDate(_lastUpdated);
-			node.setAttribute("lastupdate", d.toDDFString());
-		}
+		if (_lastUpdated > 0)
+			node.setAttribute("lastupdate", (new DDFDate(_lastUpdated)).toDDFString());
 
+		
 		if (showBidAsk) {
 			if (_bid != ParserHelper.DDFAPI_NOVALUE)
 				node.setAttribute("bid", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), _bid)));
@@ -602,16 +611,21 @@ public class Quote implements Cloneable, Serializable {
 		if (s != null)
 			qte._permission = s.charAt(0);
 
+		s = node.getAttribute("lastupdate");
+		if (s.length() > 0)
+			qte._lastUpdated = DDFDate.fromDDFString(s).getMillisCST();
+		
+		
 		for (XMLNode n : node.getAllNodes("SESSION")) {
 			Session session = new Session(qte);
 			session.fromXMLNode(n);
-
-			qte._sessions.add(session);
 
 			if (n.getAttribute("id").equals("combined"))
 				qte._combinedSession = session;
 			else if (n.getAttribute("id").equals("previous"))
 				qte._previousSession = session;
+			else
+				qte._sessions.add(session);
 		}
 		return qte;
 	}

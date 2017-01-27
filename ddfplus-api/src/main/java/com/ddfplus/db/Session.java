@@ -20,7 +20,7 @@ import com.ddfplus.util.XMLNode;
  * The Session object encapsulates the session data for a given quote object.
  * This data is what you would expect to see for a live, intraday update, e.g.
  * open, high, low, last, etc. However, since there can be multiple sessions in
- * a day, the Session object is disting from the Quote object.
+ * a day, the Session object is distinct from the Quote object.
  * <P>
  * 
  * Holds
@@ -41,8 +41,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	protected volatile float _close = 0.0f;
 	protected volatile float _close2 = 0.0f;
-	private char _day;
-	private LocalDate _dayAsLocalDate;
+	private DDFDate _day = null;
 	
 	protected volatile float _high = 0.0f;
 	// protected volatile float _last = 0.0f;
@@ -70,16 +69,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	public Session(Quote parent, char dayCode, char sessionCode) {
 		this._parentQuote = parent;
-		this._day = dayCode;
-		this._session = sessionCode;
-		
-		this._dayAsLocalDate = DDFDate.getLocalDateFromDayCode(dayCode);
+		this._day = DDFDate.fromDayCode(dayCode);
+		this._session = sessionCode;		
 	}
 
 	@Override
 	public Object clone() { // Implements Cloneable
 
-		Session s = new Session(_parentQuote, this._day, this._session);
+		Session s = new Session(_parentQuote, this._day.getDayCode(), this._session);
 
 		s._close = _close;
 		s._close2 = _close2;
@@ -115,11 +112,6 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	}
 
 	
-	public LocalDate getDayAsLocalDate() {
-		return this._dayAsLocalDate;
-	}
-	
-	
 	public void setClose(float v) {
 		this._close = v;
 	}
@@ -148,8 +140,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	}
 
 	
-	public LocalDate getDate() {
-		return this._dayAsLocalDate;
+	public DDFDate getDay() {
+		return this._day;
 	}
 	
 	/**
@@ -157,12 +149,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	 */
 
 	public char getDayCode() {
-		return _day;
+		if (_day == null)
+			return '\0';
+		
+		return _day.getDayCode();
 	}
 
-	protected void setDayCode(char code) {
-		this._day = code;
-		this._dayAsLocalDate = DDFDate.getLocalDateFromDayCode(code);
+	public void setDayCode(char code) {
+		this._day = DDFDate.fromDayCode(code);
 	}
 
 	/**
@@ -346,7 +340,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		String s = node.getAttribute("day");
 		if ((s != null) && (s.length() > 0))
-			_day = s.charAt(0);
+			_day = DDFDate.fromDayCode(s.charAt(0));
 
 		s = node.getAttribute("session");
 		if ((s != null) && (s.length() > 0))
@@ -422,7 +416,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		s = node.getAttribute("vwap");
 		try {
-			if (s != null)
+			if ((s != null) && (s.length() > 0))
 				this._vwap = ParserHelper.string2float(s, _parentQuote.getSymbolInfo().getBaseCode());
 		} catch (Exception e) {
 			;
@@ -474,8 +468,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		XMLNode node = new XMLNode("SESSION");
 
-		if (_day != '\0')
-			node.setAttribute("day", "" + _day);
+		if (_day != null)
+			node.setAttribute("day", "" + _day.getDayCode());
 
 		if (_session != '\0')
 			node.setAttribute("session", "" + _session);

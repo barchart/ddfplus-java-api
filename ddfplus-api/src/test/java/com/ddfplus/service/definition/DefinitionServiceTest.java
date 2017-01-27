@@ -80,6 +80,7 @@ public class DefinitionServiceTest {
 		while ((l = in.readLine()) != null) {
 			sb.append(l);
 		}
+		in.close();
 		return sb.toString();
 	}
 

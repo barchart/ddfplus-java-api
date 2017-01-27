@@ -222,7 +222,7 @@ public class Codec {
 			base *= 10;
 		}
 
-		return value;
+		return value * mult;
 	}
 
 	/**

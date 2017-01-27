@@ -22,7 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -34,12 +33,7 @@ import org.xml.sax.SAXException;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.db.DataMaster;
 import com.ddfplus.db.Quote;
-import com.ddfplus.db.Session;
-import com.ddfplus.db.SymbolInfo;
-import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.service.usersettings.UserSettings;
-import com.ddfplus.util.DDFDate;
-import com.ddfplus.util.ParserHelper;
 import com.ddfplus.util.XMLNode;
 import com.ddfplus.util.XmlUtil;
 

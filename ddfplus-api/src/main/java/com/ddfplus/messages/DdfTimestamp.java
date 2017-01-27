@@ -6,19 +6,10 @@
  */
 package com.ddfplus.messages;
 
-import org.joda.time.DateTime;
-
 /**
  * DDF Timestamp
  */
 public interface DdfTimestamp extends DdfMessageBase {
-
-	/**
-	 * Gets the date time.
-	 * 
-	 * @return the date time
-	 */
-	DateTime getDateTime();
 
 	/**
 	 * Returns the time data in parts, as an <code>int[]</code>.<BR>
