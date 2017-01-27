@@ -133,8 +133,6 @@ public class DDFDate {
 	 * Creates a new <code>DDFDate</code> object with the current time as the
 	 * reference point.
 	 * 
-	 * @see #fromDayCode(char, long)
-	 * 
 	 * @param daycode
 	 *            The <code>char</code> ddfplus day code.
 	 * @return The <code>DDFDate</code> object
