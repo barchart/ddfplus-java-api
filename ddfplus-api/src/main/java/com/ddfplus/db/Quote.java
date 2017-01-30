@@ -612,7 +612,7 @@ public class Quote implements Cloneable, Serializable {
 			qte._permission = s.charAt(0);
 
 		s = node.getAttribute("lastupdate");
-		if (s.length() > 0)
+		if ((s != null) && (s.length() > 0))
 			qte._lastUpdated = DDFDate.fromDDFString(s).getMillisCST();
 		
 		
