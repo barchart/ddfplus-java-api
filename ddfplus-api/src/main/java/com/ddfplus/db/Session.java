@@ -76,7 +76,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	@Override
 	public Object clone() { // Implements Cloneable
 
-		Session s = new Session(_parentQuote, this._day.getDayCode(), this._session);
+		Session s = new Session(_parentQuote, ((this._day == null) ? '\0' : this._day.getDayCode()), this._session);
 
 		s._close = _close;
 		s._close2 = _close2;

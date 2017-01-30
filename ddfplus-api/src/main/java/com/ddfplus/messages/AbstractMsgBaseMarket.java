@@ -19,6 +19,8 @@ import static com.ddfplus.util.ParserHelper.toAsciiString;
 import static com.ddfplus.util.ParserHelper.toAsciiString2;
 import static com.ddfplus.util.ParserHelper.toHexString;
 
+import java.time.ZonedDateTime;
+
 /**
  * The Message base class encapsulates a ddf plus message. It is generally
  * subclassed by one of the many Message???.class files in this package. See
@@ -158,12 +160,8 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			 * 
 			 * TODO Support switching on futures vs stocks
 			 */
-			dateTime = new DateTime(year, month + 1, date, hour, minute, second, ms, DDFDate.TIME_ZONE_CHICAGO);
-
-			millisCST = DDFDate.millisCST(dateTime);
-
+			millisCST = ZonedDateTime.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant().toEpochMilli();			
 		}
-
 	}
 
 	@Override

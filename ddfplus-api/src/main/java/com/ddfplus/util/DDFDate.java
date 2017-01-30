@@ -12,7 +12,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 /**
@@ -171,15 +170,5 @@ public class DDFDate {
 			;
 		}
 		return null;
-	}
-
-	/**
-	 * hack to force seemingly UTC time stamps look like Chicago time
-	 **/
-	public static final long millisCST(final DateTime dateTime) {
-		final long millisUTC = dateTime.getMillis();
-		final long offsetCST = TIME_ZONE_CHICAGO.getOffset(dateTime);
-		final long offsetLOC = DateTimeZone.getDefault().getOffset(dateTime);
-		return millisUTC + offsetCST - offsetLOC;
 	}
 }

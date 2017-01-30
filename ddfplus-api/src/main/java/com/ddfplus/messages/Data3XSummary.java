@@ -6,7 +6,7 @@
  */
 package com.ddfplus.messages;
 
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
 
 import com.ddfplus.codec.Codec;
 import com.ddfplus.enums.QuoteType;
@@ -105,12 +105,8 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
 		int date = Codec.parseIntValue(ba, pos + 11, 2);
 		int year = Codec.parseIntValue(ba, pos + 14, 4);
 
-		// XXX TIME!ZONE
-		DateTime dateTime = new DateTime(year, month, date, 0, 0, 0, 0, DDFDate.TIME_ZONE_CHICAGO);
-
-		// XXX
-		message.millisCST = DDFDate.millisCST(dateTime);
-
+		message.millisCST = ZonedDateTime.of(year,  month, date, 0, 0, 0, 0, DDFDate._zoneChicago).toInstant().toEpochMilli();
+		
 		pos = pos + 19;
 
 		if (message._subrecord == 'C') {
