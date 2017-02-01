@@ -144,15 +144,19 @@ public class DDFDate {
 		if ((day < 1) || (day > 31))
 			return null;
 		
-		ZonedDateTime zdt1 = ZonedDateTime.now(_zoneChicago);		
-		ZonedDateTime zdt2 = ZonedDateTime.of(zdt1.getYear(), zdt1.getMonthValue(), day, 0, 0, 0, 0, _zoneChicago);
-			
-		if (day < zdt1.getDayOfMonth() - 25) // next month
-			zdt2 = zdt2.plusMonths(1);
-		else if (day > zdt1.getDayOfMonth() + 5) // last month
-			zdt2 = zdt2.minusMonths(1);
+		ZonedDateTime zdt = ZonedDateTime.of(2017,  1, 31, 0, 0, 0, 0, _zoneChicago); 
 		
-		return new DDFDate(zdt2);
+		boolean plusMonth = (day < zdt.getDayOfMonth() - 25);
+		boolean minusMonth = (day > zdt.getDayOfMonth() + 5);
+		
+		if (plusMonth)
+			zdt = zdt.plusMonths(1);
+		else if (minusMonth)
+			zdt = zdt.minusMonths(1);
+		
+		zdt = zdt.withDayOfMonth(day);
+			
+		return new DDFDate(zdt);
 	}
 
 
