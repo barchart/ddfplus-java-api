@@ -6,7 +6,6 @@
  */
 package com.ddfplus.messages;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +68,7 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 	public volatile String _symbol = ASCII.STRING_EMPTY;
 
 	/** The _timestamp. */
-	public volatile DateTime dateTime = null;
+//	public volatile DateTime dateTime = null;
 
 	/**
 	 * Instantiates a new msg base market.

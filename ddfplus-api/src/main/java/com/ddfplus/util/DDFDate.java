@@ -12,16 +12,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.joda.time.DateTimeZone;
-
 /**
  * The DDFDate class encapsulates a date and provides some utility functions,
  * such as conversions to/from ddfplus day codes.
  */
 
 public class DDFDate {
-	public static final DateTimeZone TIME_ZONE_CHICAGO = DateTimeZone.forID("America/Chicago");
-	
 	public static final ZoneId _zoneChicago = ZoneId.of("America/Chicago");
 	private static final DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(_zoneChicago);
 	
@@ -71,7 +67,7 @@ public class DDFDate {
 	 * 
 	 * @return The date value in milliseconds.
 	 */
-	// XXX TIME!ZONE
+	
 	public long getMillisCST() {
 		return _zdt.withZoneSameInstant(_zoneChicago).toInstant().toEpochMilli();
 	}
@@ -137,14 +133,13 @@ public class DDFDate {
 	 * @return The <code>DDFDate</code> object
 	 */
 
-	// XXX TIME!ZONE millis UTC -> CST
 	public static DDFDate fromDayCode(final char daycode) {
 		int day = DDFDate.convertDayCodeToNumber(daycode);
 		
 		if ((day < 1) || (day > 31))
 			return null;
 		
-		ZonedDateTime zdt = ZonedDateTime.of(2017,  1, 31, 0, 0, 0, 0, _zoneChicago); 
+		ZonedDateTime zdt = ZonedDateTime.now(_zoneChicago); 
 		
 		boolean plusMonth = (day < zdt.getDayOfMonth() - 25);
 		boolean minusMonth = (day > zdt.getDayOfMonth() + 5);

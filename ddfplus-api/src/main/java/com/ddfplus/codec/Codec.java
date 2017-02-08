@@ -271,11 +271,8 @@ public class Codec {
 					Object[] o = Codec.stripSpreadPreamble(array);
 					record = '2';
 					array = (byte[]) o[5];
-
-					// Object[] o = MessageProvider.stripSpreadPreamble(array);
-					// spreadType = (String) o[1];
-					// spreadLegs = (String[]) o[3];
-					// array = (byte[]) o[4]; // Reset the message type.
+					spreadType = (String) o[1];
+					spreadLegs = (String[]) o[3];
 				}
 
 				switch (record) { // Record
@@ -384,7 +381,13 @@ public class Codec {
 					case 'C':
 						msg = Data3XSummary.Parse(array);
 						break;
+					case 'D':
+						showErrorMessage = false;
+						break;
 					case 'I':
+						showErrorMessage = false;
+						break;
+					case 'R':
 						showErrorMessage = false;
 						break;
 					case 'S':
@@ -496,9 +499,6 @@ public class Codec {
 		}
 
 		System.arraycopy(ba2, 2 + symbol.length(), ba3, 2 + sb.length(), ba3.length - (2 + sb.length()));
-
-		// String zzzzz = parseStringValue(ba3, 0, ba3.length);
-		// System.out.println(zzzzz);
 
 		return new Object[] { subrecord, spreadType, numberOfLegs, legs, ba2, ba3 };
 	}

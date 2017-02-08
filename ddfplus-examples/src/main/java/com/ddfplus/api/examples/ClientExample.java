@@ -432,7 +432,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 	@Override
 	public void onTimestamp(Date ts) {
 		if (logTS) {
-			log.info("TS: < " + java.text.DateFormat.getDateTimeInstance().format(ts));
+			log.info("TS: < " + ts);
 		}
 	}
 
@@ -443,7 +443,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		}
 		if (config.getExchangeCodes() != null) {
 			fn += config.getExchangeCodes().replace(',', '_');
-		}
+		}		
 		String dt = new DateTime().toString("YYYYMMdd");
 		fn += "_" + dt + ".dat";
 		return fn;

@@ -225,8 +225,6 @@ public class CumulativeVolume {
 			return null;
 		}
 
-		// System.err.println(node);
-
 		final CumulativeVolume volume = new CumulativeVolume(node.getAttribute("symbol"));
 
 		volume._baseCode = node.getAttribute("basecode").charAt(0);
