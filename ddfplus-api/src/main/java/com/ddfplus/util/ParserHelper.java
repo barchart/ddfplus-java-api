@@ -127,7 +127,7 @@ public final class ParserHelper {
 	 * 
 	 * TODO Possible optimizations here.
 	 */
-	public synchronized static final String float2string(float value, final char basecode, final int target,
+	public synchronized static final String float2string(double value, final char basecode, final int target,
 			final boolean special64) {
 
 		final int unit = SymbolInfo.ddfuc2bb(basecode);
@@ -230,7 +230,7 @@ public final class ParserHelper {
 
 		String sf = "";
 
-		float div = value - (int) value;
+		double div = value - (int) value;
 		int digits = 0;
 
 		if (unit == -1) {

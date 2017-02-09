@@ -465,7 +465,7 @@ public class Quote implements Cloneable, Serializable {
 				+ ", \"openinterest\": "
 				+ ((this._previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
 						: this._previousSession.getOpenInterest())
-				+ ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + session.getPriceVolume()
+				+ ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
 				+ ", \"timestamp\": " + session.getTimeInMillis());
 		
 		if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
