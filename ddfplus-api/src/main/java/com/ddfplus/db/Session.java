@@ -343,8 +343,19 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	public void fromXMLNode(XMLNode node) {
 
 		String s = node.getAttribute("day");
-		if ((s != null) && (s.length() > 0))
-			_day = DDFDate.fromDayCode(s.charAt(0));
+		
+		s = node.getAttribute("timestamp");
+		if (s != null)
+			_timestamp = DDFDate.fromDDFString(s).getMillisCST();
+		
+		if ((s != null) && (s.length() > 0)) {
+			try {
+				_day = DDFDate.fromDayCode(s.charAt(0));
+			}
+			catch (Exception e) {
+				_day = new DDFDate(_timestamp);
+			}
+		}
 
 		s = node.getAttribute("session");
 		if ((s != null) && (s.length() > 0))
