@@ -154,6 +154,11 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _day.getDayCode();
 	}
 
+	
+	public void setDayCode(DDFDate day) {
+		this._day = day;
+	}
+	
 	public void setDayCode(char code) {
 		this._day = DDFDate.fromDayCode(code);
 	}
