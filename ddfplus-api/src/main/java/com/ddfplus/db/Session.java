@@ -63,19 +63,19 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	// Default Constructor
 	public Session(Quote parent) {
-		this(parent, '\0', '\0');
+		this(parent, null, '\0');
 	}
 
-	public Session(Quote parent, char dayCode, char sessionCode) {
+	public Session(Quote parent, DDFDate day, char sessionCode) {
 		this._parentQuote = parent;
-		this._day = DDFDate.fromDayCode(dayCode);
+		this._day = day;
 		this._session = sessionCode;		
 	}
 
 	@Override
 	public Object clone() { // Implements Cloneable
 
-		Session s = new Session(_parentQuote, ((this._day == null) ? '\0' : this._day.getDayCode()), this._session);
+		Session s = new Session(_parentQuote, this._day, this._session);
 
 		s._close = _close;
 		s._close2 = _close2;

@@ -103,7 +103,7 @@ public class Quote implements Cloneable, Serializable {
 	public Session createSession(char dayCode, char sessionCode) {
 		Session session = this.getSession(dayCode, sessionCode);
 		if (session == null) {
-			session = new Session(this, dayCode, sessionCode);
+			session = new Session(this, DDFDate.fromDayCode(dayCode), sessionCode);
 
 			if ((sessionCode == 'R') || (sessionCode == 'T'))
 				_sessions.add(session);

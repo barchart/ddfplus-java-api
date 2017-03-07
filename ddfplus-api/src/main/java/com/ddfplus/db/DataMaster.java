@@ -443,7 +443,7 @@ public class DataMaster {
 				Session pPrevious = quote._previousSession;
 				quote._previousSession = quote._combinedSession;
 				// Create new current session
-				quote._combinedSession = new Session(quote, msg.getDay(), msg.getSession());
+				quote._combinedSession = new Session(quote, DDFDate.fromDayCode(msg.getDay()), msg.getSession());
 				quote.setFlag('p');
 
 				// Add MarketEvent.PreOpen
