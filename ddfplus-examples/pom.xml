@@ -12,6 +12,10 @@
 	<artifactId>ddfplus-examples</artifactId>
 	<description>DDF Plus Example API Code</description>
 
+	<properties>
+		<maven.javadoc.skip>true</maven.javadoc.skip>
+	</properties>
+
 
 	<dependencies>
 
@@ -43,31 +47,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>get-javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.ddfplus.jaws</groupId>
-									<artifactId>ddfplus-api</artifactId>
-									<classifier>javadoc</classifier>
-									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/javadoc</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
