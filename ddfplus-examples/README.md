@@ -97,8 +97,9 @@ where:
 * Clone the Github project
 * Load JDK 1.7
 * Load Maven 3.2.5++
-* mvn clean install
+* mvn clean install -Pdist
 
+The "dist" profile will build the executable jar.
 
 
 # Using the API
