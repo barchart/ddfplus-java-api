@@ -20,7 +20,7 @@
  The server push mode does not require a login or password.  Please contact Barchart for provisioning.
 
 ## API Requirements
-  The API requires Java 7 or higher.
+  The API requires Java 8 or higher.
 
 ## Contents
 
