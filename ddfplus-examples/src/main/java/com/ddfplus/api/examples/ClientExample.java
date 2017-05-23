@@ -443,7 +443,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		}
 		if (config.getExchangeCodes() != null) {
 			fn += config.getExchangeCodes().replace(',', '_');
-		}		
+		}
 		String dt = new DateTime().toString("YYYYMMdd");
 		fn += "_" + dt + ".dat";
 		return fn;
@@ -584,7 +584,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		@Override
 		public void onMessage(DdfMessageBase msg) {
 			if (logDdf) {
-				log.info("DDF: <" + msg);
+				log.info("DDF: <" + msg + " msCST: " + msg.getMillisCST());
 			}
 		}
 
