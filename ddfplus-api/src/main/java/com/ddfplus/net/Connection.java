@@ -244,6 +244,16 @@ public class Connection {
 		channel.enqueueCommand(cmd);
 	}
 
+	public void subscribeMinuteBar(String symbol) {
+		Cmd cmd = new Cmd("GO", symbol, "O");
+		channel.enqueueCommand(cmd);
+	}
+
+	public void unsubscribeMinuteBar(String symbol) {
+		Cmd cmd = new Cmd("STOP", symbol, "O");
+		channel.enqueueCommand(cmd);
+	}
+
 	/**
 	 * Starts the data stream to the server.
 	 */

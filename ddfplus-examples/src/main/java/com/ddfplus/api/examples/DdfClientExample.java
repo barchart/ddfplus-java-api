@@ -27,11 +27,13 @@ import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
+import com.ddfplus.api.MinuteBarHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
 import com.ddfplus.api.TradeHandler;
 import com.ddfplus.db.BookQuote;
 import com.ddfplus.db.MarketEvent;
+import com.ddfplus.db.Ohlc;
 import com.ddfplus.db.Quote;
 import com.ddfplus.enums.ConnectionType;
 import com.ddfplus.messages.DdfMarketTrade;
@@ -68,9 +70,9 @@ import com.ddfplus.util.StoreFeedHandler;
  *
  * 
  */
-public class ClientExample implements ConnectionEventHandler, TimestampHandler {
+public class DdfClientExample implements ConnectionEventHandler, TimestampHandler {
 
-	private static final Logger log = LoggerFactory.getLogger(ClientExample.class);
+	private static final Logger log = LoggerFactory.getLogger(DdfClientExample.class);
 
 	private static final String CLIENT_PROPS_FILE = "client.properties";
 
@@ -87,6 +89,8 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 	private Map<String, TradeHandler> tradeExchangeHandlers = new HashMap<String, TradeHandler>();
 
 	private Map<String, List<BookQuoteHandler>> depthHandlers = new HashMap<String, List<BookQuoteHandler>>();
+
+	private Map<String, MinuteBarHandler> minuteBarHandlers = new HashMap<String, MinuteBarHandler>();
 
 	// log modes
 	private boolean logTS;
@@ -124,6 +128,10 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			}
 			if (args[i].equals("-sym") && i + 1 < args.length) {
 				config.setSymbols(args[i + 1]);
+				i++;
+			}
+			if (args[i].equals("-m") && i + 1 < args.length) {
+				config.setMinuteBars(args[i + 1]);
 				i++;
 			}
 			if (args[i].equals("-ddf")) {
@@ -192,6 +200,9 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
 				config.setSymbols(p.getProperty("symbols"));
 			}
+			if (p.getProperty("minuteBars") != null && !p.getProperty("minuteBars").isEmpty()) {
+				config.setMinuteBars(p.getProperty("minuteBars"));
+			}
 			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
 				config.setSymbols(p.getProperty("symbols"));
 			}
@@ -255,8 +266,8 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			System.exit(0);
 		}
 
-		if (config.getSymbols() == null && config.getExchangeCodes() == null) {
-			System.err.println("Either -sym or -e must be specified.");
+		if (config.getSymbols() == null && config.getExchangeCodes() == null && config.getMinuteBars() == null) {
+			System.err.println("Either -sym, -e or -m must be specified.");
 			printHelp();
 			System.exit(0);
 		}
@@ -274,7 +285,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 		System.out.println("Starting DDF Client with " + config);
 
-		ClientExample client = new ClientExample(config);
+		DdfClientExample client = new DdfClientExample(config);
 
 		ShutdownHook shutdownThread = new ShutdownHook(client);
 		Runtime.getRuntime().addShutdownHook(shutdownThread);
@@ -293,8 +304,9 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		final StringBuilder text = new StringBuilder(1024);
 
 		text.append("" + "Loads and runs the sample ddfplus client application.\n")
-				.append("Usage: java " + ClientExample.class.getCanonicalName())
-				.append(" -u user -p password -sym symbols|-e exchangeCodes [-t TCP|HTTP|HTTPSTREAM|WSS][-s server] [-d] [-su user] [-sp password] [-l a,ts,d,me,q,qe,b] [-st] [-f <prop file namne>]");
+				.append("Usage: java " + DdfClientExample.class.getCanonicalName())
+				.append(" -u user -p password -sym symbols|-e exchangeCodes|-m symbolos [-t TCP|HTTP|HTTPSTREAM|WSS][-s server]\n")
+				.append("  [-d] [-su user] [-sp password] [-l a,ts,d,me,q,qe,b] [-st] [-f <prop file namne>]");
 		text.append("\n-u user             - User Name");
 		text.append("\n-p password         - Password");
 		text.append("\n-sym symbols        - Symbols, comma separated. Required if -e not used.");
@@ -302,6 +314,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		text.append("\n-e exchangeCodes    - Subscribe for all symbols at the given exchanges");
 		text.append("\n-eq                 - Add Exchange Quote Handler");
 		text.append("\n-et                 - Add Exchange Trade Handler");
+		text.append("\n-m symbols          - Activate minute bars for symbols");
 		text.append("\n-t connection type  - Connection Type, TCP,HTTP,HTTPSTREAM,WSS, defaults to TCP");
 		text.append("\n-s server           - DDF Server, otherwise it defaults to the server assigned to the user.");
 		text.append("\n-d                  - Activate depth subscriptions");
@@ -315,7 +328,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 
 	}
 
-	public ClientExample(ClientConfig config) throws Exception {
+	public DdfClientExample(ClientConfig config) throws Exception {
 
 		this.config = config;
 		parseLogModes(config.getLogMode());
@@ -379,6 +392,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		// Add Market Event Handler
 		marketEventHandler = new MarketEventHandlerImpl();
 		client.addMarketEventHandler(marketEventHandler);
+
 	}
 
 	public void start() throws Exception {
@@ -508,6 +522,7 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			client.removeQuoteExchangeHandler(exchangeCode);
 		}
 		quoteExchangeHandlers.clear();
+
 		// Trade Exchange
 		exchangeCodes = tradeExchangeHandlers.keySet();
 		for (String exchangeCode : exchangeCodes) {
@@ -515,6 +530,12 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		}
 		tradeExchangeHandlers.clear();
 
+		// Minute bars
+		Set<String> minuteSymbols = minuteBarHandlers.keySet();
+		for (String s : minuteSymbols) {
+			client.removeMinuteBarHandler(s);
+		}
+		minuteBarHandlers.clear();
 	}
 
 	private void startSubscriptions() {
@@ -542,38 +563,49 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 			}
 		}
 
-		if (config.getSymbols() == null) {
-			return;
-		}
-
-		String[] symbols = config.getSymbols().split(",");
-		for (String symbol : symbols) {
-			// Market Quote/BBO
-			QuoteHandler handler = new ClientQuoteHandler();
-			List<QuoteHandler> l = quoteHandlers.get(symbol);
-			if (l == null) {
-				l = new CopyOnWriteArrayList<QuoteHandler>();
-				quoteHandlers.put(symbol, l);
-			}
-			l.add(handler);
-			// This will request quotes if client does not have a subscription
-			// to the symbol
-			client.addQuoteHandler(symbol, handler);
-		}
-
-		// Depth
-		if (config.isDepthSubscription()) {
+		if (config.getSymbols() != null) {
+			String[] symbols = config.getSymbols().split(",");
 			for (String symbol : symbols) {
-				ClientBookQuoteHandler depthHandler = new ClientBookQuoteHandler();
-				List<BookQuoteHandler> l = depthHandlers.get(symbol);
+				// Market Quote/BBO
+				QuoteHandler handler = new ClientQuoteHandler();
+				List<QuoteHandler> l = quoteHandlers.get(symbol);
 				if (l == null) {
-					l = new CopyOnWriteArrayList<BookQuoteHandler>();
-					depthHandlers.put(symbol, l);
+					l = new CopyOnWriteArrayList<QuoteHandler>();
+					quoteHandlers.put(symbol, l);
 				}
-				l.add(depthHandler);
-				// Will request a depth subscription if client is not already
-				// subscribed.
-				client.addBookQuoteHandler(symbol, depthHandler);
+				l.add(handler);
+				// This will request quotes if client does not have a
+				// subscription
+				// to the symbol
+				client.addQuoteHandler(symbol, handler);
+			}
+			// Depth
+			if (config.isDepthSubscription()) {
+				for (String symbol : symbols) {
+					ClientBookQuoteHandler depthHandler = new ClientBookQuoteHandler();
+					List<BookQuoteHandler> l = depthHandlers.get(symbol);
+					if (l == null) {
+						l = new CopyOnWriteArrayList<BookQuoteHandler>();
+						depthHandlers.put(symbol, l);
+					}
+					l.add(depthHandler);
+					// Will request a depth subscription if client is not
+					// already
+					// subscribed.
+					client.addBookQuoteHandler(symbol, depthHandler);
+				}
+			}
+		}
+
+		if (config.getMinuteBars() != null) {
+			String[] symbols = config.getMinuteBars().split(",");
+			for (String symbol : symbols) {
+				// Add minute bar handler
+				ClientMinuteBarHandler mbHandler = new ClientMinuteBarHandler(symbol);
+				minuteBarHandlers.put(symbol, mbHandler);
+				// Will subscribe to minute bars if subscription does not
+				// exist
+				client.addMinuteBarHandler(symbol, mbHandler);
 			}
 		}
 
@@ -667,11 +699,29 @@ public class ClientExample implements ConnectionEventHandler, TimestampHandler {
 		}
 	}
 
+	/*
+	 * Minute bar handler
+	 */
+	private class ClientMinuteBarHandler implements MinuteBarHandler {
+
+		private String symbol;
+
+		public ClientMinuteBarHandler(String symbol) {
+			this.symbol = symbol;
+		}
+
+		@Override
+		public void onOhlc(Ohlc msg) {
+			log.info("OHLC: < " + msg);
+
+		}
+	}
+
 	private static class ShutdownHook extends Thread {
 
-		private ClientExample app;
+		private DdfClientExample app;
 
-		public ShutdownHook(ClientExample app) {
+		public ShutdownHook(DdfClientExample app) {
 			this.app = app;
 		}
 

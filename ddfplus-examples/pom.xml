@@ -62,7 +62,7 @@
 							</descriptors>
 							<archive>
 								<manifest>
-									<mainClass>com.ddfplus.api.examples.ClientExample</mainClass>
+									<mainClass>com.ddfplus.api.examples.DdfClientExample</mainClass>
 								</manifest>
 							</archive>
 						</configuration>

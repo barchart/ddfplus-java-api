@@ -357,6 +357,9 @@ public class DataMaster {
 		} else if (node.getName().equals("CV")) {
 			CumulativeVolume volume = handleRefreshCumlativeVolume(node);
 			fe.setCumVolume(volume);
+		} else if (node.getName().equals("ohlc")) {
+			Ohlc ohlc = Ohlc.fromXMLNode(node);
+			fe.setOhlc(ohlc);
 		} else {
 			log.error("wrong refresh message type: {}", node.getName());
 		}
@@ -513,11 +516,11 @@ public class DataMaster {
 			// Electronic (Form-T) Trade
 			// ///////////////////////////////////////////
 			/*
-			 * A 'T' session is for pre and post equities. These trades
-			 * normally do not affect the statistics (hi, low, etc..)
+			 * A 'T' session is for pre and post equities. These trades normally
+			 * do not affect the statistics (hi, low, etc..)
 			 */
 			Session s2 = quote.createSession(pCombinedSession.getDayCode(), 'T');
-			
+
 			record2_subrecord7T(msg, pCombinedSession, s2, session);
 
 		} else if (msg instanceof DdfMarketTrade) {

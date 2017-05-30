@@ -53,6 +53,10 @@ public class ClientConfig {
 	// Unknown Symbol interval
 	private long unknownSymbolIntervalSec = 60 * 60;
 	private long unknownSymbolDelay = 60;
+	/*
+	 * Activate minute bars for the symbols. Comma separated.
+	 */
+	private String minuteBars;
 
 	public String getSnapshotPassword() {
 		return snapshotPassword;
@@ -194,6 +198,7 @@ public class ClientConfig {
 		sb.append("\n\tdefinitionRefreshIntervalSec: " + definitionRefreshIntervalSec);
 		sb.append("\n\tunknownSymbolIntervalSec: " + unknownSymbolIntervalSec);
 		sb.append("\n\tunknownSymbolDelay: " + unknownSymbolDelay);
+		sb.append("\n\tminuteBars: " + minuteBars);
 		sb.append("\n");
 		return sb.toString();
 	}
@@ -232,6 +237,14 @@ public class ClientConfig {
 
 	public boolean isAddExchangeTradeHandler() {
 		return this.addExchangeTradeHandler;
+	}
+
+	public String getMinuteBars() {
+		return this.minuteBars;
+	}
+
+	public void setMinuteBars(String syms) {
+		this.minuteBars = syms;
 	}
 
 }

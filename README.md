@@ -14,7 +14,7 @@ Releases are available on maven central.
 <dependency>
    <groupId>com.ddfplus.jaws</groupId>
    <artifactId>ddfplus-api</artifactId>
-   <version>1.0.9</version>
+   <version>version_string</version>
 </dependency>
 
 
@@ -23,7 +23,7 @@ Releases are available on maven central.
 <dependency>
    <groupId>com.ddfplus.jaws</groupId>
    <artifactId>ddfplus-examples</artifactId>
-   <version>1.0.9</version>
+   <version>version_string</version>
 </dependency>
 
 

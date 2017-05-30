@@ -19,11 +19,13 @@ import java.time.format.DateTimeFormatter;
 
 public class DDFDate {
 	public static final ZoneId _zoneChicago = ZoneId.of("America/Chicago");
-	private static final DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").withZone(_zoneChicago);
-	
+	private static final DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+			.withZone(_zoneChicago);
+	private static final DateTimeFormatter _formatterOhlc = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+			.withZone(_zoneChicago);
+
 	private final ZonedDateTime _zdt;
 	private final char _dayCode;
-	
 
 	public DDFDate(ZonedDateTime zdt) {
 		_zdt = zdt;
@@ -40,17 +42,16 @@ public class DDFDate {
 		_zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), _zoneChicago);
 		_dayCode = DDFDate.convertNumberToDayCode(_zdt.getDayOfMonth());
 	}
-	
-	
-	/**	 * 
+
+	/**
+	 * *
+	 * 
 	 * @return The <code>ZonedDateTime</code> representing the date.
 	 */
-	
+
 	public ZonedDateTime getDate() {
 		return _zdt;
 	}
-	
-	
 
 	/**
 	 * Returns the ddfplus day code for this object.
@@ -67,7 +68,7 @@ public class DDFDate {
 	 * 
 	 * @return The date value in milliseconds.
 	 */
-	
+
 	public long getMillisCST() {
 		return _zdt.withZoneSameInstant(_zoneChicago).toInstant().toEpochMilli();
 	}
@@ -98,7 +99,7 @@ public class DDFDate {
 	public static int convertDayCodeToNumber(char daycode) {
 		if (daycode == '\0')
 			return 0;
-		
+
 		if ((daycode >= '1') && (daycode <= '9'))
 			return (daycode - '0');
 		else if (daycode == '0')
@@ -135,25 +136,24 @@ public class DDFDate {
 
 	public static DDFDate fromDayCode(final char daycode) {
 		int day = DDFDate.convertDayCodeToNumber(daycode);
-		
+
 		if ((day < 1) || (day > 31))
 			return null;
-		
-		ZonedDateTime zdt = ZonedDateTime.now(_zoneChicago); 
-		
+
+		ZonedDateTime zdt = ZonedDateTime.now(_zoneChicago);
+
 		boolean plusMonth = (day < zdt.getDayOfMonth() - 25);
 		boolean minusMonth = (day > zdt.getDayOfMonth() + 5);
-		
+
 		if (plusMonth)
 			zdt = zdt.plusMonths(1);
 		else if (minusMonth)
 			zdt = zdt.minusMonths(1);
-		
+
 		zdt = zdt.withDayOfMonth(day);
-			
+
 		return new DDFDate(zdt);
 	}
-
 
 	/**
 	 * Parses a date in the format YYYYMMDDHHNNSS
@@ -164,6 +164,16 @@ public class DDFDate {
 	public static DDFDate fromDDFString(String s) {
 		try {
 			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatter);
+			return new DDFDate(zdt);
+		} catch (Exception e) {
+			;
+		}
+		return null;
+	}
+
+	public static DDFDate fromDDFStringOhlc(String s) {
+		try {
+			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatterOhlc);
 			return new DDFDate(zdt);
 		} catch (Exception e) {
 			;

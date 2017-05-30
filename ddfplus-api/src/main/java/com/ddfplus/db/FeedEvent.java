@@ -20,6 +20,7 @@ public class FeedEvent {
 	private BookQuote bookQuote;
 	private CumulativeVolume cumVolume;
 	private List<MarketEvent> marketEvents;
+	private Ohlc ohlc;
 
 	public boolean isDdfMessage() {
 		return ddfMessage != null;
@@ -98,5 +99,18 @@ public class FeedEvent {
 
 	public void setCumVolume(CumulativeVolume volume) {
 		this.cumVolume = volume;
+	}
+
+	public boolean isOhlc() {
+		return ohlc != null;
+	}
+
+	public Ohlc getOhlc() {
+		return this.ohlc;
+	}
+
+	public void setOhlc(Ohlc ohlc) {
+		this.ohlc = ohlc;
+
 	}
 }

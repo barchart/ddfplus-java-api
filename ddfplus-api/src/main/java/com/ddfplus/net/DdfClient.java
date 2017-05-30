@@ -10,6 +10,7 @@ import com.ddfplus.api.BookQuoteHandler;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
+import com.ddfplus.api.MinuteBarHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
 import com.ddfplus.api.TradeHandler;
@@ -140,6 +141,20 @@ public interface DdfClient {
 	 *            DDF Exchange Code
 	 */
 	void removeTradeExchangeHandler(String exchangeCode);
+
+	/**
+	 * Adds handler to process OHLC messages.
+	 * 
+	 * @param symbol
+	 * 
+	 * @param symbol
+	 *            Symbol
+	 * @param mbHandler
+	 *            OHLC handler
+	 */
+	void addMinuteBarHandler(String symbol, MinuteBarHandler mbHandler);
+
+	void removeMinuteBarHandler(String symbol);
 
 	/**
 	 * Retrieves a Quote from the embedded DataManager object.

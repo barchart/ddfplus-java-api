@@ -36,7 +36,7 @@
 ## How to run the Client example
   This client will connect up to a JERQ middleware server and display market data.
 
-The source code is in `src/**/ClientExample.java`.  
+The source code is in `src/**/DdfClientExample.java`.  
 
 To get help
 
@@ -95,19 +95,16 @@ where:
 ## How to build from source
 
 * Clone the Github project
-* Load JDK 1.7
+* Load JDK 1.8
 * Load Maven 3.2.5++
-* mvn clean install -Pdist
-
-The "dist" profile will build the executable jar.
-
+* mvn clean install
 
 # Using the API
 
-Please see ClientExample.java for a running example of using the API.
+Please see DdfClientExample.java for a running example of using the API.
 
 ## Getting Started
- Please look at the ClientExample constructor for initialization.
+ Please look at the DdfClientExample constructor for initialization.
  
  1. Create a ClientConfig class
    * Set the user name and password
@@ -166,7 +163,7 @@ client.addQuoteHandler(symbol, handler);
   4. QuoteHandler - Callback with Quote which contains BBO plus other statistics
   5. MarketEventHandler - Callback for market events such as Open, High, etc.. See MarketEvent.java
   6. BookQuoteHandler - Callback for Depth messages.
-
+  7. MinuteBarHandler - Callback for OHLC minute bars
 
 ## Subscribing to market data by symbol
 
