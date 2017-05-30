@@ -15,11 +15,6 @@
 				<include>**/*.java</include>
 			</includes>
 		</fileSet>
-		<fileSet>
-			<!--  API Javadoc -->
-			<directory>${project.build.directory}/javadoc</directory>
-			<outputDirectory>doc/api</outputDirectory>
-		</fileSet>
 	</fileSets>
 
 	<files>
