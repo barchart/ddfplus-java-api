@@ -712,8 +712,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 
 		@Override
 		public void onOhlc(Ohlc msg) {
-			log.info("OHLC: < " + msg);
-
+			log.info("OHLC: Symbol: {} Open: {} High: {} Low: {} Close: {}", msg.getSymbol(), msg.getOpen(),
+					msg.getHigh(), msg.getLow(), msg.getClose());
 		}
 	}
 

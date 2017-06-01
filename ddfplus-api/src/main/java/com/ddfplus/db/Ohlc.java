@@ -17,24 +17,96 @@ import com.ddfplus.util.XMLNode;
  */
 public class Ohlc {
 
-	protected final String _symbol;
-	protected char _day;
-	protected int _interval = 0;
-	protected long _time = 0L;
-	protected char _baseCode = '\0';
+	private final String _symbol;
+	private char _day;
+	private int _interval = 0;
+	private long _time = 0L;
+	private char _baseCode = '\0';
 	// stats
-	protected float _open = 0.0f;
-	protected float _high = 0.0f;
-	protected float _low = 0.0f;
-	protected float _close = 0.0f;
-	protected volatile int _volume = 0;
+	private float _open = 0.0f;
+	private float _high = 0.0f;
+	private float _low = 0.0f;
+	private float _close = 0.0f;
+	private int _volume = 0;
 
 	public Ohlc(String symbol) {
 		_symbol = symbol;
 	}
 
 	public String getSymbol() {
-		return this._symbol;
+		return _symbol;
+	}
+
+	public char getDay() {
+		return _day;
+	}
+
+	public int getInterval() {
+		return _interval;
+	}
+
+	public long getTime() {
+		return _time;
+	}
+
+	public char getBaseCode() {
+		return _baseCode;
+	}
+
+	public float getOpen() {
+		return _open;
+	}
+
+	public float getHigh() {
+		return _high;
+	}
+
+	public float getLow() {
+		return _low;
+	}
+
+	public float getClose() {
+		return _close;
+	}
+
+	public int getVolume() {
+		return _volume;
+	}
+
+	public void setDay(char _day) {
+		this._day = _day;
+	}
+
+	public void setInterval(int _interval) {
+		this._interval = _interval;
+	}
+
+	public void setTime(long _time) {
+		this._time = _time;
+	}
+
+	public void setBaseCode(char _baseCode) {
+		this._baseCode = _baseCode;
+	}
+
+	public void setOpen(float _open) {
+		this._open = _open;
+	}
+
+	public void setHigh(float _high) {
+		this._high = _high;
+	}
+
+	public void setLow(float _low) {
+		this._low = _low;
+	}
+
+	public void setClose(float _close) {
+		this._close = _close;
+	}
+
+	public void setVolume(int _volume) {
+		this._volume = _volume;
 	}
 
 	@Override
