@@ -36,6 +36,7 @@ import com.ddfplus.db.MarketEvent;
 import com.ddfplus.db.Ohlc;
 import com.ddfplus.db.Quote;
 import com.ddfplus.enums.ConnectionType;
+import com.ddfplus.messages.AbstractMsgBaseMarket;
 import com.ddfplus.messages.DdfMarketTrade;
 import com.ddfplus.messages.DdfMessageBase;
 import com.ddfplus.net.DdfClient;
@@ -617,6 +618,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 		public void onMessage(DdfMessageBase msg) {
 			if (logDdf) {
 				log.info("DDF: <" + msg + " msCST: " + msg.getMillisCST());
+				if (msg.getMillisCST() == 0 && ((AbstractMsgBaseMarket) msg).getRecord() != 'X') {
+					log.warn("0 timestamp msg: {}", msg);
+				}
 			}
 		}
 

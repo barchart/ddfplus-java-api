@@ -135,16 +135,18 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 	 */
 	public void setMessageTimestamp(int etxpos) {
 
-		if ((_message == null) || (_message.length < etxpos + 1)) {
-			// Default to current epoch in CST. Some messages don't have an
-			// associated timestamp.
-			millisCST = ZonedDateTime.now(DDFDate._zoneChicago).toInstant().toEpochMilli();
+		if ((_message == null) || (_message.length < etxpos + 1))
 			return;
-		}
 
 		_etxpos = etxpos;
 
-		if ((_message.length == etxpos + 10) && (_message[etxpos + 1] == 20)) {
+		/*
+		 * DDF Time can be 7 or 9 bytes.
+		 * 
+		 * Some exchanges are not sending the ms, so the DDF timestamp is only 7
+		 * bytes
+		 */
+		if ((_message.length == etxpos + 10 || _message.length == etxpos + 8) && (_message[etxpos + 1] == 20)) {
 			int year = (_message[etxpos + 1] * 100) + _message[etxpos + 2] - 64;
 			int month = _message[etxpos + 3] - 64 - 1;
 			int date = _message[etxpos + 4] - 64;
@@ -152,10 +154,13 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			int minute = _message[etxpos + 6] - 64;
 			int second = _message[etxpos + 7] - 64;
 
-			int ms = (0xFF & _message[etxpos + 8]) + ((0xFF & _message[etxpos + 9]) << 8);
-			// Validation check, some feeds can have incorrect data here.
-			if (ms < 0 || ms > 999) {
-				ms = 0;
+			int ms = 0;
+			if (_message.length == etxpos + 10) {
+				ms = (0xFF & _message[etxpos + 8]) + ((0xFF & _message[etxpos + 9]) << 8);
+				// Validation check, some feeds can have incorrect data here.
+				if (ms < 0 || ms > 999) {
+					ms = 0;
+				}
 			}
 
 			/*
@@ -166,6 +171,8 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			millisCST = ZonedDateTime
 					.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant()
 					.toEpochMilli();
+		} else {
+			LOG.warn("ts < 7, extpos: {}, msglen: {} msg: {}", etxpos, _message.length, this);
 		}
 	}
 
