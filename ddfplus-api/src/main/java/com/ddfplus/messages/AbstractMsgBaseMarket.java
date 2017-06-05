@@ -6,19 +6,19 @@
  */
 package com.ddfplus.messages;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ddfplus.enums.QuoteType;
-import com.ddfplus.util.ASCII;
-import com.ddfplus.util.DDFDate;
-
 import static com.ddfplus.util.ParserHelper.filterNullChar;
 import static com.ddfplus.util.ParserHelper.toAsciiString;
 import static com.ddfplus.util.ParserHelper.toAsciiString2;
 import static com.ddfplus.util.ParserHelper.toHexString;
 
 import java.time.ZonedDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.ddfplus.enums.QuoteType;
+import com.ddfplus.util.ASCII;
+import com.ddfplus.util.DDFDate;
 
 /**
  * The Message base class encapsulates a ddf plus message. It is generally
@@ -68,7 +68,7 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 	public volatile String _symbol = ASCII.STRING_EMPTY;
 
 	/** The _timestamp. */
-//	public volatile DateTime dateTime = null;
+	// public volatile DateTime dateTime = null;
 
 	/**
 	 * Instantiates a new msg base market.
@@ -135,8 +135,12 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 	 */
 	public void setMessageTimestamp(int etxpos) {
 
-		if ((_message == null) || (_message.length < etxpos + 1))
+		if ((_message == null) || (_message.length < etxpos + 1)) {
+			// Default to current epoch in CST. Some messages don't have an
+			// associated timestamp.
+			millisCST = ZonedDateTime.now(DDFDate._zoneChicago).toInstant().toEpochMilli();
 			return;
+		}
 
 		_etxpos = etxpos;
 
@@ -159,7 +163,9 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			 * 
 			 * TODO Support switching on futures vs stocks
 			 */
-			millisCST = ZonedDateTime.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant().toEpochMilli();			
+			millisCST = ZonedDateTime
+					.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant()
+					.toEpochMilli();
 		}
 	}
 

@@ -617,6 +617,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 		public void onMessage(DdfMessageBase msg) {
 			if (logDdf) {
 				log.info("DDF: <" + msg + " msCST: " + msg.getMillisCST());
+				if (msg.getMillisCST() == 0) {
+					log.error("++++++++++++++++++++++++++++++ ERROR +++++++++++++++++++++++++++++++++++++");
+				}
 			}
 		}
 

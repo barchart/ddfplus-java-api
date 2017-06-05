@@ -6,7 +6,10 @@
  */
 package com.ddfplus.messages;
 
+import java.time.ZonedDateTime;
+
 import com.ddfplus.enums.DdfMessageType;
+import com.ddfplus.util.DDFDate;
 
 abstract class AbstractMsgBase implements DdfMessageBase {
 
@@ -33,12 +36,14 @@ abstract class AbstractMsgBase implements DdfMessageBase {
 
 	@Override
 	public long getMillisCST() {
-		return this.millisCST;
+		return this.millisCST == 0 ? ZonedDateTime.now(DDFDate._zoneChicago).toInstant().toEpochMilli()
+				: this.millisCST;
 	}
 
 	@Override
 	public long getMillisUTC() {
-		return this.millisCST;
+		return this.millisCST == 0 ? ZonedDateTime.now(DDFDate._zoneChicago).toInstant().toEpochMilli()
+				: this.millisCST;
 	}
 
 	/**
