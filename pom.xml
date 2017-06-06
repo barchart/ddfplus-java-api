@@ -25,7 +25,6 @@
 
 	<properties>
 		<projectJavaVersion>1.8</projectJavaVersion>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 
 

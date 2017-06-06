@@ -13,7 +13,6 @@
 	<description>DDF Plus Example API Code</description>
 
 	<properties>
-		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 
 
