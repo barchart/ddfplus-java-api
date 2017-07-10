@@ -17,6 +17,7 @@ import com.ddfplus.util.XMLNode;
  */
 public class Ohlc {
 
+	private String _exchange;
 	private final String _symbol;
 	private char _day;
 	private int _interval = 0;
@@ -31,6 +32,14 @@ public class Ohlc {
 
 	public Ohlc(String symbol) {
 		_symbol = symbol;
+	}
+
+	public String getExchange() {
+		return this._exchange;
+	}
+
+	public void setExchange(String exchange) {
+		this._exchange = exchange;
 	}
 
 	public String getSymbol() {
@@ -111,7 +120,11 @@ public class Ohlc {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(_symbol + ";");
+		StringBuilder sb = new StringBuilder();
+		if (_exchange != null) {
+			sb.append("exch=" + _exchange + ";");
+		}
+		sb.append(_symbol + ";");
 		sb.append("day=" + _day + ";");
 		sb.append("time=" + new DDFDate(_time).toDDFString() + ";");
 		sb.append("baseCode=" + _baseCode + ";");

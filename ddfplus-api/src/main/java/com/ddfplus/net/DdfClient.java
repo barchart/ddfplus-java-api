@@ -10,6 +10,7 @@ import com.ddfplus.api.BookQuoteHandler;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
+import com.ddfplus.api.MinuteBarExchangeHandler;
 import com.ddfplus.api.MinuteBarHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
@@ -155,6 +156,10 @@ public interface DdfClient {
 	void addMinuteBarHandler(String symbol, MinuteBarHandler mbHandler);
 
 	void removeMinuteBarHandler(String symbol);
+
+	void addMinuteBarExchangeHandler(String exch, MinuteBarExchangeHandler handler);
+
+	void removeMinuteBarExchangeHandler(String exch);
 
 	/**
 	 * Retrieves a Quote from the embedded DataManager object.

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,11 +30,16 @@ public class DefinitionServiceImpl implements DefinitionService {
 	private static final String BASE_URL = "http://extras.ddfplus.com/json/";
 	private static final String FUTURES_URL = BASE_URL + "/futures/?root=";
 	private static final String OPTIONS_URL = BASE_URL + "/options/?root=";
+	private static final String EXCHANGE_SYMBOLS_URL = BASE_URL + "/instruments?exchange=";
 
 	private static final Logger logger = LoggerFactory.getLogger("DefinitionService");
 
 	private final Map<String, FuturesRoot> futureRoots = new ConcurrentHashMap<String, FuturesRoot>();
 	private final Map<String, OptionsRoot> optionsRoots = new ConcurrentHashMap<String, OptionsRoot>();
+	// Exchange Code to symbols
+	private final Map<String, List<String>> exchangeSymbols = new ConcurrentHashMap<String, List<String>>();
+	// Symbol to exchange Code, assumes only listed on 1 exchange
+	private final Map<String, String> symbolToExchange = new ConcurrentHashMap<String, String>();
 	private final Gson gson;
 	private OkHttpClient httpClient;
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -121,6 +127,47 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 
 		return options;
+	}
+
+	@Override
+	public String[] getExchangeSymbols(String exchangeCode) {
+		return lookUpExchangeSymbols(exchangeCode, false);
+	}
+
+	private String[] lookUpExchangeSymbols(String exchangeCode, boolean refresh) {
+		// look in cache first
+		List<String> symbols = exchangeSymbols.get(exchangeCode);
+		if (refresh || symbols == null || symbols.size() == 0) {
+			// Look up from web service
+			Request request = new Request.Builder().url(EXCHANGE_SYMBOLS_URL + exchangeCode).build();
+			Response response;
+			try {
+				response = httpClient.newCall(request).execute();
+				if (response.isSuccessful()) {
+					String json = response.body().string();
+					logger.debug("< {}", json);
+					Type listType = new TypeToken<List<InstrumentDefinition>>() {
+					}.getType();
+					List<InstrumentDefinition> defs = gson.fromJson(json, listType);
+					logger.info("Received {} symbols for exchange {}", defs.size(), exchangeCode);
+					// Store
+					symbols = new ArrayList<String>();
+					for (InstrumentDefinition def : defs) {
+						symbols.add(def.getSymbol_ddf());
+						symbolToExchange.put(def.getSymbol_ddf(), exchangeCode);
+					}
+					exchangeSymbols.put(exchangeCode, symbols);
+				}
+			} catch (Exception e) {
+				logger.error("Could not obtain symbols for exchange: {} error: {}", exchangeCode, e.getMessage());
+			}
+		}
+		return symbols.toArray(new String[symbols.size()]);
+	}
+
+	@Override
+	public String getExchange(String symbol) {
+		return symbolToExchange.get(symbol);
 	}
 
 	private FuturesRoot buildFutureContractCache(String root) {
@@ -504,6 +551,31 @@ public class DefinitionServiceImpl implements DefinitionService {
 		}
 	}
 
+	/*
+	 * 
+	 */
+	static class InstrumentDefinition {
+		private String symbol_ddf;
+		private String exchange;
+
+		public String getSymbol_ddf() {
+			return symbol_ddf;
+		}
+
+		public void setSymbol_ddf(String symbol_ddf) {
+			this.symbol_ddf = symbol_ddf;
+		}
+
+		public String getExchange() {
+			return exchange;
+		}
+
+		public void setExchange(String exchange) {
+			this.exchange = exchange;
+		}
+
+	}
+
 	private class RefreshThread implements Runnable {
 
 		@Override
@@ -517,7 +589,11 @@ public class DefinitionServiceImpl implements DefinitionService {
 				logger.info("Running symbol refresh for option root: " + root);
 				buildOptionsContractCache(root);
 			}
-
+			// Refresh symbol definitions
+			Set<String> usedExchangeCodes = exchangeSymbols.keySet();
+			for (String exchange : usedExchangeCodes) {
+				lookUpExchangeSymbols(exchange, true);
+			}
 		}
 	}
 

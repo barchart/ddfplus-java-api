@@ -179,7 +179,7 @@ abstract class IoChannel extends Thread {
 
 	private class CmdThread implements Runnable {
 
-		private static final int COMMAND_AGGREGATION_COUNT = 250;
+		private static final int COMMAND_AGGREGATION_COUNT = 25;
 		private BlockingQueue<Cmd> q;
 		private StringBuilder sendBuf = new StringBuilder();
 		private StringBuilder goBuf = new StringBuilder();

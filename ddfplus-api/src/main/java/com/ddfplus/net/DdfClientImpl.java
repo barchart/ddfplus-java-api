@@ -25,6 +25,7 @@ import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
+import com.ddfplus.api.MinuteBarExchangeHandler;
 import com.ddfplus.api.MinuteBarHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
@@ -95,6 +96,8 @@ public class DdfClientImpl implements DdfClient {
 
 	// OHLC handlers
 	private static final Map<String, MinuteBarHandler> minuteBarHandlers = new ConcurrentHashMap<String, MinuteBarHandler>();
+	// Exchange to OHLC exchange handler
+	private static final Map<String, MinuteBarExchangeHandler> minuteBarExchangeHandlers = new ConcurrentHashMap<String, MinuteBarExchangeHandler>();
 
 	private static int instanceId = 0;
 
@@ -269,6 +272,7 @@ public class DdfClientImpl implements DdfClient {
 			tradeExchangeHandlers.clear();
 			bookQuoteHandlers.clear();
 			minuteBarHandlers.clear();
+			minuteBarExchangeHandlers.clear();
 		}
 	}
 
@@ -483,6 +487,34 @@ public class DdfClientImpl implements DdfClient {
 	}
 
 	@Override
+	public void addMinuteBarExchangeHandler(String exchange, MinuteBarExchangeHandler handler) {
+		synchronized (minuteBarExchangeHandlers) {
+
+			MinuteBarExchangeHandler h = minuteBarExchangeHandlers.get(exchange);
+			if (h == null) {
+				// No subscription
+				minuteBarExchangeHandlers.put(exchange, handler);
+				// Initial Subscription
+				subscribeMinuteBarExchange(exchange);
+			} else {
+				log.warn(
+						"A minute bar subscription was already active, only 1 handler is allowed per exchange, exchange: "
+								+ exchange);
+			}
+		}
+
+	}
+
+	@Override
+	public void removeMinuteBarExchangeHandler(String exch) {
+		synchronized (minuteBarExchangeHandlers) {
+			minuteBarExchangeHandlers.remove(exch);
+			unSubscribeMinuteBarExchange(exch);
+		}
+
+	}
+
+	@Override
 	public Quote getQuote(String symbol) {
 		return dataMaster.getQuote(symbol);
 	}
@@ -554,6 +586,20 @@ public class DdfClientImpl implements DdfClient {
 
 	private void unSubscribeMinuteBar(String symbol) {
 		connection.unsubscribeMinuteBar(symbol);
+	}
+
+	private void subscribeMinuteBarExchange(String exchange) {
+		String[] syms = definitionService.getExchangeSymbols(exchange);
+		for (String s : syms) {
+			subscribeMinuteBar(s);
+		}
+	}
+
+	private void unSubscribeMinuteBarExchange(String exchange) {
+		String[] syms = definitionService.getExchangeSymbols(exchange);
+		for (String s : syms) {
+			unSubscribeMinuteBar(s);
+		}
 	}
 
 	private void sendQuoteFromCache(String symbol, QuoteHandler handler) {
@@ -697,6 +743,20 @@ public class DdfClientImpl implements DdfClient {
 			// OHLC
 			if (fe.isOhlc()) {
 				Ohlc ohlc = fe.getOhlc();
+				// By exchange
+				String exchange = definitionService.getExchange(ohlc.getSymbol());
+				if (exchange != null) {
+					MinuteBarExchangeHandler h = minuteBarExchangeHandlers.get(exchange);
+					if (h != null) {
+						try {
+							ohlc.setExchange(exchange);
+							h.onOhlc(ohlc);
+						} catch (Exception e) {
+							log.error("minuteBarExchange(" + array + ") failed on onOhlc. " + e);
+						}
+					}
+				}
+				// By Symbol
 				MinuteBarHandler mh = minuteBarHandlers.get(ohlc.getSymbol());
 				if (mh != null) {
 					try {
@@ -706,7 +766,6 @@ public class DdfClientImpl implements DdfClient {
 					}
 				}
 			}
-
 		}
 
 	}

@@ -27,6 +27,7 @@ import com.ddfplus.api.ConnectionEvent;
 import com.ddfplus.api.ConnectionEventHandler;
 import com.ddfplus.api.FeedHandler;
 import com.ddfplus.api.MarketEventHandler;
+import com.ddfplus.api.MinuteBarExchangeHandler;
 import com.ddfplus.api.MinuteBarHandler;
 import com.ddfplus.api.QuoteHandler;
 import com.ddfplus.api.TimestampHandler;
@@ -92,6 +93,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 	private Map<String, List<BookQuoteHandler>> depthHandlers = new HashMap<String, List<BookQuoteHandler>>();
 
 	private Map<String, MinuteBarHandler> minuteBarHandlers = new HashMap<String, MinuteBarHandler>();
+	// Exchange to Minute Bar Handler
+	private Map<String, MinuteBarExchangeHandler> minuteBarExchangeHandlers = new HashMap<String, MinuteBarExchangeHandler>();
 
 	// log modes
 	private boolean logTS;
@@ -131,8 +134,12 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 				config.setSymbols(args[i + 1]);
 				i++;
 			}
-			if (args[i].equals("-m") && i + 1 < args.length) {
-				config.setMinuteBars(args[i + 1]);
+			if (args[i].equals("-minsym") && i + 1 < args.length) {
+				config.setMinuteBarSymbols(args[i + 1]);
+				i++;
+			}
+			if (args[i].equals("-minexch") && i + 1 < args.length) {
+				config.setMinuteBarExchanges(args[i + 1]);
 				i++;
 			}
 			if (args[i].equals("-ddf")) {
@@ -201,8 +208,11 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
 				config.setSymbols(p.getProperty("symbols"));
 			}
-			if (p.getProperty("minuteBars") != null && !p.getProperty("minuteBars").isEmpty()) {
-				config.setMinuteBars(p.getProperty("minuteBars"));
+			if (p.getProperty("minsym") != null && !p.getProperty("minsym").isEmpty()) {
+				config.setMinuteBarSymbols(p.getProperty("minsym"));
+			}
+			if (p.getProperty("minexch") != null && !p.getProperty("minexch").isEmpty()) {
+				config.setMinuteBarExchanges(p.getProperty("minexch"));
 			}
 			if (p.getProperty("symbols") != null && !p.getProperty("symbols").isEmpty()) {
 				config.setSymbols(p.getProperty("symbols"));
@@ -267,8 +277,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			System.exit(0);
 		}
 
-		if (config.getSymbols() == null && config.getExchangeCodes() == null && config.getMinuteBars() == null) {
-			System.err.println("Either -sym, -e or -m must be specified.");
+		if (config.getSymbols() == null && config.getExchangeCodes() == null && config.getMinuteBarSymbols() == null
+				&& config.getMinuteBarExchanges() == null) {
+			System.err.println("Either -sym, -e, -minsym or -minexch must be specified.");
 			printHelp();
 			System.exit(0);
 		}
@@ -315,7 +326,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 		text.append("\n-e exchangeCodes    - Subscribe for all symbols at the given exchanges");
 		text.append("\n-eq                 - Add Exchange Quote Handler");
 		text.append("\n-et                 - Add Exchange Trade Handler");
-		text.append("\n-m symbols          - Activate minute bars for symbols");
+		text.append("\n-minsym  symbols    - Activate minute bars for symbols");
+		text.append("\n-minexch exchanges  - Activate minute bars for all symbols on exchanges");
 		text.append("\n-t connection type  - Connection Type, TCP,HTTP,HTTPSTREAM,WSS, defaults to TCP");
 		text.append("\n-s server           - DDF Server, otherwise it defaults to the server assigned to the user.");
 		text.append("\n-d                  - Activate depth subscriptions");
@@ -537,6 +549,12 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			client.removeMinuteBarHandler(s);
 		}
 		minuteBarHandlers.clear();
+		// Minute bar exchange handlers
+		Set<String> minuteBarExchanges = minuteBarExchangeHandlers.keySet();
+		for (String exch : minuteBarExchanges) {
+			client.removeMinuteBarExchangeHandler(exch);
+		}
+		minuteBarExchangeHandlers.clear();
 	}
 
 	private void startSubscriptions() {
@@ -598,8 +616,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			}
 		}
 
-		if (config.getMinuteBars() != null) {
-			String[] symbols = config.getMinuteBars().split(",");
+		// Minute bars by symbol
+		if (config.getMinuteBarSymbols() != null) {
+			String[] symbols = config.getMinuteBarSymbols().split(",");
 			for (String symbol : symbols) {
 				// Add minute bar handler
 				ClientMinuteBarHandler mbHandler = new ClientMinuteBarHandler(symbol);
@@ -607,6 +626,17 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 				// Will subscribe to minute bars if subscription does not
 				// exist
 				client.addMinuteBarHandler(symbol, mbHandler);
+			}
+		}
+
+		// Minute bars for all symbols on an exchange
+		if (config.getMinuteBarExchanges() != null) {
+			String[] exhanges = config.getMinuteBarExchanges().split(",");
+			for (String exch : exhanges) {
+				ClientMinuteBarExchangeHandler h = new ClientMinuteBarExchangeHandler(exch);
+				minuteBarExchangeHandlers.put(exch, h);
+				// Will make subscription
+				client.addMinuteBarExchangeHandler(exch, h);
 			}
 		}
 
@@ -719,6 +749,30 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			log.info("OHLC: Symbol: {} Open: {} High: {} Low: {} Close: {}", msg.getSymbol(), msg.getOpen(),
 					msg.getHigh(), msg.getLow(), msg.getClose());
 		}
+	}
+
+	/*
+	 * Minute bar exchange handler
+	 */
+	private class ClientMinuteBarExchangeHandler implements MinuteBarExchangeHandler {
+
+		private String exchange;
+
+		public ClientMinuteBarExchangeHandler(String exchange) {
+			this.exchange = exchange;
+		}
+
+		@Override
+		public String getExchange() {
+			return this.exchange;
+		}
+
+		@Override
+		public void onOhlc(Ohlc msg) {
+			log.info("OHLC: Exch: {} Symbol: {} Open: {} High: {} Low: {} Close: {}", msg.getExchange(),
+					msg.getSymbol(), msg.getOpen(), msg.getHigh(), msg.getLow(), msg.getClose());
+		}
+
 	}
 
 	private static class ShutdownHook extends Thread {

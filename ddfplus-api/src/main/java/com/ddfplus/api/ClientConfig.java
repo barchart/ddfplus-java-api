@@ -56,7 +56,11 @@ public class ClientConfig {
 	/*
 	 * Activate minute bars for the symbols. Comma separated.
 	 */
-	private String minuteBars;
+	private String minuteBarSymbols;
+	/*
+	 * Activate minute bars for all symbols on the exchange.
+	 */
+	private String minuteBarExchanges;
 
 	public String getSnapshotPassword() {
 		return snapshotPassword;
@@ -198,7 +202,8 @@ public class ClientConfig {
 		sb.append("\n\tdefinitionRefreshIntervalSec: " + definitionRefreshIntervalSec);
 		sb.append("\n\tunknownSymbolIntervalSec: " + unknownSymbolIntervalSec);
 		sb.append("\n\tunknownSymbolDelay: " + unknownSymbolDelay);
-		sb.append("\n\tminuteBars: " + minuteBars);
+		sb.append("\n\tminuteBarsSymbols: " + minuteBarSymbols);
+		sb.append("\n\tminuteBarExchanges: " + minuteBarExchanges);
 		sb.append("\n");
 		return sb.toString();
 	}
@@ -239,12 +244,20 @@ public class ClientConfig {
 		return this.addExchangeTradeHandler;
 	}
 
-	public String getMinuteBars() {
-		return this.minuteBars;
+	public String getMinuteBarSymbols() {
+		return this.minuteBarSymbols;
 	}
 
-	public void setMinuteBars(String syms) {
-		this.minuteBars = syms;
+	public void setMinuteBarSymbols(String syms) {
+		this.minuteBarSymbols = syms;
+	}
+
+	public String getMinuteBarExchanges() {
+		return this.minuteBarExchanges;
+	}
+
+	public void setMinuteBarExchanges(String exchanges) {
+		this.minuteBarExchanges = exchanges;
 	}
 
 }

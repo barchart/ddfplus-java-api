@@ -21,4 +21,22 @@ public interface DefinitionService {
 
 	String[] getAllOptionsMonthYearSymbols(String root, String monthYear);
 
+	/**
+	 * Get a symbol's exchange code.
+	 * 
+	 * @param symbol
+	 *            Exchange Symbol
+	 * @return Barchart Exchange Code or null if not known at the time
+	 */
+	String getExchange(String symbol);
+
+	/**
+	 * Returns all symbols for an exchange.
+	 * 
+	 * @param exchangeCode
+	 *            Barchart Exchange Code
+	 * @return Array of symbols for this exchange.
+	 */
+	String[] getExchangeSymbols(String exchangeCode);
+
 }
