@@ -1036,7 +1036,7 @@ public class DataMaster {
 		}
 
 		l = msg21.getVolume();
-		if ((l != null) && (l > pCombinedSession._volume)) {
+		if (l != null) {
 			if (session != null)
 				session._volume = l;
 
