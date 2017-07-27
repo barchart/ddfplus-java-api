@@ -171,8 +171,6 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			millisCST = ZonedDateTime
 					.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant()
 					.toEpochMilli();
-		} else {
-			LOG.warn("ts < 7, extpos: {}, msglen: {} msg: {}", etxpos, _message.length, this);
 		}
 	}
 
