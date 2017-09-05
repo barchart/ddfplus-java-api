@@ -1119,7 +1119,7 @@ public class DataMaster {
 		DdfMarketTrade trade = (DdfMarketTrade) msg;
 		if (msg.getSubRecord() == 'Z') {
 			char saleCondition = trade.getSession();
-			if (saleCondition == 'M' || saleCondition == 'Q' || saleCondition == '9') {
+			if (saleCondition == 'M' || saleCondition == 'Q') {
 				/*
 				 * NASDAQ, NYSE: Do not set volume on these sale conditions.
 				 */
@@ -1130,7 +1130,14 @@ public class DataMaster {
 			}
 			pCombinedSession._volume += trade.getTradeSize();
 		} else {
-			// 2.7 message
+			// 2,7 message
+			char saleCondition = trade.getSession();
+			if (saleCondition == '9') {
+				/*
+				 * NASDAQ, NYSE: Do not set volume on these sale conditions.
+				 */
+				return;
+			}
 			if (session != null) {
 				session.setLast(((DdfMarketTrade) msg).getTradePrice());
 				session._tradeSize = ((DdfMarketTrade) msg).getTradeSize();

@@ -123,8 +123,8 @@ public class DataMasterTest {
 		session = update.getCombinedSession();
 		assertEquals("Volume not set", 500, session.getVolume(), 0.0);
 
-		// 9 sale condition
-		msg = "\u00012HEUS,Z\u0002A152591,100,N9\u0003".getBytes();
+		// 9 sale condition whch is a 2,7
+		msg = "\u00012HEUS,7\u0002A152591,100,N9\u0003".getBytes();
 		dataMaster.putQuote(quote);
 		fe = dataMaster.processMessage(msg);
 		update = fe.getQuote();
