@@ -364,7 +364,7 @@ public class Codec {
 					if ((msg != null) && (spreadType != null)) {
 						msg._spreadType = spreadType;
 						msg._spreadLegs = spreadLegs;
-						msg._message = baOriginal;
+//						msg._message = baOriginal;
 						// We may need re-set the etxpos
 						if (msg._etxpos > -1) {
 							msg._etxpos += (baOriginal.length - array.length);
