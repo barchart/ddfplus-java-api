@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.ddfplus.messages.DdfMarketTrade;
 import com.ddfplus.messages.DdfMessageBase;
 
 public class FeedEvent {
@@ -21,6 +22,7 @@ public class FeedEvent {
 	private CumulativeVolume cumVolume;
 	private List<MarketEvent> marketEvents;
 	private Ohlc ohlc;
+	private DdfMarketTrade trade;
 
 	public boolean isDdfMessage() {
 		return ddfMessage != null;
@@ -80,7 +82,7 @@ public class FeedEvent {
 
 	public void addMarketEvent(MarketEvent event) {
 		if (marketEvents == null) {
-			marketEvents = new ArrayList<MarketEvent>();
+			marketEvents = new ArrayList<>();
 		}
 		marketEvents.add(event);
 	}
@@ -113,4 +115,17 @@ public class FeedEvent {
 		this.ohlc = ohlc;
 
 	}
+
+	public boolean isTrade() {
+		return trade != null;
+	}
+
+	public DdfMarketTrade getTrade() {
+		return trade;
+	}
+
+	public void setTrade(DdfMarketTrade ddfMessage) {
+		this.trade = ddfMessage;
+	}
+
 }

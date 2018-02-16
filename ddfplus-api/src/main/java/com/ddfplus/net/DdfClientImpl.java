@@ -71,33 +71,33 @@ public class DdfClientImpl implements DdfClient {
 
 	private static final DataMaster dataMaster = new DataMaster(MasterType.Realtime);
 
-	private static final CopyOnWriteArrayList<ConnectionEventHandler> adminHandlers = new CopyOnWriteArrayList<ConnectionEventHandler>();
+	private static final CopyOnWriteArrayList<ConnectionEventHandler> adminHandlers = new CopyOnWriteArrayList<>();
 
 	// Raw DDF message handlers
-	private static final CopyOnWriteArrayList<FeedHandler> feedHandlers = new CopyOnWriteArrayList<FeedHandler>();
+	private static final CopyOnWriteArrayList<FeedHandler> feedHandlers = new CopyOnWriteArrayList<>();
 
 	// Market Event Handlers
-	private static final CopyOnWriteArrayList<MarketEventHandler> marketEventHandlers = new CopyOnWriteArrayList<MarketEventHandler>();
+	private static final CopyOnWriteArrayList<MarketEventHandler> marketEventHandlers = new CopyOnWriteArrayList<>();
 
 	// Timestamp Handlers
-	private static final CopyOnWriteArrayList<TimestampHandler> timestampHandlers = new CopyOnWriteArrayList<TimestampHandler>();
+	private static final CopyOnWriteArrayList<TimestampHandler> timestampHandlers = new CopyOnWriteArrayList<>();
 
 	// Quote/Market Update
-	private static final Map<String, CopyOnWriteArrayList<QuoteHandler>> quoteHandlers = new ConcurrentHashMap<String, CopyOnWriteArrayList<QuoteHandler>>();
+	private static final Map<String, CopyOnWriteArrayList<QuoteHandler>> quoteHandlers = new ConcurrentHashMap<>();
 
 	// Quote/Market Update by Exchange (ExchangeCode ==> Handler)
-	private static final Map<String, QuoteHandler> quoteExchangeHandlers = new ConcurrentHashMap<String, QuoteHandler>();
+	private static final Map<String, QuoteHandler> quoteExchangeHandlers = new ConcurrentHashMap<>();
 
 	// Trades by Exchange (ExchangeCode ==> Handler)
-	private static final Map<String, TradeHandler> tradeExchangeHandlers = new ConcurrentHashMap<String, TradeHandler>();
+	private static final Map<String, TradeHandler> tradeExchangeHandlers = new ConcurrentHashMap<>();
 
 	// Market Depth/Book Quote
-	private static final Map<String, CopyOnWriteArrayList<BookQuoteHandler>> bookQuoteHandlers = new ConcurrentHashMap<String, CopyOnWriteArrayList<BookQuoteHandler>>();
+	private static final Map<String, CopyOnWriteArrayList<BookQuoteHandler>> bookQuoteHandlers = new ConcurrentHashMap<>();
 
 	// OHLC handlers
-	private static final Map<String, MinuteBarHandler> minuteBarHandlers = new ConcurrentHashMap<String, MinuteBarHandler>();
+	private static final Map<String, MinuteBarHandler> minuteBarHandlers = new ConcurrentHashMap<>();
 	// Exchange to OHLC exchange handler
-	private static final Map<String, MinuteBarExchangeHandler> minuteBarExchangeHandlers = new ConcurrentHashMap<String, MinuteBarExchangeHandler>();
+	private static final Map<String, MinuteBarExchangeHandler> minuteBarExchangeHandlers = new ConcurrentHashMap<>();
 
 	private static int instanceId = 0;
 
@@ -329,7 +329,7 @@ public class DdfClientImpl implements DdfClient {
 				CopyOnWriteArrayList<QuoteHandler> l = quoteHandlers.get(s);
 				if (l == null) {
 					// No subscription
-					l = new CopyOnWriteArrayList<QuoteHandler>();
+					l = new CopyOnWriteArrayList<>();
 					quoteHandlers.put(s, l);
 					l.add(handler);
 					// Initial Subscription
@@ -365,7 +365,7 @@ public class DdfClientImpl implements DdfClient {
 			CopyOnWriteArrayList<BookQuoteHandler> l = bookQuoteHandlers.get(symbol);
 			if (l == null) {
 				// No subscription
-				l = new CopyOnWriteArrayList<BookQuoteHandler>();
+				l = new CopyOnWriteArrayList<>();
 				bookQuoteHandlers.put(symbol, l);
 				l.add(handler);
 				// Initial Subscription
@@ -639,6 +639,23 @@ public class DdfClientImpl implements DdfClient {
 						h.onMessage(fe.getDdfMessage());
 					} catch (Exception e) {
 						log.error("DdfClient.onMessage(" + array + ") failed on onMessage. " + e);
+					}
+				}
+			}
+
+			/*
+			 * Call any exchange Trade handlers, which works with the raw
+			 * message only.
+			 */
+			if (fe.isTrade()) {
+				DdfMarketTrade trade = fe.getTrade();
+				char ddfExchange = trade.getExchange();
+				TradeHandler tradeExchangeHandler = tradeExchangeHandlers.get(Character.toString(ddfExchange));
+				if (tradeExchangeHandler != null) {
+					try {
+						tradeExchangeHandler.onTrade(trade);
+					} catch (Exception e) {
+						log.error("exchangeTrade(" + array + ") failed on onMessage. " + e);
 					}
 				}
 			}

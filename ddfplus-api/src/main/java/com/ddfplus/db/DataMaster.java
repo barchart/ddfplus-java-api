@@ -78,10 +78,10 @@ public class DataMaster {
 	 */
 	public DataMaster(MasterType type) {
 		_type = type;
-		bookMap = new ConcurrentHashMap<String, BookQuote>();
-		_cumulativeVolumeTable = new ConcurrentHashMap<String, CumulativeVolume>();
-		quoteMap = new ConcurrentHashMap<String, Quote>();
-		unrecoginzedSymbols = new ConcurrentHashMap<String, Long>();
+		bookMap = new ConcurrentHashMap<>();
+		_cumulativeVolumeTable = new ConcurrentHashMap<>();
+		quoteMap = new ConcurrentHashMap<>();
+		unrecoginzedSymbols = new ConcurrentHashMap<>();
 	}
 
 	/**
@@ -186,6 +186,15 @@ public class DataMaster {
 			// /////////////////////////////////////////////////////////
 			// record = 2 live prices
 			// ///////////////////////////////////////////////////////////
+			/*
+			 * If the message is a Trade, set here in order for the
+			 * ExchangeTradeHandler to be called, regardless if there is a quote
+			 * available or not.
+			 */
+			if (msg instanceof DdfMarketTrade) {
+				fe.setTrade((DdfMarketTrade) msg);
+			}
+
 			final Quote quote = getQuote(msg.getSymbol());
 			if (quote == null) {
 				/*
