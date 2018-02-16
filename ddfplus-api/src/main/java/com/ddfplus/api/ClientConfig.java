@@ -52,7 +52,7 @@ public class ClientConfig {
 
 	// Unknown Symbol interval
 	private long unknownSymbolIntervalSec = 60 * 60;
-	private long unknownSymbolDelay = 60;
+	private long unknownSymbolDelay = 1;
 	/*
 	 * Activate minute bars for the symbols. Comma separated.
 	 */
