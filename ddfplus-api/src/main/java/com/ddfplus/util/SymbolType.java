@@ -29,6 +29,8 @@ public enum SymbolType {
 	 */
 	Index, /**
 	 */
-	Test;
+	Test,
+	GrainBid,
+	AgIndex;
 
 }

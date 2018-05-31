@@ -288,10 +288,12 @@ public class Codec {
 					 */
 					showErrorMessage = false;
 					break;
+				case 'C':
 				case 'S':
 				case '2': {
 					int pos = getIndexOf(array, ',', 0);
 					char subrecord = (char) array[pos + 1];
+					
 					switch (subrecord) { // Subrecord
 					case '0': {
 						String symbol = Codec.parseStringValue(array, 2, pos - 2);

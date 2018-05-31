@@ -108,6 +108,9 @@ public class Symbol {
 				return SymbolType.Equity_LSE;
 			else if (symbol.endsWith(".NS"))
 				return SymbolType.Equity_NSE;
+			else if (symbol.endsWith(".CM"))
+				return SymbolType.GrainBid;
+					
 
 			for (int i = 0; i < ca.length; i++) {
 				if (Character.isDigit(ca[i])) {

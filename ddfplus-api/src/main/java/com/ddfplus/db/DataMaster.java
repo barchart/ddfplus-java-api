@@ -182,7 +182,7 @@ public class DataMaster {
 			// ///////////////////////////////////////////////////////////
 			recordX_marketRefresh(msg, fe);
 
-		} else if (msg.getRecord() == DdfRecord.Prices.value()) {
+		} else if ((msg.getRecord() == '2') || (msg.getRecord() == 'C')) {
 			// /////////////////////////////////////////////////////////
 			// record = 2 live prices
 			// ///////////////////////////////////////////////////////////
@@ -191,6 +191,8 @@ public class DataMaster {
 			 * ExchangeTradeHandler to be called, regardless if there is a quote
 			 * available or not.
 			 */
+			
+			
 			if (msg instanceof DdfMarketTrade) {
 				fe.setTrade((DdfMarketTrade) msg);
 			}
@@ -388,7 +390,8 @@ public class DataMaster {
 		quote.updateLastUpdated();
 		// Save Original DDF message
 		quote.setMessage(msg);
-
+		
+		
 		/*
 		 * Session Logic
 		 */

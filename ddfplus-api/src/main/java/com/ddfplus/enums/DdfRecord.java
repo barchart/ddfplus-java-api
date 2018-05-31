@@ -7,7 +7,7 @@
 package com.ddfplus.enums;
 
 public enum DdfRecord {
-	Timestamp('#'), RefreshOld('%'), RefreshXml('X'), Prices('2'), DepthEndOfDay('3'), ExchangeSpreads('5');
+	Timestamp('#'), RefreshOld('%'), RefreshXml('X'), Prices('2'), DepthEndOfDay('3'), ExchangeSpreads('5'), AgIndexPrices('C'), GrainBidsPrices('C');
 
 	private char record;
 
