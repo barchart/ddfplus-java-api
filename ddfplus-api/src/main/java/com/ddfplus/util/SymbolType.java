@@ -19,6 +19,7 @@ public enum SymbolType {
 	 */
 	Equity_NSE, /**
 	 */
+	Equity_EU,
 	Fund, /**
 	 */
 	Fund_CAN, Future, Future_Spread, Equity_Option, /**
@@ -29,6 +30,7 @@ public enum SymbolType {
 	 */
 	Index, /**
 	 */
+	Index_EU,
 	Test,
 	GrainBid,
 	AgIndex;

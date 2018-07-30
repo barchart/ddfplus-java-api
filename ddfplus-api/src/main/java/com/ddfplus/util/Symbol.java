@@ -102,9 +102,15 @@ public class Symbol {
 				return SymbolType.Equity_US; // Actually a Sector.
 			else if (symbol.endsWith(".AX"))
 				return SymbolType.Equity_AX;
+			else if ((symbol.endsWith(".BB")) || (symbol.endsWith(".FP")) || (symbol.endsWith(".NA"))|| (symbol.endsWith(".PL")))
+				return SymbolType.Equity_EU;
+			else if ((symbol.endsWith(".EB")) || (symbol.endsWith(".IX")))
+				return SymbolType.Equity_EU;
+			else if ((symbol.endsWith(".EI")))
+				return SymbolType.Index_EU;
 			else if ((symbol.endsWith(".TO")) || (symbol.endsWith(".VN")) || (symbol.endsWith(".CN")))
 				return SymbolType.Equity_CAN;
-			else if (symbol.endsWith(".LS"))
+			else if ((symbol.endsWith(".LN")) || (symbol.endsWith(".LS")))
 				return SymbolType.Equity_LSE;
 			else if (symbol.endsWith(".NS"))
 				return SymbolType.Equity_NSE;
