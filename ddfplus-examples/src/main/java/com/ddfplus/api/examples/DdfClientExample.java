@@ -8,45 +8,19 @@ package com.ddfplus.api.examples;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.ddfplus.api.BookQuoteHandler;
-import com.ddfplus.api.ClientConfig;
-import com.ddfplus.api.ConnectionEvent;
-import com.ddfplus.api.ConnectionEventHandler;
-import com.ddfplus.api.FeedHandler;
-import com.ddfplus.api.MarketEventHandler;
-import com.ddfplus.api.MinuteBarExchangeHandler;
-import com.ddfplus.api.MinuteBarHandler;
-import com.ddfplus.api.QuoteHandler;
-import com.ddfplus.api.TimestampHandler;
-import com.ddfplus.api.TradeHandler;
-import com.ddfplus.db.BookQuote;
-import com.ddfplus.db.MarketEvent;
-import com.ddfplus.db.Ohlc;
-import com.ddfplus.db.Quote;
+import com.ddfplus.api.*;
+import com.ddfplus.db.*;
 import com.ddfplus.enums.ConnectionType;
-import com.ddfplus.messages.AbstractMsgBaseMarket;
-import com.ddfplus.messages.DdfMarketTrade;
-import com.ddfplus.messages.DdfMessageBase;
-import com.ddfplus.net.DdfClient;
-import com.ddfplus.net.DdfClientImpl;
-import com.ddfplus.net.SymbolProvider;
-import com.ddfplus.net.SymbolProviderImpl;
-import com.ddfplus.util.MessageStore;
-import com.ddfplus.util.MessageStoreImpl;
-import com.ddfplus.util.StoreFeedHandler;
+import com.ddfplus.messages.*;
+import com.ddfplus.net.*;
+import com.ddfplus.util.*;
 
 /**
  * This is a sample DDF client program, illustrating the DDF Plus API.
@@ -101,6 +75,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 	private boolean logQuote;
 	private boolean logMarketEvent;
 	private boolean logDdf;
+	private boolean logDdfTradesOnly;
 	private boolean logBook;
 	private boolean logQuoteExchange;
 	private boolean logTradeExchange;
@@ -357,8 +332,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 		}
 
 		/*
-		 * Symbol provider is not required for the TCP or Web Socket transport,
-		 * it is required for the following ConnectionType transports:
+		 * Symbol provider is not required for the TCP or Web Socket transport, it is
+		 * required for the following ConnectionType transports:
 		 *
 		 * UDP, HTTP, HTTPSTREAM
 		 * 
@@ -424,8 +399,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 	 * Called by DdfClient whenever a connection type event happens. Useful for
 	 * monitoring if the connection drops, etc.
 	 * 
-	 * @param event
-	 *            Connection Event
+	 * @param event Connection Event
 	 */
 	@Override
 	public void onEvent(ConnectionEvent event) {
@@ -488,6 +462,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 					logMarketEvent = true;
 				} else if (m.equals("d")) {
 					logDdf = true;
+				} else if (m.equals("df")) {
+					logDdfTradesOnly = true;
 				} else if (m.equals("b")) {
 					logBook = true;
 				} else if (m.equals("qe")) {
@@ -561,9 +537,8 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 
 		if (config.getExchangeCodes() != null) {
 			/*
-			 * There can only be one quote handler per exchange when subscribing
-			 * for all quotes on the exchange. Note: You must be provisioned for
-			 * this.
+			 * There can only be one quote handler per exchange when subscribing for all
+			 * quotes on the exchange. Note: You must be provisioned for this.
 			 */
 			String[] codes = config.getExchangeCodes().split(",");
 			for (String exchangeCode : codes) {
@@ -651,6 +626,10 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 				if (msg.getMillisCST() == 0 && ((AbstractMsgBaseMarket) msg).getRecord() != 'X') {
 					log.warn("0 timestamp msg: {}", msg);
 				}
+			}
+			if (logDdfTradesOnly && msg instanceof Data27Trade) {
+				DdfMessageBase trade = (Data27Trade) msg;
+				log.info("DDFTrade: <" + trade + " msCST: " + msg.getMillisCST());
 			}
 		}
 
