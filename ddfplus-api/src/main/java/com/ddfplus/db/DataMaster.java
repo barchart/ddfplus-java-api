@@ -191,8 +191,7 @@ public class DataMaster {
 			 * ExchangeTradeHandler to be called, regardless if there is a quote
 			 * available or not.
 			 */
-			
-			
+
 			if (msg instanceof DdfMarketTrade) {
 				fe.setTrade((DdfMarketTrade) msg);
 			}
@@ -390,8 +389,7 @@ public class DataMaster {
 		quote.updateLastUpdated();
 		// Save Original DDF message
 		quote.setMessage(msg);
-		
-		
+
 		/*
 		 * Session Logic
 		 */
@@ -591,10 +589,16 @@ public class DataMaster {
 			pCombinedSession.setLast(f);
 
 			if (modifier == QuoteElementModifiers.Last.value()) {
-				if (session != null)
-					session._tradeTimestamp = determineTimestamp(msg);
-				pCombinedSession._tradeTimestamp = determineTimestamp(msg);
+				if (msg.getMillisCST() > 0) {
+					if (session != null)
+						session._tradeTimestamp = msg.getMillisCST();
+					pCombinedSession._tradeTimestamp = msg.getMillisCST();
+				} else {
+					if (session != null)
+						session._tradeTimestamp = determineTimestamp(msg);
 
+					pCombinedSession._tradeTimestamp = determineTimestamp(msg);
+				}
 				if (!bDoNotSetFlag)
 					quote.setFlag('\0');
 			}
