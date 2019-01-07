@@ -1096,7 +1096,7 @@ public class DataMaster {
 
 	void record2_subrecord7T(DdfMarketBase msg, Session pCombinedSession, Session pElectronicSession, Session session) {
 		// Electronic (Form-T) Trade
-		if (session != null) {
+		if (session != null && session != pElectronicSession) {
 			session.setLast(((DdfMarketTrade) msg).getTradePrice());
 			session._tradeSize = ((DdfMarketTrade) msg).getTradeSize();
 			session._volume += ((DdfMarketTrade) msg).getTradeSize();

@@ -133,4 +133,21 @@ public class DataMasterTest {
 
 	}
 
+	@Test
+	public void process2T() {
+		// 2HEUS,ZbAA152591,100,NMc
+		byte[] msg = "\u00012HEUS,Z\u0002A152591,100,NT\u0003".getBytes();
+
+		symbolInfo = new SymbolInfo("HEUS", "HEUS", "G", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		// Set existing volume to 500
+		quote._combinedSession._volume = 500;
+		dataMaster.putQuote(quote);
+		FeedEvent fe = dataMaster.processMessage(msg);
+		Quote update = fe.getQuote();
+		Session session = update.getSession('N', 'T');
+		assertEquals("Volume set", 100, session.getVolume(), 0.0);
+
+	}
+
 }
