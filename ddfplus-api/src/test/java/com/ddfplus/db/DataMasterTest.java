@@ -150,4 +150,31 @@ public class DataMasterTest {
 
 	}
 
+	@Test
+	public void process20COpenInterest() {
+		symbolInfo = new SymbolInfo("HEUS", "HEUS", "G", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		dataMaster.putQuote(quote);
+
+		byte[] msgTrade = "\u00012HEUS,7\u0002A152591,100,7\u0003".getBytes();
+		dataMaster.processMessage(msgTrade);
+
+		// 2HEUS,ZbAA152591,100,NMc
+		byte[] msgOI1 = "\u00012HEUS,0\u00028M1077960,C17\u0003".getBytes();
+		byte[] msgOI2 = "\u00012HEUS,0\u00028M1077953,C18\u0003".getBytes();
+
+		FeedEvent fe = dataMaster.processMessage(msgOI1);
+		Quote update = fe.getQuote();
+		Session session = update.getCombinedSession();
+		Session previousSession = update.getPreviousSession();
+		assertEquals("Open Interest set", 77960, session.getOpenInterest(), 0.0);
+		assertEquals("Open Interest set", 0, previousSession.getOpenInterest(), 0.0);
+
+		fe = dataMaster.processMessage(msgOI2);
+		update = fe.getQuote();
+		session = update.getCombinedSession();
+		previousSession = update.getPreviousSession();
+		assertEquals("Open Interest set", 77953, session.getOpenInterest(), 0.0);
+		assertEquals("Open Interest set", 77960, previousSession.getOpenInterest(), 0.0);
+	}
 }

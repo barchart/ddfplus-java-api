@@ -684,7 +684,7 @@ public class DataMaster {
 
 		} else if ((element == QuoteElement.OpenInterest.value()) && (modifier == QuoteElementModifiers.Ask.value())) { // Open
 																														// Interest
-			pPreviousSession._openInterest = i;
+			pCombinedSession._openInterest = i;
 			bUpdateTimestamp = false;
 
 		} else if ((element == QuoteElement.Settlement.value()) && (modifier == QuoteElementModifiers.Last.value())) { // Settlement
