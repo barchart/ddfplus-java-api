@@ -23,7 +23,7 @@
 	<description>DDF Plus API Parent</description>
 
 	<properties>
-		<projectJavaVersion>1.8</projectJavaVersion>
+		<projectJavaVersion>1.10</projectJavaVersion>
 	</properties>
 
 
