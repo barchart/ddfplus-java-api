@@ -170,10 +170,6 @@ public class ClientConfig {
 		return bindInterface;
 	}
 
-	public void setBindInterface(String binInterface) {
-		bindInterface = bindInterface;
-	}
-
 	public Integer getServerPort() {
 		return serverPort;
 	}

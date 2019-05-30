@@ -51,7 +51,7 @@ public class CumulativeVolume {
 	 */
 
 	protected void addTrade(float price, int size) {
-		Float f = new Float(price);
+		Float f = price;
 		Integer i = _data.get(f);
 		int ival = 0;
 		if (i != null)
@@ -247,8 +247,8 @@ public class CumulativeVolume {
 			final String[] data = dataString.split(":");
 			for (int i = 0; i < data.length; i++) {
 				String[] pair = data[i].split(",");
-				Float price = new Float(ParserHelper.string2float(pair[0], volume._baseCode));
-				Integer quantity = new Integer(pair[1]);
+				Float price = ParserHelper.string2float(pair[0], volume._baseCode);
+				Integer quantity = Integer.parseInt(pair[1]);
 				volume._data.put(price, quantity);
 			}
 		}

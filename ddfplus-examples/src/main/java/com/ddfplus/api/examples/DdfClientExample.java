@@ -235,12 +235,12 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 			}
 			if (p.getProperty("definitionRefreshIntervalSec") != null
 					&& !p.getProperty("definitionRefreshIntervalSec").isEmpty()) {
-				Long interval = new Long(p.getProperty("definitionRefreshIntervalSec"));
+				Long interval = Long.parseLong(p.getProperty("definitionRefreshIntervalSec"));
 				config.setDefinitionRefreshIntervalSec(interval);
 			}
 			if (p.getProperty("unknownSymbolIntervalSec") != null
 					&& !p.getProperty("unknownSymbolIntervalSec").isEmpty()) {
-				Long interval = new Long(p.getProperty("unknownSymbolIntervalSec"));
+				Long interval = Long.parseLong(p.getProperty("unknownSymbolIntervalSec"));
 				config.setUnknownSymbolInterval(interval);
 			}
 		}

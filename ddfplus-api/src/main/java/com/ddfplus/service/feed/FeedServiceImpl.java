@@ -161,10 +161,6 @@ public class FeedServiceImpl implements FeedService {
 
 	}
 
-	private void processBook(Node node) {
-
-	}
-
 
 	private String buildQueryString(List<String> symbols) {
 		// for testing only
