@@ -113,6 +113,32 @@ public class Quote implements Cloneable, Serializable {
 	}
 
 	/**
+	 * Creates a session given a specific day and session code, stores it, and
+	 * returns it. Only creates the session if necessary otherwise returns the
+	 * current session.
+	 *
+	 * @param date date
+	 *
+	 * @param sessionCode
+	 *            Session Code
+	 *
+	 * @return Session Current session object.
+	 */
+	public Session createSession(DDFDate date, char sessionCode) {
+		char dayCode = date.getDayCode();
+
+		Session session = this.getSession(dayCode, sessionCode);
+		if (session == null) {
+			session = new Session(this, date, sessionCode);
+
+			if ((sessionCode == 'R') || (sessionCode == 'T'))
+				_sessions.add(session);
+		}
+
+		return session;
+	}
+
+	/**
 	 * Returns the best Ask (offer) price.
 	 * 
 	 * @return <code>float</code> The Ask price
