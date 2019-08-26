@@ -1141,6 +1141,14 @@ public class DataMaster {
 				 */
 				return;
 			}
+			
+			if (saleCondition == 'Z') {
+				pCombinedSession.setBlockTrade(trade.getTradePrice());
+				if (session != null) {
+					session.setBlockTrade(trade.getTradePrice());
+				}
+			}
+			
 			if (session != null) {
 				session._volume += trade.getTradeSize();
 			}
@@ -1155,19 +1163,18 @@ public class DataMaster {
 				return;
 			}
 			if (session != null) {
-				session.setLast(((DdfMarketTrade) msg).getTradePrice());
-				session._tradeSize = ((DdfMarketTrade) msg).getTradeSize();
-				session._volume += ((DdfMarketTrade) msg).getTradeSize();
+				session.setLast(trade.getTradePrice());
+				session._tradeSize = trade.getTradeSize();
+				session._volume += trade.getTradeSize();
 				session._numTrades++;
-				session._priceVolume += ((DdfMarketTrade) msg).getTradePrice() * ((DdfMarketTrade) msg).getTradeSize();
+				session._priceVolume += trade.getTradePrice() * trade.getTradeSize();
 			}
 
-			pCombinedSession.setLast(((DdfMarketTrade) msg).getTradePrice());
-			pCombinedSession._tradeSize = ((DdfMarketTrade) msg).getTradeSize();
-			pCombinedSession._volume += ((DdfMarketTrade) msg).getTradeSize();
+			pCombinedSession.setLast(trade.getTradePrice());
+			pCombinedSession._tradeSize = trade.getTradeSize();
+			pCombinedSession._volume += trade.getTradeSize();
 			pCombinedSession._numTrades++;
-			pCombinedSession._priceVolume += ((DdfMarketTrade) msg).getTradePrice()
-					* ((DdfMarketTrade) msg).getTradeSize();
+			pCombinedSession._priceVolume += trade.getTradePrice()			* trade.getTradeSize();
 
 			if (msg.getMillisCST() > 0) {
 				if (session != null)

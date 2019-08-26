@@ -38,6 +38,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		_numberFormatInstance.setMinimumFractionDigits(2);
 	}
 
+	protected volatile float _blockTrade = 0.0f;
 	protected volatile float _close = 0.0f;
 	protected volatile float _close2 = 0.0f;
 	private DDFDate _day = null;
@@ -77,6 +78,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		Session s = new Session(_parentQuote, this._day, this._session);
 
+		s._blockTrade = _blockTrade;
 		s._close = _close;
 		s._close2 = _close2;
 		s._high = _high;
@@ -99,7 +101,16 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		return s;
 	}
+	
+	/**
+	 * @return The last Block Trade price
+	 */
+	
+	public float getBlockTrade() {
+		return _blockTrade;
+	}
 
+	
 	/**
 	 * @return The Closing price for the session. Will return 0 if the session
 	 *         is not closed. The getLast() method will also return the closing
@@ -438,8 +449,17 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 			;
 		}
 
+		s = node.getAttribute("blocktrade");
+		if (s != null)
+			_blockTrade = ParserHelper.string2float(s, _parentQuote.getSymbolInfo().getBaseCode());
+
 	}
 
+	
+	public void setBlockTrade(float value) {
+		_blockTrade = value;
+	}
+	
 	public void setHigh(float value) {
 		_high = value;
 	}
@@ -541,6 +561,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		if (_vwap != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("vwap", Integer.toString(ParserHelper.float2int(uc, _vwap)));
 
+		if (_blockTrade != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("blocktrade", Integer.toString(ParserHelper.float2int(uc, _blockTrade)));
+
+		
 		if (_tradeTimestamp > 0L) {
 			DDFDate d = new DDFDate(_tradeTimestamp);
 			node.setAttribute("tradetime", d.toDDFString());
