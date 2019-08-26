@@ -4,7 +4,6 @@ import com.ddfplus.db.DataMaster;
 import com.ddfplus.db.MasterType;
 import com.ddfplus.db.Quote;
 import com.ddfplus.messages.DdfMarketBase;
-import com.ddfplus.messages.DdfMessageBase;
 
 public class ProfileMessageParser {
 
@@ -65,7 +64,7 @@ public class ProfileMessageParser {
 
 		while (true) {
 			long begin = System.nanoTime();
-			DdfMessageBase m = Codec.parseMessage(ba);
+			/* DdfMessageBase m = */ Codec.parseMessage(ba);
 			// ProfileMessageParser.emptyVoid();
 			long end = System.nanoTime();
 
@@ -90,10 +89,10 @@ public class ProfileMessageParser {
 		DataMaster dm = new DataMaster(MasterType.Realtime);
 
 		DdfMarketBase m1 = Codec.parseMessage(msg1);
-		Quote q1 = dm.processMessage(m1).getQuote();
+		/* Quote q1 = */ dm.processMessage(m1).getQuote();
 
 		DdfMarketBase m2 = Codec.parseMessage(msg2);
-		Quote q2 = dm.processMessage(m2).getQuote();
+		/* Quote q2 = */ dm.processMessage(m2).getQuote();
 
 	}
 

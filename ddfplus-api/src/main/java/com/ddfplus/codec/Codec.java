@@ -303,7 +303,7 @@ public class Codec {
 
 						int pos2 = Codec.getIndexOf(array, ',', pos + 7);
 						char element = (char) array[pos2 + 1];
-						char modifier = (char) array[pos2 + 2];
+//						char modifier = (char) array[pos2 + 2];
 
 						switch (element) {
 						case '1': // Ask

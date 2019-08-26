@@ -553,10 +553,10 @@ public class DataMaster {
 			quote.setMarketCondition(marketConditon);
 			// Send Market Event
 			if (marketConditon == MarketConditionType.TRADING_HALT) {
-				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.TradingHalt,
+				/* MarketEvent me = */ addMarketEvent(fe, msg, MarketEventType.TradingHalt,
 						quote.getSymbolInfo().getSymbol());
 			} else if (marketConditon == MarketConditionType.TRADING_RESUMTPION) {
-				MarketEvent me = addMarketEvent(fe, msg, MarketEventType.TradingResumption,
+				/* MarketEvent me = */ addMarketEvent(fe, msg, MarketEventType.TradingResumption,
 						quote.getSymbolInfo().getSymbol());
 			}
 		}

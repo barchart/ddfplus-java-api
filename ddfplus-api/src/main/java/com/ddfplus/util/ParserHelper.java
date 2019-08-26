@@ -9,9 +9,6 @@ package com.ddfplus.util;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ddfplus.db.SymbolInfo;
 
 /**
@@ -21,7 +18,7 @@ import com.ddfplus.db.SymbolInfo;
  */
 public final class ParserHelper {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ParserHelper.class);
+//	private static final Logger LOG = LoggerFactory.getLogger(ParserHelper.class);
 
 	/**
 	 * Default Value when there is no data. This is not the same as zero (0),
