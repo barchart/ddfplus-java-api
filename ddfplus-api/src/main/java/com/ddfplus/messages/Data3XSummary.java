@@ -17,9 +17,6 @@ import com.ddfplus.util.DDFDate;
  */
 public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSummary {
 
-    /** The _date. */
-    public volatile Long millisCST = null;
-
     /** The _open. */
     public volatile Float _open = null;;
 
@@ -59,7 +56,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
      * @return the date as millis
      */
     long getDateAsMillis() {
-        return ((this.millisCST == null) ? 0L : this.millisCST);
+        return this.millisCST;
     }
 
     public float getHigh() {
