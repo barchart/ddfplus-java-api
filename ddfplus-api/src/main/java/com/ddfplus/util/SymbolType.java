@@ -33,6 +33,8 @@ public enum SymbolType {
 	Index_EU,
 	Test,
 	GrainBid,
-	AgIndex;
+	AgIndex,
+	CommodityStats,
+	Commodity3;
 
 }

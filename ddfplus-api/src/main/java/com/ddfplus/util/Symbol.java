@@ -116,6 +116,10 @@ public class Symbol {
 				return SymbolType.Equity_NSE;
 			else if (symbol.endsWith(".CM"))
 				return SymbolType.GrainBid;
+			else if (symbol.endsWith(".CS"))
+				return SymbolType.CommodityStats;
+			else if (symbol.endsWith(".C3"))
+				return SymbolType.Commodity3;
 					
 
 			for (int i = 0; i < ca.length; i++) {
