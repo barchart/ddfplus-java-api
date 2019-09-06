@@ -157,6 +157,11 @@ public class XMLNode {
 			s = s.replaceAll("\\&", "&amp;");
 		if (s.indexOf("\"") > -1)
 			s = s.replaceAll("\\\"", "&quot;");
+		if (s.indexOf("<") > -1)
+			s = s.replaceAll("\\<", "&lt;");
+		if (s.indexOf(">") > -1)
+			s = s.replaceAll("\\>", "&gt;");
+
 		return s;
 	}
 
@@ -164,6 +169,8 @@ public class XMLNode {
 		s = s.replaceAll("\\&amp;", "&");
 		s = s.replaceAll("\\&quot;", "\"");
 		s = s.replaceAll("\\&nbsp;", " ");
+		s = s.replaceAll("\\&lt;", "<");
+		s = s.replaceAll("\\&gt;", ">");
 		return s;
 	}
 	
@@ -184,9 +191,6 @@ public class XMLNode {
 				result.addNode(node2);
 			}
 		}
-
-//		if (result.getName().equals("QUOTE"))
-//			System.out.println(result);	
 
 		return result;
 	}
