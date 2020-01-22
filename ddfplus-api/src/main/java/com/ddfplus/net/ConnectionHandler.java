@@ -35,5 +35,4 @@ public interface ConnectionHandler {
 	 * @see com.ddfplus.codec
 	 */
 	public void onMessage(byte[] array);
-q
 }
