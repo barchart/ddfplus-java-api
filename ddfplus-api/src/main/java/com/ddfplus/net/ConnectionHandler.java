@@ -25,15 +25,15 @@ public interface ConnectionHandler {
 	public void onConnectionEvent(ConnectionEvent event);
 
 	/**
-	 * This method is called whenever new data arrives. This is the original ddf
-	 * plus message. Your application should then process this message, either
-	 * using the <B>ddf.parser</B> package, with your own equivalent.
+	 * This method is called whenever new data arrives, passing the original
+	 * ddfplus message. Your application should then process this message, either
+	 * using the <B>ddf.parser</B> package or using your own equivalent.
 	 * <P>
-	 * For more information on what exactly is contained in these ddfplus
+	 * For more information on what exactly is contained in ddfplus
 	 * messages, please refer to the ddfplus feed specifications.
-	 * 
+	 *
 	 * @see com.ddfplus.codec
 	 */
 	public void onMessage(byte[] array);
-
+q
 }
