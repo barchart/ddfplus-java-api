@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>org.glassfish.tyrus.bundles</groupId>
 			<artifactId>tyrus-standalone-client-jdk</artifactId>
-			<version>1.12</version>
+			<version>1.15</version>
 		</dependency>
 
 		<!-- Uses Grizzly container <dependency> <groupId>org.glassfish.tyrus.bundles</groupId> <artifactId>tyrus-standalone-client</artifactId> 

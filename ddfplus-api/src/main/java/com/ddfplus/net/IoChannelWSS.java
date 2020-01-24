@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,9 +65,6 @@ class IoChannelWSS extends IoChannel {
 
 	public IoChannelWSS(Connection connection) {
 		super(connection);
-		if (symbolProvider == null) {
-			throw new IllegalArgumentException("Symbol Provider cannot be null");
-		}
 
 		// Build Web Service URL
 		String addr = null;
@@ -250,14 +248,14 @@ class IoChannelWSS extends IoChannel {
 		}
 	}
 
-	private class WssMessageTextStreamHandler implements MessageHandler.Whole<Reader> {
+	private class WssMessageTextStreamHandler implements MessageHandler.Whole<java.nio.ByteBuffer> {
 
 		private char[] buf = new char[READ_BUF_SIZE];
 		private StringBuilder bufPartial = new StringBuilder(100);
 		private int partialCount;
 
 		@Override
-		public void onMessage(Reader reader) {
+		public void onMessage(ByteBuffer reader) {
 
 			if (log.isDebugEnabled()) {
 				log.debug("+++++++++++++++++++ onMessage ++++++++++++++++++++++++++++++++++++++++");
@@ -267,8 +265,8 @@ class IoChannelWSS extends IoChannel {
 			String packet = null;
 			try {
 
-				while (reader.ready()) {
-					int c = reader.read();
+				while (reader.hasRemaining()) {
+					int c = reader.get();
 					// We have data, increase index
 					index++;
 
@@ -312,7 +310,7 @@ class IoChannelWSS extends IoChannel {
 
 				}
 
-			} catch (IOException e1) {
+			} catch (Exception e1) {
 				log.error("WSS read error: ", e1);
 			}
 			if (log.isDebugEnabled()) {
@@ -488,7 +486,6 @@ class IoChannelWSS extends IoChannel {
 			}
 			connectionLatch.countDown();
 		}
-
 	}
 
 }
