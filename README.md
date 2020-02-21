@@ -29,6 +29,15 @@ Releases are available on maven central.
 
 ## Version History 
 
+### 1.1.8
+* Changed DdfMessageBase to add getter for the LocalDateTime. 
+        DdfMarketBase message = quote.getMessage();
+        if (message instanceof DdfMarketTrade) {
+            DdfMarketTrade ddfTradeMessage = (DdfMarketTrade) message;
+    
+            LocalDateTime localDateTime = message.getLocalDateTime();
+        }
+
 ### 1.0.9
 * Added support for .F symbols as FOREX
 

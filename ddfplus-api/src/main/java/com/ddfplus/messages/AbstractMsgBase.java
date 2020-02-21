@@ -8,6 +8,8 @@ package com.ddfplus.messages;
 
 import com.ddfplus.enums.DdfMessageType;
 
+import java.time.LocalDateTime;
+
 abstract class AbstractMsgBase implements DdfMessageBase {
 
 	/** The original ddf message. */
@@ -16,6 +18,8 @@ abstract class AbstractMsgBase implements DdfMessageBase {
 	/** The _time in millis. */
 	// http://www.timeanddate.com/library/abbreviations/timezones/na/cst.html
 	volatile long millisCST = 0L;
+
+	volatile LocalDateTime localDateTime;
 
 	AbstractMsgBase(byte[] message) {
 		_message = message;
@@ -39,6 +43,16 @@ abstract class AbstractMsgBase implements DdfMessageBase {
 	@Override
 	public long getMillisUTC() {
 		return this.millisCST;
+	}
+
+	/**
+	 * Returns the local date time of the message. Will be represented in the exchange time zone.
+	 *
+	 * @return The local date time.
+	 */
+	@Override
+	public LocalDateTime getLocalDateTime() {
+		return this.localDateTime;
 	}
 
 	/**

@@ -8,6 +8,8 @@ package com.ddfplus.messages;
 
 import com.ddfplus.enums.DdfMessageType;
 
+import java.time.LocalDateTime;
+
 /**
  * Raw DDF Message
  */
@@ -28,6 +30,13 @@ public interface DdfMessageBase {
 	long getMillisCST();
 
 	long getMillisUTC();
+
+	/**
+	 * Returns the local date time of the message. Will be represented in the exchange time zone.
+	 *
+	 * @return The local date time.
+	 */
+	LocalDateTime getLocalDateTime();
 
 	/**
 	 * Gets the message type.

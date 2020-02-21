@@ -11,6 +11,7 @@ import static com.ddfplus.util.ParserHelper.toAsciiString;
 import static com.ddfplus.util.ParserHelper.toAsciiString2;
 import static com.ddfplus.util.ParserHelper.toHexString;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 import org.slf4j.Logger;
@@ -30,6 +31,11 @@ import com.ddfplus.util.DDFDate;
  */
 
 public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements DdfMarketBase {
+
+	/*
+	 * Used for the timestamp encoding to make it more printable.
+	 */
+	public static final int ASCII_SHIFT = 0x40;
 
 	/** The Constant LOG. */
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractMsgBaseMarket.class);
@@ -147,12 +153,12 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 		 * bytes
 		 */
 		if ((_message.length == etxpos + 10 || _message.length == etxpos + 8) && (_message[etxpos + 1] == 20)) {
-			int year = (_message[etxpos + 1] * 100) + _message[etxpos + 2] - 64;
-			int month = _message[etxpos + 3] - 64 - 1;
-			int date = _message[etxpos + 4] - 64;
-			int hour = _message[etxpos + 5] - 64;
-			int minute = _message[etxpos + 6] - 64;
-			int second = _message[etxpos + 7] - 64;
+			int year = (_message[etxpos + 1] * 100) + _message[etxpos + 2] - ASCII_SHIFT;
+			int month = _message[etxpos + 3] - ASCII_SHIFT - 1;
+			int date = _message[etxpos + 4] - ASCII_SHIFT;
+			int hour = _message[etxpos + 5] - ASCII_SHIFT;
+			int minute = _message[etxpos + 6] - ASCII_SHIFT;
+			int second = _message[etxpos + 7] - ASCII_SHIFT;
 
 			int ms = 0;
 			if (_message.length == etxpos + 10) {
@@ -168,8 +174,9 @@ public abstract class AbstractMsgBaseMarket extends AbstractMsgBase implements D
 			 * 
 			 * TODO Support switching on futures vs stocks
 			 */
-			millisCST = ZonedDateTime
-					.of(year, month + 1, date, hour, minute, second, ms * 1000000, DDFDate._zoneChicago).toInstant()
+			this.localDateTime = LocalDateTime.of(year, month + 1, date, hour, minute, second, ms * 1_000_000);
+			this.millisCST = ZonedDateTime
+					.of(this.localDateTime, DDFDate._zoneChicago).toInstant()
 					.toEpochMilli();
 		}
 	}
