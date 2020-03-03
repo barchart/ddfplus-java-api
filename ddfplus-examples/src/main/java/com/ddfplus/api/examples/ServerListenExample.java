@@ -239,7 +239,7 @@ public class ServerListenExample implements ConnectionHandler {
 				log.info("< TS:" + fe.getTimestamp());
 			}
 			if (fe.isDdfMessage()) {
-				log.info("< DDF:" + fe.getDdfMessage());
+				log.info("< DDF: [" + ddfMessage.getLocalDateTime() + "] - " + fe.getDdfMessage());
 			}
 			if (fe.isQuote()) {
 				log.info("< " + fe.getQuote().toXMLNode().toXMLString());
