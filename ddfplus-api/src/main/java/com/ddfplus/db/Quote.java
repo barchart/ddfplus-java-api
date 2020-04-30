@@ -51,7 +51,6 @@ public class Quote implements Cloneable, Serializable {
 	// Original DDF Message
 	private volatile DdfMarketBase _message = null;
 	private volatile char _permission = '\0';
-	private boolean eodQuote;
 
 	public Quote(SymbolInfo symbolInfo) {
 		this._symbolInfo = symbolInfo;	
@@ -83,8 +82,6 @@ public class Quote implements Cloneable, Serializable {
 		q._previousSession = (Session) _previousSession.clone();
 
 		q._sessions.addAll(_sessions);
-		q.eodQuote = eodQuote;
-
 		return q;
 
 	}
@@ -665,11 +662,4 @@ public class Quote implements Cloneable, Serializable {
 		return _message.getQuoteType().isRefresh();
 	}
 
-	public boolean isEodQuote() {
-		return eodQuote;
-	}
-
-	public void setEodQuote(boolean eodQuote) {
-		this.eodQuote = eodQuote;
-	}
 }

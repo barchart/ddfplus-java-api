@@ -1382,9 +1382,7 @@ public class DataMaster {
 
 	}
 
-	public void clearEodQuotes() {
-		List<Quote> eods = quoteMap.values().stream().filter(q -> q.isEodQuote()).collect(Collectors.toList());
-		eods.forEach(q -> quoteMap.remove(q.getSymbolInfo().getSymbol()));
-		log.info("Cleared {} EOD quotes of {}",eods.size(),quoteMap.size());
+	public void deleteQuote(String symbol) {
+		quoteMap.remove(symbol);
 	}
 }
