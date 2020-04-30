@@ -8,8 +8,10 @@ package com.ddfplus.db;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1380,4 +1382,9 @@ public class DataMaster {
 
 	}
 
+	public void clearEodQuotes() {
+		List<Quote> eods = quoteMap.values().stream().filter(q -> q.isEodQuote()).collect(Collectors.toList());
+		eods.forEach(q -> quoteMap.remove(q.getSymbolInfo().getSymbol()));
+		log.info("Cleared {} EOD quotes of {}",eods.size(),quoteMap.size());
+	}
 }
