@@ -35,6 +35,7 @@ public enum SymbolType {
 	GrainBid,
 	AgIndex,
 	CommodityStats,
-	Commodity3;
+	Commodity3,
+	CommodityPrices;
 
 }
