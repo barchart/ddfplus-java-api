@@ -121,7 +121,7 @@ public class Symbol {
 			else if (symbol.endsWith(".C3"))
 				return SymbolType.Commodity3;
 			else if (symbol.endsWith(".CP"))
-				return SymbolType.CommodityPrices;
+				return SymbolType.CommodityPriceNetwork;
 
 			for (int i = 0; i < ca.length; i++) {
 				if (Character.isDigit(ca[i])) {
