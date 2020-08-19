@@ -47,13 +47,38 @@ public class TestData3XSummary {
         assertEquals(m1._close, (Float) 122.78F);
 
         assertEquals(m1._volume, (Long) 5967600L);
+    }
 
+    @Test
+    public void testMessage3X_S_SummaryWithTS() {
+        // 3,S
+        final byte[] ba1 = "\u00013IBM,S\u0002AN>>,10/07/2009,12112,12285,12094,12278,5967600\u0003 ".getBytes();
+
+        final Data3XSummary m1 = (Data3XSummary) Codec.parseMessage(ba1);
+
+        //log.info("m1 : {}", m1);
+        //log.info("m1 : {}", m1.toStringAscii());
+        //log.info("m1 : {}", m1.toStringHex());
+        //log.info("m1 : {}", m1.toStringAsciiHex());
+
+        assertEquals(m1._record, '3');
+        assertEquals(m1._subrecord, 'S');
+        assertEquals(m1._symbol, "IBM");
+        assertEquals(m1._basecode, 'A');
+        assertEquals(m1._exchange, 'N');
+
+        assertEquals(m1._open, (Float) 121.12F);
+        assertEquals(m1._high, (Float) 122.85F);
+        assertEquals(m1._low, (Float) 120.94F);
+        assertEquals(m1._close, (Float) 122.78F);
+
+        assertEquals(m1._volume, (Long) 5967600L);
     }
 
     @Test
     public void testMessage3X_C_Summary() {
         // 3,C
-        final byte[] ba1 = "\u00013IBM,C\u0002AN>>,10/07/2009,12112,12285,12094,12278\u0003".getBytes();
+        final byte[] ba1 = "\u00013IBM,C\u0002AN>>,10/07/2009,12112,12285,12094,12278\u0003 ".getBytes();
 
         final Data3XSummary m1 = (Data3XSummary) Codec.parseMessage(ba1);
 
@@ -76,7 +101,7 @@ public class TestData3XSummary {
 
     @Test
     public void testMessage3X_I_Summary() {
-        final byte[] ba1 = "\u00013IBM,I\u0002AN>>,10/07/2009,5967600,1000\u0003".getBytes();
+        final byte[] ba1 = "\u00013IBM,I\u0002AN>>,10/07/2009,5967600,1000\u0003 ".getBytes();
 
         final Data3XSummary m1 = (Data3XSummary) Codec.parseMessage(ba1);
 

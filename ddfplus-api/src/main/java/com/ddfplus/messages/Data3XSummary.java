@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 
 import com.ddfplus.codec.Codec;
 import com.ddfplus.enums.QuoteType;
+import com.ddfplus.util.ASCII;
 import com.ddfplus.util.DDFDate;
 
 /**
@@ -107,6 +108,13 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
 
         pos = pos + 19;
 
+        // Calculate last index of the message taking etx into account.
+        int lastMessageIdx = ba.length - 1;
+        int etxIndex = Codec.getIndexOf(ba, (char)ASCII.ETX, pos);
+        if (etxIndex != -1 && etxIndex < lastMessageIdx) {
+            lastMessageIdx = etxIndex;
+        }
+
         if (message._subrecord == 'C') {
             // end-of-day commodity prices
             int pos2 = Codec.getIndexOf(ba, ',', pos);
@@ -121,7 +129,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
             message._low = Codec.parseDDFPriceValue(ba, pos, pos2 - pos, message._basecode);
             pos = pos2 + 1;
 
-            message._close = Codec.parseDDFPriceValue(ba, pos, ba.length - pos - 1, message._basecode);
+            message._close = Codec.parseDDFPriceValue(ba, pos, lastMessageIdx - pos, message._basecode);
 
         } else if (message._subrecord == 'S') {
             // end-of-day stock and forex prices and volume
@@ -141,7 +149,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
             message._close = Codec.parseDDFPriceValue(ba, pos, pos2 - pos, message._basecode);
             pos = pos2 + 1;
 
-            message._volume = (long) Codec.parseDDFIntValue(ba, pos, ba.length - pos - 1);
+            message._volume = (long) Codec.parseDDFIntValue(ba, pos, lastMessageIdx - pos);
 
         } else if (message._subrecord == 'I') {
             // yesterday commodity ind vol & open int.
@@ -149,7 +157,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
             message._volume = Codec.parseLongValue(ba, pos, pos2 - pos);
             pos = pos2 + 1;
 
-            message._openInterest = Codec.parseLongValue(ba, pos, ba.length - pos - 1);
+            message._openInterest = Codec.parseLongValue(ba, pos, lastMessageIdx - pos);
 
         } else if (message._subrecord == 'T') {
             // yesterday commodity composite vol & open int.
@@ -157,7 +165,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
             message._volume = Codec.parseLongValue(ba, pos, pos2 - pos);
             pos = pos2 + 1;
 
-            message._openInterest = Codec.parseLongValue(ba, pos, ba.length - pos - 1);
+            message._openInterest = Codec.parseLongValue(ba, pos, lastMessageIdx - pos);
         }
 
         return message;
