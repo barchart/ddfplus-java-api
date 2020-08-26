@@ -122,6 +122,8 @@ public class Symbol {
 				return SymbolType.Commodity3;
 			else if (symbol.endsWith(".CP"))
 				return SymbolType.CommodityPriceNetwork;
+			else if (symbol.endsWith(".RT"))
+				return SymbolType.Rates;
 
 			for (int i = 0; i < ca.length; i++) {
 				if (Character.isDigit(ca[i])) {
