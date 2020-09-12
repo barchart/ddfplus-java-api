@@ -52,6 +52,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	private final Quote _parentQuote;
 	private volatile float _previous = 0.0f;
+	private DDFDate _previousDay = null;
 	protected volatile char _session;
 	protected volatile float _settlement = 0.0f;
 	protected volatile long _timestamp = 0L;
@@ -264,6 +265,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	public float getPrevious() {
 		return _previous;
+	}
+
+	public DDFDate getPreviousDay() {
+		return _previousDay;
+	}
+
+	public void setPreviousDay(DDFDate dt) {
+		this._previousDay = dt;
 	}
 
 	public double getPriceVolume() {
