@@ -41,7 +41,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	protected volatile float _blockTrade = 0.0f;
 	protected volatile float _close = 0.0f;
 	protected volatile float _close2 = 0.0f;
-	private DDFDate _day = null;
+	private DDFDate _day;
 	
 	protected volatile float _high = 0.0f;
 	// protected volatile float _last = 0.0f;
@@ -92,6 +92,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._open2 = _open2;
 		s._openInterest = _openInterest;
 		s._previous = _previous;
+		s._previousDay = _previousDay;
 		s._timestamp = _timestamp;
 		s._tradeSize = _tradeSize;
 		s._tradeTimestamp = _tradeTimestamp;
