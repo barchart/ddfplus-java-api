@@ -37,6 +37,7 @@ public enum SymbolType {
 	CommodityStats,
 	Commodity3,
 	CommodityPriceNetwork,
-	Rates;
+	Rates,
+	Platts;
 
 }

@@ -124,6 +124,8 @@ public class Symbol {
 				return SymbolType.CommodityPriceNetwork;
 			else if (symbol.endsWith(".RT"))
 				return SymbolType.Rates;
+			else if (symbol.endsWith(".PT"))
+				return SymbolType.Platts;
 
 			for (int i = 0; i < ca.length; i++) {
 				if (Character.isDigit(ca[i])) {
