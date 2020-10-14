@@ -496,8 +496,8 @@ public class Quote implements Cloneable, Serializable {
 			sb.append(", \"t_session\" : { ");
 			sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL));
 			sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
-			sb.append(", \"tradetimestamp\": " + session_t.getTradeTimestamp());
-			sb.append(", \"timestamp\": " + session_t.getTimeInMillis());
+			sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()) );
+			sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()) );
 			sb.append("}");
 		}		
 		
