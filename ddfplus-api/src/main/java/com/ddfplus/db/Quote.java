@@ -8,7 +8,7 @@
 package com.ddfplus.db;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,11 +26,12 @@ import com.ddfplus.util.XMLNode;
  */
 public class Quote implements Cloneable, Serializable {
 
+	public static final ZoneId ZONE_ID_CHICAGO = ZoneId.of("America/Chicago");
 	// By defining the serialVersionUID we can keep Object Serialization
 	// consistent.
 	private static final long serialVersionUID = 9094149815858170620L;
-	
-	
+
+	private Clock clock = Clock.system(ZONE_ID_CHICAGO);
 	private volatile String _ddfExchange = "";
 	private final SymbolInfo _symbolInfo;
 	// Prices
@@ -493,13 +494,23 @@ public class Quote implements Cloneable, Serializable {
 				+ ", \"timestamp\": " + session.getTimeInMillis());
 		
 		if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
-			sb.append(", \"t_session\" : { ");
-			sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL));
-			sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
-			sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()) );
-			sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()) );
-			sb.append("}");
-		}		
+			boolean display = true;
+			if(session_t.getTradeTimestamp() != 0) {
+				ZonedDateTime tradeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(session_t.getTradeTimestamp()), ZONE_ID_CHICAGO);
+				ZonedDateTime now = ZonedDateTime.now(clock);
+				if(now.getHour() >= 15) {
+					display = tradeTime.getHour() >= 12 ? true : false;
+				}
+			}
+			if(display) {
+				sb.append(", \"t_session\" : { ");
+				sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL));
+				sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
+				sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()) );
+				sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()) );
+				sb.append("}");
+			}
+		}
 		
 		Session previous_session = this._previousSession;
 
