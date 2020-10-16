@@ -498,7 +498,23 @@ public class Quote implements Cloneable, Serializable {
 			if(session_t.getTradeTimestamp() != 0) {
 				ZonedDateTime tradeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(session_t.getTradeTimestamp()), ZONE_ID_CHICAGO);
 				ZonedDateTime now = ZonedDateTime.now(clock);
-				if(now.getHour() >= 15) {
+				ZonedDateTime currentSessionDate = session.getDay() != null ? session.getDay().getDate() : null;
+				if(currentSessionDate != null && currentSessionDate.getDayOfYear() !=  tradeTime.getDayOfYear()) {
+					// T session is not for the current session
+					if(this._previousSession.getDay() != null && this._previousSession.getDay().getDate().getDayOfYear() == tradeTime.getDayOfYear()) {
+						// T session is from previous session
+						if(now.getHour() > 15) {
+							// after trading day don't show
+							display = false;
+						}
+						else if (tradeTime.getHour() >= 12) {
+							// during trading, only show if after 12 pm
+							display = false;
+						}
+					}
+				}
+				else if(now.getHour() >= 15) {
+					// For the current session, only show if trade after 12 pm
 					display = tradeTime.getHour() >= 12 ? true : false;
 				}
 			}
