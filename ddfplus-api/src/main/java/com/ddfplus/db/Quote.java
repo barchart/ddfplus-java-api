@@ -52,6 +52,7 @@ public class Quote implements Cloneable, Serializable {
 	// Original DDF Message
 	private volatile DdfMarketBase _message = null;
 	private volatile char _permission = '\0';
+	private long seqNo;
 
 	public Quote(SymbolInfo symbolInfo) {
 		this._symbolInfo = symbolInfo;	
@@ -406,9 +407,12 @@ public class Quote implements Cloneable, Serializable {
 	public void updateLastUpdated(long millis) {
 		_lastUpdated = millis;
 	}
-	
 
 	public String toJSONString() {
+		return toJSONString(0);
+	}
+
+	public String toJSONString(int version) {
 		Session session = this._combinedSession;
 		Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
 
@@ -491,7 +495,8 @@ public class Quote implements Cloneable, Serializable {
 				+ ((session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
 						: session.getOpenInterest())
 				+ ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
-				+ ", \"timestamp\": " + session.getTimeInMillis());
+				+ ", \"timestamp\": " + session.getTimeInMillis()
+				+ (version == 1 && seqNo > 0 ?  ", \"seqno\": " + seqNo : ""));
 		
 		if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
 			boolean display = true;
@@ -547,12 +552,14 @@ public class Quote implements Cloneable, Serializable {
 		return sb.toString();
 	}
 
-	
+
 	public XMLNode toXMLNode() {
 		return toXMLNode(true);
 	}
 
-	
+
+
+
 	/**
 	 * Converts the Quote object into an XMLNode, which can then be used to
 	 * bring the Quote into a textual form.
@@ -689,4 +696,11 @@ public class Quote implements Cloneable, Serializable {
 		return _message.getQuoteType().isRefresh();
 	}
 
+	public long getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(long seqNo) {
+		this.seqNo = seqNo;
+	}
 }
