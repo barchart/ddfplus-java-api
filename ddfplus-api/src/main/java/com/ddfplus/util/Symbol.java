@@ -104,7 +104,7 @@ public class Symbol {
 				return SymbolType.Equity_AX;
 			else if ((symbol.endsWith(".BB")) || (symbol.endsWith(".FP")) || (symbol.endsWith(".NA"))|| (symbol.endsWith(".PL")))
 				return SymbolType.Equity_EU;
-			else if ((symbol.endsWith(".EB")) || (symbol.endsWith(".IX")))
+			else if ((symbol.endsWith(".EB")) || (symbol.endsWith(".IX")) || (symbol.endsWith(".DX")))
 				return SymbolType.Equity_EU;
 			else if ((symbol.endsWith(".EI")))
 				return SymbolType.Index_EU;
