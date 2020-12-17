@@ -14,7 +14,7 @@ import com.ddfplus.util.XMLNode;
  */
 public class SymbolInfo {
 
-	private final char _baseCode;
+	private char _baseCode;
 	private final String _exchange;
 	private final String _name;
 	private final String _symbol;
@@ -46,6 +46,8 @@ public class SymbolInfo {
 	public char getBaseCode() {
 		return _baseCode;
 	}
+
+	public void setBaseCode(char baseCode) {this._baseCode = baseCode; }
 
 	public String getExchange() {
 		return this._exchange;
