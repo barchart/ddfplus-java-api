@@ -525,6 +525,16 @@ public class Quote implements Cloneable, Serializable {
                 sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
                 sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()));
                 sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()));
+                if(session_t.getNumberOfTrades() != 0) {
+                    sb.append(", \"numtrades\": " + session_t.getNumberOfTrades());
+                }
+                if(session_t.getVolume() != ParserHelper.DDFAPI_NOVALUE) {
+                    sb.append(", \"volume\": " + session_t.getVolume());
+                }
+                if(session_t.getPriceVolume() != ParserHelper.DDFAPI_NOVALUE) {
+                    sb.append(", \"pricevolume\": " +  ParserHelper.float2string(session_t.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
+                }
+
                 sb.append("}");
             }
         }
