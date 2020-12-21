@@ -133,7 +133,7 @@ class IoChannelListenTCP extends IoChannel {
 					client.getInetAddress() + ":" + client.getPort());
 
 		} catch (Throwable e) {
-			log.error("listener client session failed", e);
+			log.warn("listener client session failed", e);
 		} finally {
 			if (client != null) {
 				try {
