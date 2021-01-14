@@ -406,10 +406,25 @@ public class Quote implements Cloneable, Serializable {
     }
 
     public String toJSONString() {
-        return toJSONString(0, true);
+        return toJSONString(0, true,false);
     }
 
-    public String toJSONString(int version, boolean displayBbo) {
+    public String toJSONString(int version, boolean displayBbo,boolean useEquityExtendedDecimals) {
+        char baseCode = this._symbolInfo.getBaseCode();
+        if(useEquityExtendedDecimals) {
+            String exchange = this._symbolInfo.getExchange();
+            switch(exchange) {
+                case "NYSE":
+                case "NASDAQ":
+                case "AMEX":
+                case "OTC":
+                    baseCode = 'C';
+                    break;
+            }
+        }
+
+
+
         Session session = this._combinedSession;
         Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
 
@@ -439,53 +454,53 @@ public class Quote implements Cloneable, Serializable {
             sb.append(
                     ", \"bid\": "
                             + ((_bid == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                            : ParserHelper.float2string(_bid, this._symbolInfo.getBaseCode(),
+                            : ParserHelper.float2string(_bid, baseCode,
                             ParserHelper.PURE_DECIMAL))
                             + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _bidSize * 100)
                             + ", \"ask\": "
                             + ((_ask == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                            : ParserHelper.float2string(_ask, this._symbolInfo.getBaseCode(),
+                            : ParserHelper.float2string(_ask, baseCode,
                             ParserHelper.PURE_DECIMAL))
                             + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _askSize * 100));
         }
 
         sb.append(", " + "\"open\": "
                 + ((session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getOpen(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getOpen(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"high\": "
                 + ((session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getHigh(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getHigh(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"low\": "
                 + ((session.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getLow(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getLow(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"last\": "
                 + ((session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getLast(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getLast(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"last2\": "
                 + ((session.getLast(1) == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getLast(1), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getLast(1), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"last3\": "
                 + ((session.getLast(2) == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getLast(2), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getLast(2), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"last_t\": "
                 + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
-                .float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)
+                .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                 : "null")
                 + ", \"lastsize\": "
                 + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
                 + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
                 + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getSettlement(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getSettlement(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"previous\": "
                 + ((session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                : ParserHelper.float2string(session.getPrevious(), this._symbolInfo.getBaseCode(),
+                : ParserHelper.float2string(session.getPrevious(), baseCode,
                 ParserHelper.PURE_DECIMAL))
                 + ", \"volume\": "
                 + ((session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getVolume())
@@ -521,7 +536,7 @@ public class Quote implements Cloneable, Serializable {
             }
             if (display) {
                 sb.append(", \"t_session\" : { ");
-                sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL));
+                sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
                 sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
                 sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()));
                 sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()));
@@ -542,11 +557,11 @@ public class Quote implements Cloneable, Serializable {
         Session previous_session = this._previousSession;
 
         sb.append(", " + "\"previous_session\": { ");
-        sb.append("\"last\": " + ((previous_session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previous_session.getLast(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previous_session.getOpen(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previous_session.getHigh(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previous_session.getLow(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), this._symbolInfo.getBaseCode(), ParserHelper.PURE_DECIMAL)));
+        sb.append("\"last\": " + ((previous_session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previous_session.getLast(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previous_session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previous_session.getOpen(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previous_session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previous_session.getHigh(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previous_session.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previous_session.getLow(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
         sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
         sb.append(",\"day\": " + ((previous_session.getDayCode() == '\0') ? "null" : "\"" + previous_session.getDayCode() + "\""));
