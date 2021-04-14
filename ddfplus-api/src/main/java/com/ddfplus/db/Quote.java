@@ -564,6 +564,7 @@ public class Quote implements Cloneable, Serializable {
         sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
         sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
+        sb.append((previous_session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + previous_session.getSettlement());
         sb.append(",\"day\": " + ((previous_session.getDayCode() == '\0') ? "null" : "\"" + previous_session.getDayCode() + "\""));
         sb.append(",\"date\": " + ((previous_session.getDay() == null) ? "null" : "\"" + LocalDate.from(previous_session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
 
