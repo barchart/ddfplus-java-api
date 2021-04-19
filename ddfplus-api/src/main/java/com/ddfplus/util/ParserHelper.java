@@ -63,6 +63,8 @@ public final class ParserHelper {
 	 */
 	public static int float2int(int basecode, float value) {
 
+		// Have cent support, 4.635 --> 4.64
+		boolean roundUp = ((value * 100) % 1) >= .5f ? true : false;
 		float c = value;
 		float rf = (float) 0.25;
 
@@ -76,7 +78,7 @@ public final class ParserHelper {
 		// much with them.
 		if (tmp >= 0) {
 			float d = c * units_f1[tmp] + rf;
-			return Math.round(d);
+			return roundUp ? Math.round(d) : (int)d;
 		}
 
 		// Now the pain in the ass stuff

@@ -16,12 +16,12 @@ public class ParserHelperTest {
 
     @Test
     public void float2int_round_2() {
-        int v = ParserHelper.float2int(2,5.795f);
-        assertEquals(580,v);
-        v = ParserHelper.float2int(2,5.790f);
-        assertEquals(579,v);
-        v = ParserHelper.float2int(2,5.792f);
-        assertEquals(579,v);
+        int v = ParserHelper.float2int(2,179.0044f);
+        assertEquals(17900,v);
+        v = ParserHelper.float2int(2, 179.0050f);
+        assertEquals(17901,v);
+        v = ParserHelper.float2int(2,179.0051f);
+        assertEquals(17901,v);
     }
 
     @Test
