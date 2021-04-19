@@ -76,7 +76,7 @@ public final class ParserHelper {
 		// much with them.
 		if (tmp >= 0) {
 			float d = c * units_f1[tmp] + rf;
-			return (int) d;
+			return Math.round(d);
 		}
 
 		// Now the pain in the ass stuff
