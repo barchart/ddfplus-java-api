@@ -420,6 +420,10 @@ public class Quote implements Cloneable, Serializable {
                 case "OTC":
                     baseCode = 'C';
                     break;
+                case "TSX":
+                case "TSXV":
+                    baseCode = 'B';
+                    break;
             }
         }
 
