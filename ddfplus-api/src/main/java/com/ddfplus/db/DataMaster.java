@@ -298,6 +298,8 @@ public class DataMaster {
 		return new int[] { quoteMap.size(), bookMap.size(), _cumulativeVolumeTable.size() };
 	}
 
+	public String [] getAllSymbols() { return quoteMap.keySet().toArray(new String[quoteMap.size()]); }
+
 	/**
 	 * Returns the latest timestamp processed by the DataMaster object.
 	 * 
