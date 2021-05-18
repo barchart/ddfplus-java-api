@@ -202,8 +202,30 @@ public class DataMasterTest {
 		session = q.getCombinedSession();
 		assertEquals(3600000,session.getTimeInMillis());
 
-
-
-
 	}
+
+	@Test
+	public void process20_BLD() {
+
+		symbolInfo = new SymbolInfo("BLD", "BLD", "G", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		dataMaster.putQuote(quote);
+
+		// Settle 2,0
+		 byte[] msg = "\u00012BLD,0\u0002AN1520598,D0G\u0003".getBytes();
+		FeedEvent fe = dataMaster.processMessage(msg);
+		assertNotNull(fe);
+		Quote update = fe.getQuote();
+		assertNotNull(update);
+		Session session = update.getCombinedSession();
+		assertEquals(205.98, session.getSettlement(), 0.01);
+
+		// 3,S
+		msg = "\u00013BLD,S\u0002AN>>,05/05/2021,23352,23450,22636,23005,324700\u0003".getBytes();
+		fe = dataMaster.processMessage(msg);
+		assertNotNull(fe);
+		update = fe.getQuote();
+		assertNull("Don't process on the client side",update);
+	}
+
 }
