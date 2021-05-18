@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.junit.Before;
@@ -176,5 +177,33 @@ public class DataMasterTest {
 		previousSession = update.getPreviousSession();
 		assertEquals("Open Interest set", 77953, session.getOpenInterest(), 0.0);
 		assertEquals("Open Interest set", 77960, previousSession.getOpenInterest(), 0.0);
+	}
+
+	@Test
+	public void processRefresh_MutualFund() {
+		symbolInfo = new SymbolInfo("TEPLX", "TEPLX", "F", '2', null, 1);
+		quote = new Quote(symbolInfo);
+		dataMaster.putQuote(quote);
+
+		// Not set
+		assertEquals(0,dataMaster.getMillisCST());
+
+		// 2,1
+		final byte[] msg21 = "\u00012TEPLX,1\u0002AF15,2575,2575,2575,2575,,2725,,,,,2575,,,,D\u0003   UENT@@  ".getBytes();
+		FeedEvent fe = dataMaster.processMessage(msg21);
+		Quote q = fe.getQuote();
+		Session session = q.getCombinedSession();
+		assertEquals(3600000,session.getTimeInMillis());
+
+		// 2,3
+		byte [] msg23 = "\u00012TEPLX,3\u0002AF15,2575,2575,2575,2575,,,,2531,,,2575,,,,D\u0003   UEO@DQ  ".getBytes();
+		 fe = dataMaster.processMessage(msg23);
+		q = fe.getQuote();
+		session = q.getCombinedSession();
+		assertEquals(3600000,session.getTimeInMillis());
+
+
+
+
 	}
 }
