@@ -43,6 +43,7 @@ public class Quote implements Cloneable, Serializable {
     // Sessions
     protected volatile Session _combinedSession = new Session(this);
     protected volatile Session _previousSession = new Session(this);
+    protected volatile Session _zSession = new Session(this);
     private final List<Session> _sessions = new CopyOnWriteArrayList<Session>();
 
     private volatile char _flag = '\0';
@@ -82,6 +83,7 @@ public class Quote implements Cloneable, Serializable {
 
         q._combinedSession = (Session) _combinedSession.clone();
         q._previousSession = (Session) _previousSession.clone();
+        q._zSession = (Session) _zSession.clone();
 
         q._sessions.addAll(_sessions);
         return q;
@@ -281,6 +283,16 @@ public class Quote implements Cloneable, Serializable {
     }
 
     /**
+     * Returns the 'Z' trading session for the Quote. The Z session includes
+     * all trades, even the ones that do not update Last.
+     *
+     * @return <code>Session</code> The 'Z' session object.
+     */
+    public Session getZSession() {
+        return _zSession;
+    }
+
+    /**
      * Returns the specific session for a day and session.
      *
      * @param dayCode
@@ -432,6 +444,9 @@ public class Quote implements Cloneable, Serializable {
         Session session = this._combinedSession;
         Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
 
+        boolean useZSession = (_zSession.getLast() != ParserHelper.DDFAPI_NOVALUE)
+                && _zSession.getDay() != null && _zSession.getDay().getDate().getDayOfYear() == new DDFDate(System.currentTimeMillis()).getDate().getDayOfYear();
+
         StringBuilder sb = new StringBuilder("\"" + this._symbolInfo.getSymbol() + "\": { " + "\"symbol\": \""
                 + this._symbolInfo.getSymbol() + "\"" + ", \"name\": \""
                 + this._symbolInfo.getName().replaceAll("\"", "\\\\\"") + "\"" + ", \"exchange\": \""
@@ -496,6 +511,10 @@ public class Quote implements Cloneable, Serializable {
                 + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
                 .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                 : "null")
+                + ", \"last_z\": "
+                + (useZSession ? ParserHelper
+                .float2string(_zSession.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
+                : "null")
                 + ", \"lastsize\": "
                 + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
                 + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
@@ -556,6 +575,27 @@ public class Quote implements Cloneable, Serializable {
 
                 sb.append("}");
             }
+        }
+
+        if (useZSession) {
+            sb.append(", \"z_session\" : { ");
+            sb.append("\"last\": " + ParserHelper.float2string(_zSession.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
+            sb.append(", \"lastsize\": " + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : _zSession.getLastSize()));
+            sb.append(", \"tradetimestamp\": " + (_zSession.getTradeTimestamp() == 0 ? null : _zSession.getTradeTimestamp()));
+            sb.append(", \"timestamp\": " + (_zSession.getTimeInMillis() == 0 ? null : _zSession.getTimeInMillis()));
+            if(_zSession.getNumberOfTrades() != 0) {
+                sb.append(", \"numtrades\": " + _zSession.getNumberOfTrades());
+            }
+            if(_zSession.getVolume() != ParserHelper.DDFAPI_NOVALUE) {
+                sb.append(", \"volume\": " + _zSession.getVolume());
+            }
+            if(_zSession.getPriceVolume() != ParserHelper.DDFAPI_NOVALUE) {
+                sb.append(", \"pricevolume\": " +  ParserHelper.float2string(_zSession.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
+            }
+            sb.append(",\"day\": " + ((_zSession.getDayCode() == '\0') ? "null" : "\"" + _zSession.getDayCode() + "\""));
+            sb.append(",\"date\": " + ((_zSession.getDay() == null) ? "null" : "\"" + LocalDate.from(_zSession.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
+
+            sb.append("}");
         }
 
         Session previous_session = this._previousSession;
@@ -633,6 +673,13 @@ public class Quote implements Cloneable, Serializable {
         XMLNode n2 = _previousSession.toXMLNode();
         n2.setAttribute("id", "previous");
         node.addNode(n2);
+
+        if ((_zSession.getLast() != ParserHelper.DDFAPI_NOVALUE)
+                && _zSession.getDay() != null && _zSession.getDay().getDate().getDayOfYear() == new DDFDate(System.currentTimeMillis()).getDate().getDayOfYear()) {
+            XMLNode n3 = _zSession.toXMLNode();
+            n3.setAttribute("id", "Z");
+            node.addNode(n3);
+        }
 
         for (Session session : _sessions) {
             XMLNode n = session.toXMLNode();
