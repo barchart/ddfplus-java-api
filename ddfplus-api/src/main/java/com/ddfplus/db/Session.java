@@ -596,4 +596,47 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		return node;
 	}
+
+	/*
+	 * Serializes the <code>Session</code> into an <code>XMLNode</code> object.
+	 */
+	public XMLNode toZSessionXMLNode() {
+		int uc = _parentQuote.getSymbolInfo().getUnitCode();
+
+		XMLNode node = new XMLNode("SESSION");
+
+		if (_day != null)
+			node.setAttribute("day", "" + _day.getDayCode());
+
+		if (_session != '\0')
+			node.setAttribute("session", "" + _session);
+
+		if (_timestamp > 0) {
+			DDFDate d = new DDFDate(_timestamp);
+			node.setAttribute("timestamp", d.toDDFString());
+		}
+
+		float f = getLast();
+		if (f != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("last_z", Integer.toString(ParserHelper.float2int(uc, f)));
+
+		if (_tradeSize != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("tradesize_z", "" + _tradeSize);
+
+		if (_volume != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("volume", "" + _volume);
+
+		if (_numTrades > 0)
+			node.setAttribute("numtrades", "" + _numTrades);
+
+		if (_priceVolume != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("pricevolume", "" + _numberFormatInstance.format(_priceVolume));
+
+		if (_tradeTimestamp > 0L) {
+			DDFDate d = new DDFDate(_tradeTimestamp);
+			node.setAttribute("tradetime_z", d.toDDFString());
+		}
+
+		return node;
+	}
 }
