@@ -506,10 +506,12 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		this._vwap = value;
 	}
 
-	/*
+	/**
 	 * Serializes the <code>Session</code> into an <code>XMLNode</code> object.
+	 * @param zSession zSession
+	 * @return
 	 */
-	public XMLNode toXMLNode() {
+	public XMLNode toXMLNode(Session zSession) {
 		int uc = _parentQuote.getSymbolInfo().getUnitCode();
 
 		XMLNode node = new XMLNode("SESSION");
@@ -574,7 +576,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		if (_blockTrade != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("blocktrade", Integer.toString(ParserHelper.float2int(uc, _blockTrade)));
 
-		
+
 		if (_tradeTimestamp > 0L) {
 			DDFDate d = new DDFDate(_tradeTimestamp);
 			node.setAttribute("tradetime", d.toDDFString());
@@ -594,7 +596,28 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		if (ticks.length() > 0)
 			node.setAttribute("ticks", ticks.toString());
 
+		if (zSession != null) {
+			float fZSession = zSession.getLast();
+			if (fZSession != ParserHelper.DDFAPI_NOVALUE)
+				node.setAttribute("last_z", Integer.toString(ParserHelper.float2int(uc, fZSession)));
+
+			if (zSession._tradeSize != ParserHelper.DDFAPI_NOVALUE)
+				node.setAttribute("tradesize_z", "" + zSession._tradeSize);
+
+			if (zSession._tradeTimestamp > 0L) {
+				DDFDate d = new DDFDate(zSession._tradeTimestamp);
+				node.setAttribute("tradetime_z", d.toDDFString());
+			}
+		}
+
 		return node;
+	}
+
+	/*
+	 * Serializes the <code>Session</code> into an <code>XMLNode</code> object.
+	 */
+	public XMLNode toXMLNode() {
+		return this.toXMLNode(null);
 	}
 
 	/*

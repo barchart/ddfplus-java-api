@@ -457,9 +457,10 @@ public class Quote implements Cloneable, Serializable {
         Session session = this._combinedSession;
         Session session_t = this.getSession(this._combinedSession.getDayCode(), 'T');
 
-        boolean useZSession = isUseZSession();
+        boolean useZSessionAsCurrentSession = isZSessionNewerThanCurrentSession();
+        boolean useZSessionForCurrentSession = isZSessionForCurrentSession();
 
-        if (useZSession) {
+        if (useZSessionAsCurrentSession) {
             session = _zSession;
         }
 
@@ -480,7 +481,7 @@ public class Quote implements Cloneable, Serializable {
             );
         }
 
-        if (!useZSession) {
+        if (!useZSessionAsCurrentSession) {
             sb.append(", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null"));
         }
         else {
@@ -489,7 +490,7 @@ public class Quote implements Cloneable, Serializable {
 
         sb.append(", \"lastupdate\": " + (new DDFDate(_lastUpdated).toDDFString()));
 
-        if (displayBbo && !useZSession) {
+        if (displayBbo && !useZSessionAsCurrentSession) {
             sb.append(
                     ", \"bid\": "
                             + ((_bid == ParserHelper.DDFAPI_NOVALUE) ? "null"
@@ -503,7 +504,7 @@ public class Quote implements Cloneable, Serializable {
                             + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _askSize * 100));
         }
 
-        if (!useZSession) {
+        if (!useZSessionAsCurrentSession) {
             sb.append(", " + "\"open\": "
                     + ((session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : ParserHelper.float2string(session.getOpen(), baseCode,
@@ -532,6 +533,15 @@ public class Quote implements Cloneable, Serializable {
                     + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
+                    + (useZSessionForCurrentSession ? (
+                        ", \"last_z\": "
+                                + ((_zSession.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null"
+                                : ParserHelper.float2string(_zSession.getLast(), baseCode,
+                                ParserHelper.PURE_DECIMAL))
+                        + ", \"lastsize_z\": "
+                        + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : _zSession.getLastSize())
+                        + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
+                    ): "")
                     + ", \"lastsize\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
                     + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
@@ -576,7 +586,8 @@ public class Quote implements Cloneable, Serializable {
                     + ", \"lastsize_z\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
                     + ", \"tradetimestamp\": null"
-                    + ", \"tradetimestamp_z\": " + session.getTradeTimestamp() + ", \"settlement\": "
+                    + ", \"tradetimestamp_z\": " + session.getTradeTimestamp()
+                    + ", \"settlement\": "
                     + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : ParserHelper.float2string(session.getSettlement(), baseCode,
                     ParserHelper.PURE_DECIMAL))
@@ -594,7 +605,7 @@ public class Quote implements Cloneable, Serializable {
                     + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
         }
 
-        if (!useZSession && (session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
+        if (!useZSessionAsCurrentSession && (session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
             boolean display = true;
             if (session_t.getTradeTimestamp() != 0) {
                 ZonedDateTime tradeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(session_t.getTradeTimestamp()), ZONE_ID_CHICAGO);
@@ -639,7 +650,7 @@ public class Quote implements Cloneable, Serializable {
 
         Session previous_session = this._previousSession;
 
-        if (useZSession) {
+        if (useZSessionAsCurrentSession) {
             previous_session = _combinedSession;
         }
 
@@ -662,7 +673,7 @@ public class Quote implements Cloneable, Serializable {
     }
 
     // Use Z session if it is for today and newer than primary session.
-    private boolean isUseZSession() {
+    private boolean isZSessionNewerThanCurrentSession() {
         if (_zSession == null || _zSession.getDay() == null)
             return false;
 
@@ -674,6 +685,15 @@ public class Quote implements Cloneable, Serializable {
 
         // Is zSession date after primary session?
         return _combinedSession.getDay() == null || zSessionDate.toLocalDate().isAfter(_combinedSession.getDay().getDate().toLocalDate());
+    }
+
+    // Use Z session if it is for today and newer than primary session.
+    private boolean isZSessionForCurrentSession() {
+        if (_zSession == null || _zSession.getDay() == null || _combinedSession == null || _combinedSession.getDay() == null)
+            return false;
+
+        // Is zSession date after primary session?
+        return _zSession.getDay().getDate().toLocalDate().equals(_combinedSession.getDay().getDate().toLocalDate());
     }
 
     public XMLNode toXMLNode() {
@@ -699,12 +719,13 @@ public class Quote implements Cloneable, Serializable {
         node.setAttribute("pointvalue", "" + _symbolInfo.getPointValue());
         node.setAttribute("tickincrement", "" + _symbolInfo.getTickIncrement());
 
-        boolean useZSession = isUseZSession();
+        boolean useZSessionAsCurrentSession = isZSessionNewerThanCurrentSession();
+        boolean useZSessionForCurrentSession = isZSessionForCurrentSession();
 
         if ((_ddfExchange != null) && (_ddfExchange.length() > 0))
             node.setAttribute("ddfexchange", _ddfExchange);
 
-        if (!useZSession) {
+        if (!useZSessionAsCurrentSession) {
             if (_flag != '\0')
                 node.setAttribute("flag", "" + _flag);
         }
@@ -729,7 +750,7 @@ public class Quote implements Cloneable, Serializable {
                 node.setAttribute("asksize", "" + _askSize);
         }
 
-        if (useZSession) {
+        if (useZSessionAsCurrentSession) {
             XMLNode n1 = _zSession.toZSessionXMLNode();
             n1.setAttribute("id", "combined");
             node.addNode(n1);
@@ -739,7 +760,7 @@ public class Quote implements Cloneable, Serializable {
             node.addNode(n2);
         }
         else {
-            XMLNode n1 = _combinedSession.toXMLNode();
+            XMLNode n1 = _combinedSession.toXMLNode(useZSessionForCurrentSession ? _zSession : null);
             n1.setAttribute("id", "combined");
             node.addNode(n1);
 
