@@ -533,15 +533,6 @@ public class Quote implements Cloneable, Serializable {
                     + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
-                    + (useZSessionForCurrentSession ? (
-                        ", \"last_z\": "
-                                + ((_zSession.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                                : ParserHelper.float2string(_zSession.getLast(), baseCode,
-                                ParserHelper.PURE_DECIMAL))
-                        + ", \"lastsize_z\": "
-                        + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : _zSession.getLastSize())
-                        + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
-                    ): "")
                     + ", \"lastsize\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
                     + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
@@ -559,6 +550,15 @@ public class Quote implements Cloneable, Serializable {
                     : session.getOpenInterest())
                     + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                     + ", \"timestamp\": " + session.getTimeInMillis()
+                    + (useZSessionForCurrentSession ? (
+                            ", \"last_z\": "
+                            + ((_zSession.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null"
+                            : ParserHelper.float2string(_zSession.getLast(), baseCode,
+                            ParserHelper.PURE_DECIMAL))
+                            + ", \"lastsize_z\": "
+                            + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : _zSession.getLastSize())
+                            + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
+                    ): "")
                     + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
         }
         else {
