@@ -462,6 +462,7 @@ public class Quote implements Cloneable, Serializable {
 
         if (useZSessionAsCurrentSession) {
             session = _zSession;
+            session_t = this.getSession(this._zSession.getDayCode(), 'T');
         }
 
         StringBuilder sb = new StringBuilder("\"" + this._symbolInfo.getSymbol() + "\": { " + "\"symbol\": \""
@@ -605,7 +606,7 @@ public class Quote implements Cloneable, Serializable {
                     + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
         }
 
-        if (!useZSessionAsCurrentSession && (session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
+        if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
             boolean display = true;
             if (session_t.getTradeTimestamp() != 0) {
                 ZonedDateTime tradeTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(session_t.getTradeTimestamp()), ZONE_ID_CHICAGO);
