@@ -45,7 +45,7 @@ public class QuoteTest {
 		symbolInfo = new SymbolInfo("HGEN", "MEZ900C", "G", '2', null, 1);
 		quote = new Quote(symbolInfo);
 		// Current Session
-		quote.getCombinedSession().setDayCode('1');
+		quote.getCombinedSession().setDayCode(DDFDate.fromDDFString("20210501000000"));
 		// Z Session
 		Session z = quote.createZSession();
 		z.setLast(100);

@@ -459,9 +459,11 @@ public class Quote implements Cloneable, Serializable {
 
         boolean useZSessionAsCurrentSession = isZSessionNewerThanCurrentSession();
         boolean useZSessionForCurrentSession = isZSessionForCurrentSession();
+        Session previousSession = this._previousSession;
 
         if (useZSessionAsCurrentSession) {
             session = _zSession;
+            previousSession = _combinedSession;
             session_t = this.getSession(this._zSession.getDayCode(), 'T');
         }
 
@@ -614,12 +616,12 @@ public class Quote implements Cloneable, Serializable {
                 ZonedDateTime currentSessionDate = session.getDay() != null ? session.getDay().getDate() : null;
                 if (currentSessionDate != null && currentSessionDate.getDayOfYear() != tradeTime.getDayOfYear()) {
                     // T session is not for the current session
-                    if (this._previousSession.getDay() != null && this._previousSession.getDay().getDate().getDayOfYear() == tradeTime.getDayOfYear()) {
+                    if (previousSession.getDay() != null && previousSession.getDay().getDate().getDayOfYear() == tradeTime.getDayOfYear()) {
                         // T session is from previous session
                         if (now.getHour() > 15) {
                             // after trading day don't show
                             display = false;
-                        } else if (tradeTime.getHour() >= 12) {
+                        } else if (tradeTime.getHour() < 12) {
                             // during trading, only show if after 12 pm
                             display = false;
                         }
@@ -649,23 +651,17 @@ public class Quote implements Cloneable, Serializable {
             }
         }
 
-        Session previous_session = this._previousSession;
-
-        if (useZSessionAsCurrentSession) {
-            previous_session = _combinedSession;
-        }
-
         sb.append(", " + "\"previous_session\": { ");
-        sb.append("\"last\": " + ((previous_session.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previous_session.getLast(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previous_session.getOpen(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previous_session.getHigh(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previous_session.getLow(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append(((previous_session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previous_session.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append((previous_session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previous_session.getVolume());
-        sb.append((previous_session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previous_session.getOpenInterest());
-        sb.append((previous_session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previous_session.getSettlement(),baseCode, ParserHelper.PURE_DECIMAL));
-        sb.append(",\"day\": " + ((previous_session.getDayCode() == '\0') ? "null" : "\"" + previous_session.getDayCode() + "\""));
-        sb.append(",\"date\": " + ((previous_session.getDay() == null) ? "null" : "\"" + LocalDate.from(previous_session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
+        sb.append("\"last\": " + ((previousSession.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previousSession.getLast(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previousSession.getOpen() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"open\": " + ParserHelper.float2string(previousSession.getOpen(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previousSession.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previousSession.getHigh(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previousSession.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previousSession.getLow(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previousSession.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previousSession.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append((previousSession.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previousSession.getVolume());
+        sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
+        sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(),baseCode, ParserHelper.PURE_DECIMAL));
+        sb.append(",\"day\": " + ((previousSession.getDayCode() == '\0') ? "null" : "\"" + previousSession.getDayCode() + "\""));
+        sb.append(",\"date\": " + ((previousSession.getDay() == null) ? "null" : "\"" + LocalDate.from(previousSession.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
 
         sb.append(" }");
 
