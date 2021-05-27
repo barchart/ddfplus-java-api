@@ -7,37 +7,8 @@
 
 package com.ddfplus.net;
 
-import java.net.InetAddress;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.ddfplus.api.BookQuoteHandler;
-import com.ddfplus.api.ClientConfig;
-import com.ddfplus.api.ConnectionEvent;
-import com.ddfplus.api.ConnectionEventHandler;
-import com.ddfplus.api.FeedHandler;
-import com.ddfplus.api.MarketEventHandler;
-import com.ddfplus.api.MinuteBarExchangeHandler;
-import com.ddfplus.api.MinuteBarHandler;
-import com.ddfplus.api.QuoteHandler;
-import com.ddfplus.api.TimestampHandler;
-import com.ddfplus.api.TradeHandler;
-import com.ddfplus.db.BookQuote;
-import com.ddfplus.db.CumulativeVolume;
-import com.ddfplus.db.DataMaster;
-import com.ddfplus.db.FeedEvent;
-import com.ddfplus.db.MarketEvent;
-import com.ddfplus.db.MasterType;
-import com.ddfplus.db.Ohlc;
-import com.ddfplus.db.Quote;
+import com.ddfplus.api.*;
+import com.ddfplus.db.*;
 import com.ddfplus.enums.ConnectionType;
 import com.ddfplus.messages.DdfMarketBase;
 import com.ddfplus.messages.DdfMarketTrade;
@@ -48,6 +19,13 @@ import com.ddfplus.service.feed.FeedServiceImpl;
 import com.ddfplus.service.usersettings.UserSettings;
 import com.ddfplus.service.usersettings.UserSettingsService;
 import com.ddfplus.service.usersettings.UserSettingsServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.InetAddress;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * DDF Client API.
@@ -614,6 +592,22 @@ public class DdfClientImpl implements DdfClient {
 	 */
 	private class DdfClientConnectionHandler implements ConnectionHandler {
 
+		private boolean wireStats = false;
+		private WireStats stats;
+
+		public DdfClientConnectionHandler() {
+			if(wireStats) {
+				stats = new WireStats();
+				Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::logStats,1,1,TimeUnit.SECONDS);
+			}
+		}
+
+		private void logStats() {
+			log.info("{}",this.stats);
+			this.stats.reset();
+		}
+
+
 		@Override
 		public void onConnectionEvent(ConnectionEvent event) {
 			for (ConnectionEventHandler listener : adminHandlers) {
@@ -623,6 +617,10 @@ public class DdfClientImpl implements DdfClient {
 
 		@Override
 		public void onMessage(byte[] array) {
+
+			if(wireStats) {
+				stats.update(array.length);
+			}
 
 			// Decode and update caches
 			FeedEvent fe = dataMaster.processMessage(array);
