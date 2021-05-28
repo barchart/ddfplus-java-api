@@ -584,7 +584,10 @@ public class Quote implements Cloneable, Serializable {
                     + ", \"last\": null"
                     + ", \"last2\": null"
                     + ", \"last3\": null"
-                    + ", \"last_t\": null"
+                    + ", \"last_t\": "
+                    + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
+                    .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
+                    : "null")
                     + ", \"lastsize\": null"
                     + ", \"lastsize_z\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
