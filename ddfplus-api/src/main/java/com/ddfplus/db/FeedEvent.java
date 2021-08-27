@@ -23,6 +23,7 @@ public class FeedEvent {
 	private List<MarketEvent> marketEvents;
 	private Ohlc ohlc;
 	private DdfMarketTrade trade;
+	private boolean refreshMessage;
 
 	public boolean isDdfMessage() {
 		return ddfMessage != null;
@@ -128,4 +129,8 @@ public class FeedEvent {
 		this.trade = ddfMessage;
 	}
 
+    public void setRefreshMessage(boolean b) {
+		this.refreshMessage = b;
+    }
+    public boolean isRefreshMessage() { return this.refreshMessage; }
 }

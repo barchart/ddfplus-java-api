@@ -310,8 +310,13 @@ public class DdfClientImpl implements DdfClient {
 					l = new CopyOnWriteArrayList<>();
 					quoteHandlers.put(s, l);
 					l.add(handler);
-					// Initial Subscription
-					subscribeQuote(s);
+					if(handler.isSnapshotRequest()) {
+						subscribeQuoteSnapshot(s);
+					}
+					else {
+						// Initial Subscription
+						subscribeQuote(s);
+					}
 				} else {
 					// We have a subscription
 					boolean added = l.addIfAbsent(handler);
@@ -332,7 +337,12 @@ public class DdfClientImpl implements DdfClient {
 			}
 			l.remove(handler);
 			if (l.size() == 0) {
-				unsubscribeQuote(symbol);
+				if(handler.isSnapshotRequest()) {
+					unsubscribeQuoteSnapshot(symbol);
+				}
+				else {
+					unsubscribeQuote(symbol);
+				}
 			}
 		}
 	}
@@ -507,6 +517,11 @@ public class DdfClientImpl implements DdfClient {
 		return dataMaster.getCumulativeVolume(symbol);
 	}
 
+	@Override
+	public void sendQuoteSnapshot(String symbol) {
+		connection.subscribeQuoteSnapshot(symbol);
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -550,6 +565,17 @@ public class DdfClientImpl implements DdfClient {
 
 	private void unsubscribeQuote(String symbol) {
 		connection.unsubscribeQuote(symbol);
+		dataMaster.removeSubscribedSymbol(symbol);
+	}
+
+	private void subscribeQuoteSnapshot(String symbol) {
+		connection.subscribeQuoteSnapshot(symbol);
+		// For tracking unknown symbols
+		dataMaster.addSubscribedSymbol(symbol);
+	}
+
+	private void unsubscribeQuoteSnapshot(String symbol) {
+		connection.unsubscribeQuoteSnapshot(symbol);
 		dataMaster.removeSubscribedSymbol(symbol);
 	}
 

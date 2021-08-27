@@ -211,6 +211,11 @@ public class Connection {
 		channel.enqueueCommand(cmd);
 	}
 
+	public void unsubscribeQuoteSnapshot(String symbol) {
+		Cmd cmd = new Cmd("STOP", symbol, "s");
+		channel.enqueueCommand(cmd);
+	}
+
 	/**
 	 * Subscribe for book/depth.
 	 * 

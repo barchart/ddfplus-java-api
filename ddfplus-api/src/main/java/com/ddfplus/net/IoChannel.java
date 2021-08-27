@@ -292,7 +292,7 @@ abstract class IoChannel extends Thread {
 
 		private void send(String cmd) {
 			// Call communications channel specific send method.
-			log.info("> " + cmd);
+			log.debug("> {}",cmd);
 			sendCommand(cmd);
 
 		}

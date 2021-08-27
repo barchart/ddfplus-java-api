@@ -34,6 +34,9 @@ public class ClientConfig {
 	 * symbols = "YHOO,IBM,ESH6,YMH6,QQQQ,";
 	 */
 	private String symbols;
+	private boolean snapshotRequest;
+	// If > 0 will periodically send snapshot requests
+	private int snapshotIntervalSec;
 	private boolean addDdfHandler;
 	/**
 	 * Activate depth subscriptions.
@@ -256,4 +259,19 @@ public class ClientConfig {
 		this.minuteBarExchanges = exchanges;
 	}
 
+	public boolean isSnapshotRequest() {
+		return snapshotRequest;
+	}
+
+	public void setSnapshotRequest(boolean snapshotRequest) {
+		this.snapshotRequest = snapshotRequest;
+	}
+
+	public int getSnapshotIntervalSec() {
+		return snapshotIntervalSec;
+	}
+
+	public void setSnapshotIntervalSec(int snapshotIntervalSec) {
+		this.snapshotIntervalSec = snapshotIntervalSec;
+	}
 }

@@ -8,10 +8,8 @@ package com.ddfplus.db;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -365,15 +363,19 @@ public class DataMaster {
 		if (node.getName().equals("QUOTE")) {
 			Quote quote = handleRefreshQuote(msg, node);
 			fe.setQuote(quote);
+			fe.setRefreshMessage(true);
 		} else if (node.getName().equals("BOOK")) {
 			BookQuote bookQuote = handleBookQuoteRefresh(node);
 			fe.setBook(bookQuote);
+			fe.setRefreshMessage(true);
 		} else if (node.getName().equals("CV")) {
 			CumulativeVolume volume = handleRefreshCumlativeVolume(node);
 			fe.setCumVolume(volume);
+			fe.setRefreshMessage(true);
 		} else if (node.getName().equals("ohlc")) {
 			Ohlc ohlc = Ohlc.fromXMLNode(node);
 			fe.setOhlc(ohlc);
+			fe.setRefreshMessage(true);
 		} else {
 			log.error("wrong refresh message type: {}", node.getName());
 		}

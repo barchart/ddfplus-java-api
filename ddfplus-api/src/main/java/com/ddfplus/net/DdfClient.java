@@ -38,8 +38,6 @@ public interface DdfClient {
 	 * used when the API is used in pull by exchange mode where all symbols for
 	 * an exchange are requested.
 	 *
-	 * @see addQuoteExchangeHandler
-	 * 
 	 * @param username
 	 *            Refresh/Snapshot web service login
 	 * @param password
@@ -192,4 +190,5 @@ public interface DdfClient {
 	 */
 	CumulativeVolume getCumulativeVolume(String symbol);
 
+	void sendQuoteSnapshot(String symbol);
 }
