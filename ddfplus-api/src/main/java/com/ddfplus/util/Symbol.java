@@ -366,19 +366,27 @@ public class Symbol {
 	}
 
 	public String getShortSymbol() {
+		return getShortSymbol(_currentYear, new DateTime().getMonthOfYear());
+	}
+
+	public String getShortSymbol(int currentYear, int currentMonth) {
 		switch (this._type) {
 		case Future: {
 			char c_mo = _month;
-			if (_currentYear < _year - 9) {
-				int mon = Symbol.getMonthFromFuturesCode(_month);
-				if (mon == 0)
-					return _symbol;
 
-				// XXX TIME!ZONE
-				int mon2 = new DateTime().getMonthOfYear() + 1;
+			int mon = Symbol.getMonthFromFuturesCode(_month);
+			if (mon == 0)
+				return _symbol;
 
-				if ((_currentYear < _year + 10) || (mon > mon2))
+			final int switchYear = currentYear + 10;
+			if (_year >= switchYear) {
+				if (_year == switchYear) {
+					if (mon >= currentMonth) {
+						c_mo = Symbol.getExtendedFuturesMonthCode(mon);
+					}
+				} else {
 					c_mo = Symbol.getExtendedFuturesMonthCode(mon);
+				}
 			}
 
 			return _commodityCode + c_mo + Integer.toString(_year).substring(3, 4);
