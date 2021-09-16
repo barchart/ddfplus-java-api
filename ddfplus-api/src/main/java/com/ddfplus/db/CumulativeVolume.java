@@ -163,7 +163,7 @@ public class CumulativeVolume {
 		return _tickIncrement;
 	}
 
-	protected void setDate(long date) {
+	public void setDate(long date) {
 		_date = date;
 	}
 
