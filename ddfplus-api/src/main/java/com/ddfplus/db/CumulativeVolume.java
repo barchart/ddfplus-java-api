@@ -167,6 +167,26 @@ public class CumulativeVolume {
 		_date = date;
 	}
 
+	public void setBaseCode(char _baseCode) {
+		this._baseCode = _baseCode;
+	}
+
+	public void setTickIncrement(int _tickIncrement) {
+		this._tickIncrement = _tickIncrement;
+	}
+
+	public void setLast(float _last) {
+		this._last = _last;
+	}
+
+	public void setLastSize(int _lastSize) {
+		this._lastSize = _lastSize;
+	}
+
+	public void setLastCumulativeVolume(int _lastCumulativeVolume) {
+		this._lastCumulativeVolume = _lastCumulativeVolume;
+	}
+
 	public String toString() { // Overrides Object
 		String s = _symbol + ";" + _last + ";" + _lastSize + ";" + _lastCumulativeVolume + ";" + _data.toString();
 		return s;
