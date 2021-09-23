@@ -318,6 +318,10 @@ public class DataMaster {
 		quoteMap.put(q.getSymbolInfo().getSymbol(), q);
 	}
 
+	public void putQuote(String symbol, Quote q) {
+		quoteMap.put(symbol, q);
+	}
+
 	/**
 	 * Adds/Replaces a BookQuote in the internal table.
 	 * 
