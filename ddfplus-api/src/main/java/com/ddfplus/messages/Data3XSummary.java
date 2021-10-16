@@ -149,7 +149,7 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
             message._close = Codec.parseDDFPriceValue(ba, pos, pos2 - pos, message._basecode);
             pos = pos2 + 1;
 
-            message._volume = (long) Codec.parseDDFIntValue(ba, pos, lastMessageIdx - pos);
+            message._volume = Codec.parseLongValue(ba, pos, lastMessageIdx - pos);
 
         } else if (message._subrecord == 'I') {
             // yesterday commodity ind vol & open int.
