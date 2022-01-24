@@ -6,35 +6,21 @@
  */
 package com.ddfplus.db;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.ddfplus.codec.Codec;
 import com.ddfplus.db.MarketEvent.MarketEventType;
-import com.ddfplus.enums.DdfRecord;
-import com.ddfplus.enums.DdfSessionCode;
-import com.ddfplus.enums.DdfSubRecord;
-import com.ddfplus.enums.MarketConditionType;
-import com.ddfplus.enums.QuoteElement;
-import com.ddfplus.enums.QuoteElementModifiers;
-import com.ddfplus.messages.DdfMarketBase;
-import com.ddfplus.messages.DdfMarketBidAsk;
-import com.ddfplus.messages.DdfMarketCondition;
-import com.ddfplus.messages.DdfMarketDepth;
-import com.ddfplus.messages.DdfMarketParameter;
-import com.ddfplus.messages.DdfMarketRefresh;
-import com.ddfplus.messages.DdfMarketRefreshXML;
-import com.ddfplus.messages.DdfMarketTrade;
-import com.ddfplus.messages.DdfTimestamp;
+import com.ddfplus.enums.*;
+import com.ddfplus.messages.*;
 import com.ddfplus.service.feed.FeedService;
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
 import com.ddfplus.util.XMLNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The DataMaster class controls the "mini-database" system that comes with the
@@ -913,6 +899,7 @@ public class DataMaster {
 			if (session != null) {
 				session._close = f;
 				session.setLast(f);
+				session.setLastSize(0);
 			}
 			if (bProcessCombined) {
 				if (!bDoNotSetFlag)
@@ -920,6 +907,7 @@ public class DataMaster {
 
 				pCombinedSession._close = f;
 				pCombinedSession.setLast(f);
+				pCombinedSession.setLastSize(0);
 				clearPreFlag = true;
 
 				// MarketEvent.Close
@@ -960,6 +948,7 @@ public class DataMaster {
 			} else {
 				if (session != null) {
 					session.setLast(f);
+					session.setLastSize(0);
 					session._settlement = f;
 				}
 
@@ -968,6 +957,7 @@ public class DataMaster {
 						quote.setFlag('s');
 					}
 					pCombinedSession.setLast(f);
+					pCombinedSession.setLastSize(0);
 					pCombinedSession._settlement = f;
 					clearPreFlag = true;
 					// MarketEvent.Settlement

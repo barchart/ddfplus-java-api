@@ -1,19 +1,14 @@
 package com.ddfplus.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.ddfplus.db.MarketEvent.MarketEventType;
 import com.ddfplus.messages.CtrlTimestamp;
 import com.ddfplus.messages.DdfMarketBase;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class DataMasterTest {
 
@@ -183,6 +178,8 @@ public class DataMasterTest {
 	public void processRefresh_MutualFund() {
 		symbolInfo = new SymbolInfo("TEPLX", "TEPLX", "F", '2', null, 1);
 		quote = new Quote(symbolInfo);
+		Session combinedSession = quote.getCombinedSession();
+		combinedSession.setLastSize(100);
 		dataMaster.putQuote(quote);
 
 		// Not set
@@ -194,13 +191,17 @@ public class DataMasterTest {
 		Quote q = fe.getQuote();
 		Session session = q.getCombinedSession();
 		assertEquals(3600000,session.getTimeInMillis());
+		assertEquals(0,session.getLastSize());
 
 		// 2,3
+		combinedSession = quote.getCombinedSession();
+		combinedSession.setLastSize(101);
 		byte [] msg23 = "\u00012TEPLX,3\u0002AF15,2575,2575,2575,2575,,,,2531,,,2575,,,,D\u0003   UEO@DQ  ".getBytes();
 		 fe = dataMaster.processMessage(msg23);
 		q = fe.getQuote();
 		session = q.getCombinedSession();
 		assertEquals(3600000,session.getTimeInMillis());
+		assertEquals(0,session.getLastSize());
 
 	}
 
