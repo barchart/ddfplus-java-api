@@ -7,11 +7,11 @@
 
 package com.ddfplus.db;
 
-import java.text.NumberFormat;
-
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
 import com.ddfplus.util.XMLNode;
+
+import java.text.NumberFormat;
 
 /**
  * Holds session statistics for a symbol.
@@ -327,6 +327,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		// System.err.println(" LA0=" + lastArray[0] + " LA1=" + lastArray[1]
 		// + " LA2=" + lastArray[2]);
+	}
+
+	public void clearLasts() {
+		lastArray[2] = lastArray[1] = lastArray[0] = 0.0f;
 	}
 
 	public void setLastSize(int value) {
