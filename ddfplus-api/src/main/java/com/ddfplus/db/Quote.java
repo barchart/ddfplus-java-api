@@ -7,17 +7,17 @@
 
 package com.ddfplus.db;
 
-import java.io.Serializable;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.messages.DdfMarketBase;
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
 import com.ddfplus.util.XMLNode;
+
+import java.io.Serializable;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The Quote class encapsulates the complete quotation information for a given
@@ -479,10 +479,17 @@ public class Quote implements Cloneable, Serializable {
 
         if (session.getDay() != null) {
             sb.append(
-                    ", \"day\": \"" + session.getDayCode() + "\""
-                            + ", \"date\": \"" + LocalDate.from(session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""
-            );
+                    ", \"day\": \"" + session.getDayCode() + "\", " );
         }
+        if(session._timestamp > 0) {
+            DDFDate d = new DDFDate(session._timestamp);
+            String dt = LocalDate.from(d.getDate()).format(DateTimeFormatter.ISO_DATE);
+            sb.append(  "\"date\": \"" + dt +  "\"");
+        }
+        else {
+            sb.append("\"date\": \"null\"");
+        }
+
 
         if (!useZSessionAsCurrentSession) {
             sb.append(", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null"));
@@ -664,7 +671,13 @@ public class Quote implements Cloneable, Serializable {
         sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
         sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(),baseCode, ParserHelper.PURE_DECIMAL));
         sb.append(",\"day\": " + ((previousSession.getDayCode() == '\0') ? "null" : "\"" + previousSession.getDayCode() + "\""));
-        sb.append(",\"date\": " + ((previousSession.getDay() == null) ? "null" : "\"" + LocalDate.from(previousSession.getDay().getDate()).format(DateTimeFormatter.ISO_DATE) + "\""));
+        if (previousSession._timestamp > 0) {
+            DDFDate d = new DDFDate(previousSession._timestamp);
+            String dt = LocalDate.from(d.getDate()).format(DateTimeFormatter.ISO_DATE);
+            sb.append(", \"date\": \"" + dt + "\"");
+        } else {
+            sb.append(", \"date\": \"null\"");
+        }
 
         sb.append(" }");
 
