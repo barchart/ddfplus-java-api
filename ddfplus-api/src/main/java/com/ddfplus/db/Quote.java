@@ -438,6 +438,8 @@ public class Quote implements Cloneable, Serializable {
 
     public String toJSONString(int version, boolean displayBbo,boolean useEquityExtendedDecimals) {
         char baseCode = this._symbolInfo.getBaseCode();
+        // US Exchange Equity
+        boolean usEquity = false;
         if(useEquityExtendedDecimals) {
             String exchange = this._symbolInfo.getExchange();
             switch(exchange) {
@@ -446,6 +448,7 @@ public class Quote implements Cloneable, Serializable {
                 case "AMEX":
                 case "OTC":
                     baseCode = 'C';
+                    usEquity = true;
                     break;
                 case "TSX":
                 case "TSXV":
@@ -506,12 +509,12 @@ public class Quote implements Cloneable, Serializable {
                             + ((_bid == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(_bid, baseCode,
                             ParserHelper.PURE_DECIMAL))
-                            + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _bidSize * 100)
+                            + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" :  (usEquity ? _bidSize * 100 : _bidSize))
                             + ", \"ask\": "
                             + ((_ask == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(_ask, baseCode,
                             ParserHelper.PURE_DECIMAL))
-                            + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : _askSize * 100));
+                            + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * 100: _askSize)));
         }
 
         if (!useZSessionAsCurrentSession) {
@@ -544,7 +547,7 @@ public class Quote implements Cloneable, Serializable {
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
                     + ", \"lastsize\": "
-                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
+                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * 100 : session.getLastSize()))
                     + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
                     + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : ParserHelper.float2string(session.getSettlement(), baseCode,
@@ -566,7 +569,7 @@ public class Quote implements Cloneable, Serializable {
                             : ParserHelper.float2string(_zSession.getLast(), baseCode,
                             ParserHelper.PURE_DECIMAL))
                             + ", \"lastsize_z\": "
-                            + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : _zSession.getLastSize())
+                            + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ?  _zSession.getLastSize() * 100 : _zSession.getLastSize()))
                             + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
                     ): "")
                     + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
@@ -597,7 +600,7 @@ public class Quote implements Cloneable, Serializable {
                     : "null")
                     + ", \"lastsize\": null"
                     + ", \"lastsize_z\": "
-                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getLastSize())
+                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * 100 : session.getLastSize()))
                     + ", \"tradetimestamp\": null"
                     + ", \"tradetimestamp_z\": " + session.getTradeTimestamp()
                     + ", \"settlement\": "
@@ -644,7 +647,7 @@ public class Quote implements Cloneable, Serializable {
             if (display) {
                 sb.append(", \"t_session\" : { ");
                 sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
-                sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session_t.getLastSize()));
+                sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session_t.getLastSize() * 100 : session_t.getLastSize())));
                 sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()));
                 sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()));
                 if(session_t.getNumberOfTrades() != 0) {
