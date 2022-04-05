@@ -483,16 +483,9 @@ public class Quote implements Cloneable, Serializable {
         if (session.getDay() != null) {
             sb.append(
                     ", \"day\": \"" + session.getDayCode() + "\", " );
-        }
-        if(session._timestamp > 0) {
-            DDFDate d = new DDFDate(session._timestamp);
-            String dt = LocalDate.from(d.getDate()).format(DateTimeFormatter.ISO_DATE);
+            String dt = LocalDate.from(session.getDay().getDate()).format(DateTimeFormatter.ISO_DATE);
             sb.append(  "\"date\": \"" + dt +  "\"");
         }
-        else {
-            sb.append("\"date\": \"null\"");
-        }
-
 
         if (!useZSessionAsCurrentSession) {
             sb.append(", \"flag\": " + ((this._flag != '\0') ? ("\"" + this._flag + "\"") : "null"));
@@ -674,9 +667,8 @@ public class Quote implements Cloneable, Serializable {
         sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
         sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(),baseCode, ParserHelper.PURE_DECIMAL));
         sb.append(",\"day\": " + ((previousSession.getDayCode() == '\0') ? "null" : "\"" + previousSession.getDayCode() + "\""));
-        if (previousSession._timestamp > 0) {
-            DDFDate d = new DDFDate(previousSession._timestamp);
-            String dt = LocalDate.from(d.getDate()).format(DateTimeFormatter.ISO_DATE);
+        if (previousSession.getDay() != null) {
+            String dt = LocalDate.from(previousSession.getDay().getDate()).format(DateTimeFormatter.ISO_DATE);
             sb.append(", \"date\": \"" + dt + "\"");
         } else {
             sb.append(", \"date\": \"null\"");
