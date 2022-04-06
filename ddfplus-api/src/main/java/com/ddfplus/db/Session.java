@@ -535,10 +535,22 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		if (_session != '\0')
 			node.setAttribute("session", "" + _session);
 
+		// timestamp field
 		if (_timestamp > 0) {
 			DDFDate d = new DDFDate(_timestamp);
+			// Sanity check to ensure _timestamp matches the "day" field
+			if(_day != null) {
+				if (_day.getDate().getYear() != d.getDate().getYear() || _day.getDate().getMonth() != d.getDate().getMonth()
+				|| _day.getDate().getDayOfMonth() != d.getDate().getDayOfMonth()) {
+					// We have a timestamp newer than the "day" field.
+					ZonedDateTime newDay = d.getDate().withYear(_day.getDate().getYear()).withMonth(_day.getDate().getMonth().getValue())
+							.withDayOfMonth(_day.getDate().getDayOfMonth());
+					d = new DDFDate(newDay);
+				}
+			}
 			node.setAttribute("timestamp", d.toDDFString());
 		}
+
 
 		if (_open != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("open", Integer.toString(ParserHelper.float2int(uc, _open)));
@@ -649,6 +661,16 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_timestamp > 0) {
 			DDFDate d = new DDFDate(_timestamp);
+			// Sanity check to ensure _timestamp matches the "day" field
+			if(_day != null) {
+				if (_day.getDate().getYear() != d.getDate().getYear() || _day.getDate().getMonth() != d.getDate().getMonth()
+						|| _day.getDate().getDayOfMonth() != d.getDate().getDayOfMonth()) {
+					// We have a timestamp newer than the "day" field.
+					ZonedDateTime newDay = d.getDate().withYear(_day.getDate().getYear()).withMonth(_day.getDate().getMonth().getValue())
+							.withDayOfMonth(_day.getDate().getDayOfMonth());
+					d = new DDFDate(newDay);
+				}
+			}
 			node.setAttribute("timestamp", d.toDDFString());
 		}
 
