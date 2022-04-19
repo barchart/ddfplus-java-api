@@ -57,6 +57,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	private DDFDate _previousDay = null;
 	protected volatile char _session;
 	protected volatile float _settlement = 0.0f;
+
+	protected volatile long _tzAdjustment = 0L;
+
 	protected volatile long _timestamp = 0L;
 	protected volatile int _tradeSize = 0;
 	protected volatile long _tradeTimestamp = 0L;
@@ -96,6 +99,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._previous = _previous;
 		s._previousDay = _previousDay;
 		s._timestamp = _timestamp;
+		s._tzAdjustment = _tzAdjustment;
 		s._tradeSize = _tradeSize;
 		s._tradeTimestamp = _tradeTimestamp;
 		s._volume = _volume;
@@ -153,7 +157,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _timestamp;
 	}
 
-	
+	/**
+	 * Get timezone adjustment for timestamp.
+	 * @return
+	 */
+	public long getTzAdjustment() {
+		return _tzAdjustment;
+	}
+
 	public DDFDate getDay() {
 		return this._day;
 	}
@@ -509,6 +520,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	public void setTimeInMillis(long value) {
 		this._timestamp = value;
+	}
+
+	public void setTzAdjustment(long value) {
+		this._tzAdjustment = value;
 	}
 
 	public void setVolume(long value) {

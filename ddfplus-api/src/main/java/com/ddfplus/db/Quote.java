@@ -495,6 +495,7 @@ public class Quote implements Cloneable, Serializable {
         }
 
         sb.append(", \"lastupdate\": " + (new DDFDate(_lastUpdated).toDDFString()));
+        sb.append(", \"tzadjustment\": " + session.getTzAdjustment());
 
         if (displayBbo && !useZSessionAsCurrentSession) {
             sb.append(
