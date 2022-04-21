@@ -452,7 +452,19 @@ public class Quote implements Cloneable, Serializable {
                     break;
                 case "TSX":
                 case "TSXV":
+                case "TSX-V":
                     baseCode = 'B';
+                    usEquity = true;
+                    break;
+            }
+        }
+        else {
+            // TSX, Venture
+            switch(this._symbolInfo.getExchange()) {
+                case "TSX":
+                case "TSXV":
+                case "TSX-V":
+                    usEquity = true;
                     break;
             }
         }
@@ -720,6 +732,16 @@ public class Quote implements Cloneable, Serializable {
      */
 
     public XMLNode toXMLNode(boolean showBidAsk) {
+        boolean usEquity = false;
+        String exchange = this._symbolInfo.getExchange();
+        switch (exchange) {
+            case "TSX":
+            case "TSXV":
+            case "TSX-V":
+                usEquity = true;
+                break;
+        }
+
         XMLNode node = new XMLNode("QUOTE");
         node.setAttribute("symbol", _symbolInfo.getSymbol());
         node.setAttribute("name", _symbolInfo.getName());
@@ -752,11 +774,11 @@ public class Quote implements Cloneable, Serializable {
             if (_bid != ParserHelper.DDFAPI_NOVALUE)
                 node.setAttribute("bid", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), _bid)));
             if (_bidSize != ParserHelper.DDFAPI_NOVALUE)
-                node.setAttribute("bidsize", "" + _bidSize);
+                node.setAttribute("bidsize", "" + (usEquity ? _bidSize * 100 : _bidSize));
             if (_ask != ParserHelper.DDFAPI_NOVALUE)
                 node.setAttribute("ask", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), _ask)));
             if (_askSize != ParserHelper.DDFAPI_NOVALUE)
-                node.setAttribute("asksize", "" + _askSize);
+                node.setAttribute("asksize", "" + (usEquity ? _askSize * 100 : _askSize));
         }
 
         if (useZSessionAsCurrentSession) {

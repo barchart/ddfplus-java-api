@@ -1,6 +1,7 @@
 package com.ddfplus.db;
 
 import com.ddfplus.util.DDFDate;
+import com.ddfplus.util.XMLNode;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ public class QuoteTest {
 
 	@Before
 	public void setUp() throws Exception {
-
 	}
 
 
@@ -70,9 +70,40 @@ public class QuoteTest {
 		t.setLast(100);
 		String xml = quote.toXMLNode(true).toXMLString();
 		assertNotNull(xml);
-//		System.out.println(xml);
 	}
 
+	@Test
+	public void toXML_VN() {
+		symbolInfo = new SymbolInfo("RCK.VN", "rck", "TSX-V", 'B', null, 1);
+		quote = new Quote(symbolInfo);
+		quote.setBid(5.31f);
+		quote.setBidSize(1);
+		quote.setAsk(5.5f);
+		quote.setAskSize(2);
+		XMLNode xml = quote.toXMLNode(true);
+		assertEquals("5310",xml.getAttribute("bid"));
+		assertEquals("100",xml.getAttribute("bidsize"));
+		assertEquals("5500",xml.getAttribute("ask"));
+		assertEquals("200",xml.getAttribute("asksize"));
+	}
 
+	@Test
+	public void toJson_VN() {
+		symbolInfo = new SymbolInfo("RCK.VN", "rck", "TSX-V", 'B', null, 1);
+		quote = new Quote(symbolInfo);
+		quote.setBid(5.31f);
+		quote.setBidSize(1);
+		quote.setAsk(5.5f);
+		quote.setAskSize(2);
+		String json = quote.toJSONString();
+		assertNotNull(json);
+		JSONObject obj = new JSONObject("{" + json + "}");
+		JSONObject jsonObject = obj.getJSONObject("RCK.VN");
+		float bid = jsonObject.getFloat("bid");
+		assertEquals(5.310,bid,0.01);
+		assertEquals(100,jsonObject.getInt("bidsize"));
+		assertEquals(5.50,jsonObject.getFloat("ask"),0.01);
+		assertEquals(200,jsonObject.getInt("asksize"));
+	}
 
 }
