@@ -9,26 +9,49 @@ package com.ddfplus.util;
 public enum SymbolType {
 	/**
 	 */
-	Unknown, /**
+	Unknown,
+	/**
+	 * US Equity, NYSE, NASDAQ, etc
 	 */
-	Equity_US, /**
+	Equity_US,
+	/**
+	 * Australian Equity.
 	 */
-	Equity_AX, Equity_CAN, /**
+	Equity_AX, Equity_CAN,
+	/**
+	 * London Stock Exchange Equity.
 	 */
-	Equity_LSE, /**
+	Equity_LSE,
+	/**
+	 * National Stock Exchange of India.
 	 */
-	Equity_NSE, /**
+	Equity_NSE,
+	/**
+	 * EU Equity.
 	 */
 	Equity_EU,
-	Fund, /**
+	Fund,
+	/**
+	 * Canadian Funds.
 	 */
-	Fund_CAN, Future, Future_Spread, Equity_Option, /**
+	Fund_CAN,
+	Future,
+	Future_Spread,
+	Equity_Option,
+	/**
+	 * Future Options.
 	 */
-	Future_Option, /**
+	Future_Option,
+	/**
+	 * Forex.
 	 */
-	Forex, /**
+	Forex,
+	/**
+	 * Indexes.
 	 */
-	Index, /**
+	Index,
+	/**
+	 * EU Indexes.
 	 */
 	Index_EU,
 	Test,
@@ -38,6 +61,10 @@ public enum SymbolType {
 	Commodity3,
 	CommodityPriceNetwork,
 	Rates,
-	Platts;
+	Platts,
+	/**
+	 * Globex user defined spread on Future Options
+	 */
+	Future_Option_UserDefinedSpread;
 
 }

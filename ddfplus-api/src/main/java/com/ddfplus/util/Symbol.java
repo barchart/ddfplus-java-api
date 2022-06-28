@@ -83,6 +83,8 @@ public class Symbol {
 	public static SymbolType getSymbolType(String symbol) {
 		if (symbol.startsWith("_S_"))
 			return SymbolType.Future_Spread;
+		else if (symbol.startsWith("_U_"))
+			return SymbolType.Future_Option_UserDefinedSpread;
 		else if (symbol.startsWith("_"))
 			return SymbolType.Test;
 		else if (symbol.length() > 0) {
