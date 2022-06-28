@@ -22,6 +22,8 @@ public class SymbolInfo {
 	private final int _tickIncrement;
 	private final int _unitCode;
 
+	private String _longSymbol;
+
 	public SymbolInfo(String symbol, String name, String exchange, int unitCode, Float pointValue, int tickIncrement) {
 		this(symbol, name, exchange, convertUnitCodeInt2DDF(unitCode), pointValue, tickIncrement);
 	}
@@ -229,5 +231,13 @@ public class SymbolInfo {
 			return -6;
 		}
 		return 0;
+	}
+
+	public String getLongSymbol() {
+		return _longSymbol;
+	}
+
+	public void setLongSymbol(String _longSymbol) {
+		this._longSymbol = _longSymbol;
 	}
 }
