@@ -34,6 +34,8 @@ public class Quote implements Cloneable, Serializable {
     private Clock clock = Clock.system(ZONE_ID_CHICAGO);
     private volatile String _ddfExchange = "";
     private final SymbolInfo _symbolInfo;
+    // Request symbol can be short symbol
+    private String _requestSymbol = null;
     // Prices
     private volatile float _ask = 0.0f;
     private volatile int _askSize = 0;
@@ -88,6 +90,7 @@ public class Quote implements Cloneable, Serializable {
         }
 
         q._sessions.addAll(_sessions);
+        q._requestSymbol = _requestSymbol;
         return q;
 
     }
@@ -897,5 +900,13 @@ public class Quote implements Cloneable, Serializable {
 
     public void setSeqNo(long seqNo) {
         this.seqNo = seqNo;
+    }
+
+    public String getRequestSymbol() {
+        return _requestSymbol;
+    }
+
+    public void setRequestSymbol(String symbol) {
+        this._requestSymbol = symbol;
     }
 }

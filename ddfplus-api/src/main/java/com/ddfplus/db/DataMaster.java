@@ -302,6 +302,9 @@ public class DataMaster {
 	 */
 	public void putQuote(Quote q) {
 		quoteMap.put(q.getSymbolInfo().getSymbol(), q);
+		if(q.getRequestSymbol() != null) {
+			quoteMap.put(q.getRequestSymbol(), q);
+		}
 	}
 
 	public void putQuote(String symbol, Quote q) {
