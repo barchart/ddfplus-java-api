@@ -16,6 +16,7 @@ public class Symbol {
 
 	// XXX TIME!ZONE
 	public static final int _currentYear = new DateTime().getYear();
+	public static final int _currentMonth = new DateTime().getMonthOfYear();
 
 	private static char[] _extendedFuturesMonths = new char[] { 'A', 'B', 'C', 'D', 'E', 'I', 'L', 'O', 'P', 'R', 'S',
 			'T' };
@@ -161,12 +162,12 @@ public class Symbol {
 			return SymbolType.Unknown;
 	}
 
-	private static String[] splitSymbol(String symbol) {
+	private static String[] splitSymbol(String symbol, int currentYear, int currentMonth) {
 		SymbolType type = getSymbolType(symbol);
-		return splitSymbol(symbol, type);
+		return splitSymbol(symbol, type, currentYear, currentMonth);
 	}
 
-	private static String[] splitSymbol(String symbol, SymbolType type) {
+	private static String[] splitSymbol(String symbol, SymbolType type, int currentYear, int currentMonth) {
 		String[] parts = null;
 		switch (type) {
 		case Future:
@@ -199,17 +200,35 @@ public class Symbol {
 			String[] sa = symbol.split("\\|");
 
 			if (sa.length == 2) {
-				parts = new String[4];
-				String[] sb = splitSymbol(sa[0]);
+				parts = new String[5];
+				String[] sb = splitSymbol(sa[0], currentYear, currentMonth);
 
 				parts[0] = sb[0];
 				parts[1] = sb[1];
 				parts[2] = sa[1].substring(0, sa[1].length() - 1);
-				parts[3] = sa[1].substring(sa[1].length() - 1, sa[1].length());
+				char callPutIndicator = sa[1].substring(sa[1].length() - 1).charAt(0);
+				int year = callPutIndicator >= 'P' ? currentYear + (callPutIndicator - 'P') : currentYear + (callPutIndicator - 'C');
+				int month = Symbol.getMonthFromExtendedFuturesCode(parts[1].charAt(0));
+				if (month == 0) {
+					month = Symbol.getMonthFromFuturesCode(parts[1].charAt(0));
+				}
+
+				if (sb.length > 2) {
+					year += Integer.parseInt(sb[2]) - currentYear % (int)Math.pow(10, sb[2].length());
+				}
+
+				if (year == currentYear && month < currentMonth) {
+					year += 10;
+				}
+
+				parts[3] = Integer.toString(year);
+				parts[4] = callPutIndicator >= 'P' ? "P" : "C";
 				return parts;
 			} else {
-				parts = new String[4];
-				parts[3] = symbol.substring(symbol.length() - 1);
+				parts = new String[5];
+				char callPutIndicator = symbol.substring(symbol.length() - 1).charAt(0);
+				parts[3] = Integer.toString(callPutIndicator >= 'P' ? currentYear + (callPutIndicator - 'P') : currentYear + (callPutIndicator - 'C'));
+				parts[4] = callPutIndicator >= 'P' ? "P" : "C";
 
 				parts[2] = "";
 				int pos = symbol.length() - 2;
@@ -242,12 +261,15 @@ public class Symbol {
 	private final List<Symbol> _spreadLegs;
 
 	public Symbol(String symbol) {
+		this(symbol, _currentYear, _currentMonth);
+	}
+	public Symbol(String symbol, int currentYear, int currentMonth) {
 		this._symbol = symbol;
 		this._type = Symbol.getSymbolType(symbol);
 
 		switch (this._type) {
 		case Future: {
-			String[] sa = Symbol.splitSymbol(symbol);
+			String[] sa = Symbol.splitSymbol(symbol, currentYear, currentMonth);
 			this._commodityCode = sa[0];
 			this._month = (sa[1].length() > 0) ? sa[1].charAt(0) : '\0';
 			this._year = Symbol.calculateYear(sa[2]);
@@ -258,19 +280,13 @@ public class Symbol {
 			break;
 		}
 		case Future_Option: {
-			String[] sa = Symbol.splitSymbol(symbol);
+			String[] sa = Symbol.splitSymbol(symbol, currentYear, currentMonth);
 			this._commodityCode = sa[0];
 			this._month = (sa[1].length() > 0) ? sa[1].charAt(0) : '\0';
 			this._strike = sa[2];
 
-			char cp = sa[3].charAt(0);
-			if (cp >= 'P') {
-				this._optionType = OptionType.Put;
-				this._year = _currentYear + (cp - 'P');
-			} else {
-				this._optionType = OptionType.Call;
-				this._year = _currentYear + (cp - 'C');
-			}
+			_year = Integer.parseInt(sa[3]);
+			this._optionType = sa[4].equals("P") ? OptionType.Put : OptionType.Call;
 			this._spreadType = null;
 			this._spreadLegs = null;
 			break;
@@ -368,7 +384,7 @@ public class Symbol {
 	}
 
 	public String getShortSymbol() {
-		return getShortSymbol(_currentYear, new DateTime().getMonthOfYear());
+		return getShortSymbol(_currentYear, _currentMonth);
 	}
 
 	public String getShortSymbol(int currentYear, int currentMonth) {
@@ -393,7 +409,37 @@ public class Symbol {
 
 			return _commodityCode + c_mo + Integer.toString(_year).substring(3, 4);
 		}
-		default:
+		case Future_Option: {
+				char c_mo = _month;
+
+				int mon = Symbol.getMonthFromFuturesCode(_month);
+				if (mon == 0)
+					return _symbol;
+
+				final int switchYear = currentYear + 10;
+				if (_year >= switchYear) {
+					if (_year == switchYear) {
+						if (mon >= currentMonth) {
+							c_mo = Symbol.getExtendedFuturesMonthCode(mon);
+						}
+					} else {
+						c_mo = Symbol.getExtendedFuturesMonthCode(mon);
+					}
+				}
+
+				if (_commodityCode.length() <=2) {
+					int yearDelta = (_year - currentYear) % 10;
+
+					return _commodityCode + c_mo + _strike
+							+ (_optionType == OptionType.Call ? (char) ('C' + yearDelta) : (char) ('P' + yearDelta));
+				}
+				else {
+					return _commodityCode + c_mo + (_year % 10) + "|" + _strike
+							+ (_optionType == OptionType.Call ? 'C' : 'P');
+				}
+			}
+
+			default:
 			return this._symbol;
 		}
 	}
