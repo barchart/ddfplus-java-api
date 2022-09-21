@@ -397,10 +397,12 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		}
 		// Sanity check dates before the current year
 		ZonedDateTime timeStampZdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(_timestamp), DDFDate._zoneChicago);
-		if(_day.getDate().getYear() != timeStampZdt.getYear() && _day.getDate().getMonth() != timeStampZdt.getMonth()) {
-			// We have a session from another year.
-			ZonedDateTime newDay = _day.getDate().withYear(timeStampZdt.getYear()).withMonth(timeStampZdt.getMonth().getValue());
-			_day = new DDFDate(newDay);
+		if (_day != null) {
+			if (_day.getDate().getYear() != timeStampZdt.getYear() && _day.getDate().getMonth() != timeStampZdt.getMonth()) {
+				// We have a session from another year.
+				ZonedDateTime newDay = _day.getDate().withYear(timeStampZdt.getYear()).withMonth(timeStampZdt.getMonth().getValue());
+				_day = new DDFDate(newDay);
+			}
 		}
 
 		s = node.getAttribute("session");
