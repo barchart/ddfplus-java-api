@@ -10,6 +10,8 @@ public class SymbolTest {
     public void testGetSymbolType() {
         assertEquals(SymbolType.Rates, Symbol.getSymbolType("USTM3.RT"));
         assertEquals(SymbolType.Platts, Symbol.getSymbolType("AA.PT"));
+        assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("TSLA|20221014|232.50C"));
     }
 
     @Test
