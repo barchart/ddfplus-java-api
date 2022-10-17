@@ -155,11 +155,11 @@ public class Symbol {
 			} else {
 				if (Character.isDigit(ca[ca.length - 1]))
 					return SymbolType.Future;
-				else if (symbol.indexOf('.') == -1) {
-					return SymbolType.Future_Option;
+				else if (symbol.length() >= 4 && symbol.charAt(symbol.length() - 4) == '.') {
+					return SymbolType.Equity_Option;
 				}
 				else {
-					return SymbolType.Equity_Option;
+					return SymbolType.Future_Option;
 				}
 			}
 		} else
