@@ -129,6 +129,8 @@ public class Symbol {
 				return SymbolType.Rates;
 			else if (symbol.endsWith(".PT"))
 				return SymbolType.Platts;
+			else if (symbol.endsWith(".CA") || symbol.endsWith(".CB") || symbol.endsWith(".CC"))
+				return SymbolType.CommitmentOfTrades;
 
 			for (int i = 0; i < ca.length; i++) {
 				if (Character.isDigit(ca[i])) {

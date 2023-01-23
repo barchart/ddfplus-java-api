@@ -8,10 +8,13 @@ import static org.junit.Assert.assertEquals;
 public class SymbolTest {
     @Test
     public void testGetSymbolType() {
+        assertEquals(SymbolType.Equity_US, Symbol.getSymbolType("AAPL"));
         assertEquals(SymbolType.Rates, Symbol.getSymbolType("USTM3.RT"));
         assertEquals(SymbolType.Platts, Symbol.getSymbolType("AA.PT"));
         assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("TSLA|20221014|232.50C"));
+        assertEquals(SymbolType.CommitmentOfTrades, Symbol.getSymbolType("A6.CA"));
+        assertEquals(SymbolType.CommitmentOfTrades, Symbol.getSymbolType("ZC.CC"));
     }
 
     @Test
