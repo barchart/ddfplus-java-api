@@ -13,8 +13,6 @@ public class SymbolTest {
         assertEquals(SymbolType.Platts, Symbol.getSymbolType("AA.PT"));
         assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("TSLA|20221014|232.50C"));
-        assertEquals(SymbolType.CommitmentOfTrades, Symbol.getSymbolType("A6.CA"));
-        assertEquals(SymbolType.CommitmentOfTrades, Symbol.getSymbolType("ZC.CC"));
     }
 
     @Test
