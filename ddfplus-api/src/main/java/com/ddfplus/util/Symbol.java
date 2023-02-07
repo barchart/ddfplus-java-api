@@ -7,10 +7,10 @@
 
 package com.ddfplus.util;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.joda.time.DateTime;
 
 public class Symbol {
 
@@ -264,6 +264,8 @@ public class Symbol {
 	private final String _spreadType;
 	private final List<Symbol> _spreadLegs;
 
+	private String [] futureParts;
+
 	public Symbol(String symbol) {
 		this(symbol, _currentYear, _currentMonth);
 	}
@@ -274,6 +276,7 @@ public class Symbol {
 		switch (this._type) {
 		case Future: {
 			String[] sa = Symbol.splitSymbol(symbol, currentYear, currentMonth);
+			futureParts = sa;
 			this._commodityCode = sa[0];
 			this._month = (sa[1].length() > 0) ? sa[1].charAt(0) : '\0';
 			this._year = Symbol.calculateYear(sa[2]);
@@ -470,6 +473,18 @@ public class Symbol {
 
 	public int getYear() {
 		return this._year;
+	}
+
+	public boolean isFutureYearEndMatch() {
+		if(this._type != SymbolType.Future) {
+			return false;
+		}
+		try {
+			String calculatedYear = Integer.toString(this._year).substring(2);
+			return this.futureParts[2].equalsIgnoreCase(calculatedYear);
+		} catch(Exception e) {
+			return false;
+		}
 	}
 
 }
