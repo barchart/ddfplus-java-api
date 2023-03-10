@@ -166,6 +166,17 @@ public class Symbol {
 			return SymbolType.Unknown;
 	}
 
+	public static boolean isCashSymbol(String symbol) {
+		return symbol.endsWith("Y0") || symbol.endsWith("Y00");
+	}
+
+	public static String getShortCashSymbol(String symbol) {
+		if(symbol.endsWith("Y00")) {
+			return symbol.substring(0,symbol.length() - 1);
+		}
+		return symbol;
+	}
+
 	private static String[] splitSymbol(String symbol, int currentYear, int currentMonth) {
 		SymbolType type = getSymbolType(symbol);
 		return splitSymbol(symbol, type, currentYear, currentMonth);
@@ -395,6 +406,10 @@ public class Symbol {
 	}
 
 	public String getShortSymbol(int currentYear, int currentMonth) {
+		 if(isCashSymbol(_symbol)) {
+			return getShortCashSymbol(_symbol);
+		}
+
 		switch (this._type) {
 		case Future: {
 			char c_mo = _month;

@@ -1,6 +1,5 @@
 package com.ddfplus.util;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -85,5 +84,11 @@ public class SymbolTest {
 
         assertEquals("MDUV2|3200P", new Symbol("MDUV2|3200P", 2022, 9).getShortSymbol(2022, 9));
         assertEquals("MMCF3|9650C", new Symbol("MMCF3|9650C", 2022, 9).getShortSymbol(2022, 9));
+    }
+
+    @Test
+    public void testCashShortSymbol() {
+        assertEquals("LZYY0", new Symbol("LZYY0").getShortSymbol());
+        assertEquals("LZYY0", new Symbol("LZYY00").getShortSymbol());
     }
 }
