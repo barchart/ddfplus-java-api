@@ -91,4 +91,11 @@ public class SymbolTest {
         assertEquals("LZYY0", new Symbol("LZYY0").getShortSymbol());
         assertEquals("LZYY0", new Symbol("LZYY00").getShortSymbol());
     }
+
+    @Test
+    public void testFutureSpreadShortSymbol() {
+        assertEquals("Its already short","_S_SP_ZSN3_ZSX3", new Symbol("_S_SP_ZSN3_ZSX3").getShortSymbol());
+        assertEquals("Long -> Short","_S_SP_ZSN3_ZSX3", new Symbol("_S_SP_ZSN23_ZSX23").getShortSymbol());
+    }
+
 }

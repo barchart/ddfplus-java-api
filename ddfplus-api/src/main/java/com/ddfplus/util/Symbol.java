@@ -460,7 +460,16 @@ public class Symbol {
 							+ (_optionType == OptionType.Call ? 'C' : 'P');
 				}
 			}
-
+			case Future_Spread:
+				if(this._spreadLegs != null && this._spreadLegs.size() > 0) {
+					String shortSymbol = "_S_"+this._spreadType;
+					for(Symbol symbol : this._spreadLegs) {
+						shortSymbol += "_";
+						shortSymbol += symbol.getShortSymbol();
+					}
+					return shortSymbol;
+				}
+				return  this._symbol;
 			default:
 			return this._symbol;
 		}
