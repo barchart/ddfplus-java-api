@@ -55,7 +55,9 @@ public class Quote implements Cloneable, Serializable {
     // Original DDF Message
     private volatile DdfMarketBase _message = null;
     private volatile char _permission = '\0';
-    private long seqNo;
+    // Openfeed Fields
+    private long _seqNo;
+    private long _marketId;
 
     public Quote(SymbolInfo symbolInfo) {
         this._symbolInfo = symbolInfo;
@@ -91,6 +93,8 @@ public class Quote implements Cloneable, Serializable {
 
         q._sessions.addAll(_sessions);
         q._requestSymbol = _requestSymbol;
+        q._seqNo = _seqNo;
+        q._marketId = _marketId;
         return q;
 
     }
@@ -583,7 +587,9 @@ public class Quote implements Cloneable, Serializable {
                             + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ?  _zSession.getLastSize() * 100 : _zSession.getLastSize()))
                             + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
                     ): "")
-                    + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
+                    + (version == 1 && _seqNo > 0 ? ", \"seqno\": " + _seqNo : "")
+                    + (version >= 1 && _marketId > 0 ? ", \"marketId\": " + _marketId : "")
+                    );
         }
         else {
             sb.append(", " + "\"open\": "
@@ -629,7 +635,9 @@ public class Quote implements Cloneable, Serializable {
                     : session.getOpenInterest())
                     + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                     + ", \"timestamp\": " + session.getTimeInMillis()
-                    + (version == 1 && seqNo > 0 ? ", \"seqno\": " + seqNo : ""));
+                    + (version == 1 && _seqNo > 0 ? ", \"seqno\": " + _seqNo : "")
+                    + (version >= 1 && _marketId > 0 ? ", \"marketId\": " + _marketId : "")
+            );
         }
 
         if ((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) {
@@ -895,11 +903,11 @@ public class Quote implements Cloneable, Serializable {
     }
 
     public long getSeqNo() {
-        return seqNo;
+        return _seqNo;
     }
 
-    public void setSeqNo(long seqNo) {
-        this.seqNo = seqNo;
+    public void setSeqNo(long _seqNo) {
+        this._seqNo = _seqNo;
     }
 
     public String getRequestSymbol() {
@@ -908,5 +916,13 @@ public class Quote implements Cloneable, Serializable {
 
     public void setRequestSymbol(String symbol) {
         this._requestSymbol = symbol;
+    }
+
+    public long getMarketId() {
+        return _marketId;
+    }
+
+    public void setMarketId(long _marketId) {
+        this._marketId = _marketId;
     }
 }
