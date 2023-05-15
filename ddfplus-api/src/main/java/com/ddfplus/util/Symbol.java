@@ -95,8 +95,30 @@ public class Symbol {
 			boolean hasNumbers = false;
 			char[] ca = symbol.toCharArray();
 
-			if (ca[0] == '$')
+			if (ca[0] == '$') {
+				// $TSLA|20221014|232.50C
+				// $SPX|20221014|232.50WC
+				// $HDX|20221014|232.50PC
+				if (symbol.length() >= 5) {
+					char last = symbol.charAt(symbol.length() - 1);
+					if (last == 'C' || last == 'P') {
+						char beforeLast = symbol.charAt(symbol.length() - 2);
+						// Weekly or PM option.
+						if (beforeLast == 'P' || beforeLast == 'W') {
+							if (symbol.charAt(symbol.length() - 5) == '.') {
+								return SymbolType.Equity_Option;
+							}
+						}
+						else {
+							if (symbol.charAt(symbol.length() - 4) == '.') {
+								return SymbolType.Equity_Option;
+							}
+						}
+					}
+				}
+
 				return SymbolType.Index;
+			}
 			else if (ca[0] == '^')
 				return SymbolType.Forex;
 			else if ((symbol.length() == 8) && (ca[6] == '.'))
@@ -157,7 +179,12 @@ public class Symbol {
 			} else {
 				if (Character.isDigit(ca[ca.length - 1]))
 					return SymbolType.Future;
-				else if (symbol.length() >= 4 && symbol.charAt(symbol.length() - 4) == '.') {
+				// TSLA|20221014|232.50C
+				// SPX|20221014|232.50WC
+				// HDX|20221014|232.50PC
+				else if (symbol.length() >= 5 &&
+						( ((symbol.charAt(symbol.length() - 2) == 'P' || symbol.charAt(symbol.length() - 2) == 'W') && symbol.charAt(symbol.length() - 5) == '.') ||
+						   		symbol.charAt(symbol.length() - 4) == '.') ) {
 					return SymbolType.Equity_Option;
 				}
 				else {

@@ -11,7 +11,19 @@ public class SymbolTest {
         assertEquals(SymbolType.Rates, Symbol.getSymbolType("USTM3.RT"));
         assertEquals(SymbolType.Platts, Symbol.getSymbolType("AA.PT"));
         assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
+        assertEquals(SymbolType.Index, Symbol.getSymbolType("$SPX"));
+    }
+
+    @Test
+    public void testEquoityOptionSymbolType() {
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("TSLA|20221014|232.50C"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$SPX|20221014|232.50C"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$SPX|20221014|232.50WC"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$SPX|20221014|232.50WP"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("XYZ|20221014|232.50WC"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("XYZ|20221014|232.50WP"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$HDX|20221014|232.50PC"));
+        assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$HDX|20221014|232.50PP"));
     }
 
     @Test
