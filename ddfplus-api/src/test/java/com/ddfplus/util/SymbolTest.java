@@ -15,7 +15,14 @@ public class SymbolTest {
     }
 
     @Test
-    public void testEquoityOptionSymbolType() {
+    public void testEquity() {
+        assertEquals(SymbolType.Equity_US, Symbol.getSymbolType("IBM"));
+        assertEquals(SymbolType.Equity_US, Symbol.getSymbolType("-AA"));
+        assertEquals(SymbolType.Fund, Symbol.getSymbolType("AAAAX"));
+    }
+
+    @Test
+    public void testEquityOptionSymbolType() {
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("TSLA|20221014|232.50C"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$SPX|20221014|232.50C"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$SPX|20221014|232.50WC"));
@@ -24,6 +31,17 @@ public class SymbolTest {
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("XYZ|20221014|232.50WP"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$HDX|20221014|232.50PC"));
         assertEquals(SymbolType.Equity_Option, Symbol.getSymbolType("$HDX|20221014|232.50PP"));
+    }
+
+    @Test
+    public void testFuturesSymbolType() {
+        assertEquals(SymbolType.Future, Symbol.getSymbolType("ESM3"));
+        assertEquals(SymbolType.Future, Symbol.getSymbolType("ESM33"));
+        assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("ESM3|4160C"));
+        assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("ZCN3|535C"));
+        assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("ZCN23|535C"));
+        assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("KFX2600P"));
+        assertEquals(SymbolType.Future_Spread, Symbol.getSymbolType("_S_SP_ZCN3_ZCU3"));
     }
 
     @Test
