@@ -23,6 +23,7 @@ public class SymbolInfo {
     private final int _unitCode;
 
     private String _longSymbol;
+    private String _updatedAt;
 
     public SymbolInfo(String symbol, String name, String exchange, int unitCode, Float pointValue, int tickIncrement) {
         this(symbol, name, exchange, convertUnitCodeInt2DDF(unitCode), pointValue, tickIncrement);
@@ -60,6 +61,14 @@ public class SymbolInfo {
 
     public String getExchange() {
         return this._exchange;
+    }
+
+    public String getUpdatedAt() {
+        return _updatedAt;
+    }
+
+    public void setUpdatedAt(String _updatedAt) {
+        this._updatedAt = _updatedAt;
     }
 
     /**

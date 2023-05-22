@@ -1,20 +1,17 @@
 package com.ddfplus.service.definition;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import com.ddfplus.service.definition.DefinitionServiceImpl.FuturesRoot;
+import com.ddfplus.service.definition.DefinitionServiceImpl.OptionsRoot;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import com.ddfplus.service.definition.DefinitionServiceImpl.FuturesRoot;
-import com.ddfplus.service.definition.DefinitionServiceImpl.OptionsRoot;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefinitionServiceTest {
