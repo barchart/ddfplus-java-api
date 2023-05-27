@@ -115,8 +115,31 @@ public final class ParserHelper {
 	 *            <LI>#INTEGER - Integer (like dash but no dashes) notation
 	 *            </ul>
 	 */
-	public static final String float2string(float f, char basecode, int target) {
-		return float2string(f, basecode, target, true);
+	public synchronized static final String float2string(float f, char basecode, int target) {
+		return float2string(NF, f, basecode, target, true);
+	}
+
+	/**
+	 * Converts a floating point value into a String that's suitable for client
+	 * display.
+	 * <P>
+	 *
+	 * @param f
+	 *            Floating point value
+	 * @param basecode
+	 *            Base Code (a.k.a. unit code)
+	 * @param target
+	 *            The Target Format
+	 *            <P>
+	 *            <B>Target is one of the following constants:</B><BR>
+	 *            <ul>
+	 *            <LI>#DECIMAL - Decimal Notation
+	 *            <LI>#DASH - Dash Notation
+	 *            <LI>#INTEGER - Integer (like dash but no dashes) notation
+	 *            </ul>
+	 */
+	public static final String float2string(NumberFormat numberFormat, float f, char basecode, int target) {
+		return float2string(numberFormat, f, basecode, target, true);
 	}
 
 	private final static NumberFormat NF = NumberFormat.getInstance();
