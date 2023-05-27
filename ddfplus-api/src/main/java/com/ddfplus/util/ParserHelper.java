@@ -123,24 +123,29 @@ public final class ParserHelper {
 
 	/*
 	 * Convert a float to a DDF string.
-	 * 
+	 */
+	public synchronized static final String float2string(double value, final char basecode, final int target, final boolean special64) {
+		return float2string(NF, value, basecode, target, special64);
+	}
+
+	/*
+	 * Convert a float to a DDF string.
+	 *
 	 * TODO Possible optimizations here.
 	 */
-	public synchronized static final String float2string(double value, final char basecode, final int target,
-			final boolean special64) {
-
+	public static final String float2string(NumberFormat numberFormat, double value, final char basecode, final int target, final boolean special64) {
 		final int unit = SymbolInfo.ddfuc2bb(basecode);
 
 		if (unit >= 0) {
 			if (target == PURE_DECIMAL)
-				NF.setGroupingUsed(false);
+				numberFormat.setGroupingUsed(false);
 			else
-				NF.setGroupingUsed(true);
+				numberFormat.setGroupingUsed(true);
 
-			NF.setMinimumFractionDigits(unit);
-			NF.setMaximumFractionDigits(unit);
+			numberFormat.setMinimumFractionDigits(unit);
+			numberFormat.setMaximumFractionDigits(unit);
 
-			String s = NF.format(value);
+			String s = numberFormat.format(value);
 
 			if (target == INTEGER) {
 				char ca[] = s.toCharArray();
@@ -179,38 +184,38 @@ public final class ParserHelper {
 
 		if ((target == DECIMAL) || (target == PURE_DECIMAL)) {
 			if (target == PURE_DECIMAL)
-				NF.setGroupingUsed(false);
+				numberFormat.setGroupingUsed(false);
 			else
-				NF.setGroupingUsed(true);
+				numberFormat.setGroupingUsed(true);
 
 			switch (unit) {
 			case -1:
-				NF.setMinimumFractionDigits(3);
-				NF.setMaximumFractionDigits(3);
+				numberFormat.setMinimumFractionDigits(3);
+				numberFormat.setMaximumFractionDigits(3);
 				break;
 			case -2:
-				NF.setMinimumFractionDigits(4);
-				NF.setMaximumFractionDigits(4);
+				numberFormat.setMinimumFractionDigits(4);
+				numberFormat.setMaximumFractionDigits(4);
 				break;
 			case -3:
-				NF.setMinimumFractionDigits(5);
-				NF.setMaximumFractionDigits(5);
+				numberFormat.setMinimumFractionDigits(5);
+				numberFormat.setMaximumFractionDigits(5);
 				break;
 			case -4:
-				NF.setMinimumFractionDigits(6);
-				NF.setMaximumFractionDigits(6);
+				numberFormat.setMinimumFractionDigits(6);
+				numberFormat.setMaximumFractionDigits(6);
 				break;
 			case -5:
-				NF.setMinimumFractionDigits(7);
-				NF.setMaximumFractionDigits(7);
+				numberFormat.setMinimumFractionDigits(7);
+				numberFormat.setMaximumFractionDigits(7);
 				break;
 			case -6:
-				NF.setMinimumFractionDigits(8);
-				NF.setMaximumFractionDigits(8);
+				numberFormat.setMinimumFractionDigits(8);
+				numberFormat.setMaximumFractionDigits(8);
 				break;
 			}
 
-			return (NF.format(value));
+			return (numberFormat.format(value));
 		}
 
 		int sign = 1;
