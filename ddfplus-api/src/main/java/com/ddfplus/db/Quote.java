@@ -58,6 +58,7 @@ public class Quote implements Cloneable, Serializable {
     // Openfeed Fields
     private long _seqNo;
     private long _marketId;
+    private long _cacheTimeMs;
 
     public Quote(SymbolInfo symbolInfo) {
         this._symbolInfo = symbolInfo;
@@ -924,5 +925,13 @@ public class Quote implements Cloneable, Serializable {
 
     public void setMarketId(long _marketId) {
         this._marketId = _marketId;
+    }
+
+    public long getCacheTimeMs() {
+        return _cacheTimeMs;
+    }
+
+    public void setCacheTimeMs(long _cacheTimeMs) {
+        this._cacheTimeMs = _cacheTimeMs;
     }
 }
