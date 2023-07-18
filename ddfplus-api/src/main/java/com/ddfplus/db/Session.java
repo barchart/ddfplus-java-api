@@ -543,6 +543,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	 */
 	public XMLNode toXMLNode(Session zSession) {
 		int uc = _parentQuote.getSymbolInfo().getUnitCode();
+		boolean opra = _parentQuote.getSymbolInfo().getExchange().equals("OPRA") ? true : false;
 
 		XMLNode node = new XMLNode("SESSION");
 
@@ -595,6 +596,13 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_volume != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("volume", "" + _volume);
+
+		if (opra && _volume != ParserHelper.DDFAPI_NOVALUE && _openInterest != ParserHelper.DDFAPI_NOVALUE) {
+			Float voloi = (float) _volume / _openInterest;
+			if(voloi != null) {
+				node.setAttribute("voloi", "" + voloi);
+			}
+		}
 
 		if (_numTrades > 0)
 			node.setAttribute("numtrades", "" + _numTrades);
