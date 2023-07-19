@@ -44,6 +44,11 @@ public class SymbolInfo {
         return si;
     }
 
+    @Override
+    public String toString() {
+        return "sym: "+_symbol + " exch: " + _exchange +"  bc: "+_baseCode + " lngSym "+_longSymbol;
+    }
+
     /**
      * The base code (unit code), tells you how to format the underlying
      * floating point data.
