@@ -519,7 +519,7 @@ public class Quote implements Cloneable, Serializable {
                             + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * 100 : _askSize)));
             if (opra && _bid != ParserHelper.DDFAPI_NOVALUE && _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
-                sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint, baseCode, ParserHelper.PURE_DECIMAL));
+                sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint,'C', ParserHelper.PURE_DECIMAL));
             }
         }
 
@@ -827,7 +827,7 @@ public class Quote implements Cloneable, Serializable {
     }
 
     private float calcMidPoint() {
-        float midpoint = (_ask - _bid) / 2 + _bid;
+        float midpoint = (_ask + _bid) / 2 ;
         return midpoint;
     }
 
