@@ -26,6 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Quote implements Cloneable, Serializable {
 
+    public static enum CacheAge { SevenDays, SixWeeks,SixWeeksPlus }
+
     public static final ZoneId ZONE_ID_CHICAGO = ZoneId.of("America/Chicago");
     // By defining the serialVersionUID we can keep Object Serialization
     // consistent.
@@ -59,6 +61,7 @@ public class Quote implements Cloneable, Serializable {
     private long _seqNo;
     private long _marketId;
     private long _cacheTimeMs;
+    private CacheAge _cacheAge;
 
     public Quote(SymbolInfo symbolInfo) {
         this._symbolInfo = symbolInfo;
@@ -938,4 +941,9 @@ public class Quote implements Cloneable, Serializable {
     public void setCacheTimeMs(long _cacheTimeMs) {
         this._cacheTimeMs = _cacheTimeMs;
     }
+
+    public void setCacheAge(CacheAge age) {
+        this._cacheAge = age;
+    }
+    public CacheAge getCacheAge() { return this._cacheAge; }
 }
