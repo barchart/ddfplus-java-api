@@ -205,12 +205,12 @@ abstract class IoChannel extends Thread {
 					if (cmd != null) {
 
 						// Must be logged in
-						if (!cmd.getCmd().startsWith("LOGIN") && connState != ConnectionState.LoggedIn) {
+						if ((!cmd.getCmd().startsWith("LOGIN") && !cmd.getCmd().startsWith("TOKEN")) && connState != ConnectionState.LoggedIn) {
 							log.warn("Not logined in, ignoring command: " + cmd);
 							continue;
 						}
 						// Admin commands
-						if (cmd.getCmd().startsWith("LOGIN") || cmd.getCmd().startsWith("VERSION")
+						if (cmd.getCmd().startsWith("LOGIN") || cmd.getCmd().startsWith("TOKEN") || cmd.getCmd().startsWith("VERSION")
 								|| cmd.getCmd().startsWith("LOGOFF") || cmd.getCmd().startsWith("LOGOUT")) {
 							sendBuf.append(cmd.getCmd());
 							send(sendBuf.toString());

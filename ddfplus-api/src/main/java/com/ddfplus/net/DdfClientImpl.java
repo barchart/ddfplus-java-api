@@ -93,6 +93,8 @@ public class DdfClientImpl implements DdfClient {
 	private final String username;
 	private final String password;
 	private UserSettings userSettings;
+	// JWT Token
+	private String token;
 	// Jerq Snapshot credentials
 	private String snapshotUserName;
 	private String snapshotPassword;
@@ -121,6 +123,7 @@ public class DdfClientImpl implements DdfClient {
 		if (username == null || password == null) {
 			throw new IllegalArgumentException("username and password have to be set");
 		}
+		this.token = config.getToken();
 		this.type = config.getConnectionType();
 		this.bindInterface = config.getBindInterface();
 		this.host = config.getPrimaryServer();
@@ -218,7 +221,8 @@ public class DdfClientImpl implements DdfClient {
 					config.getServerPort() != null ? config.getServerPort() : type.port, //
 					intf, //
 					symbolProvider, //
-					secondaryServer);
+					secondaryServer,
+					this.token);
 
 			// Sets the JERQ/P version
 			connection.setVersion(jerqVersion);

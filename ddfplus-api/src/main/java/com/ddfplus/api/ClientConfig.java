@@ -23,6 +23,8 @@ public class ClientConfig {
 
 	private String userName;
 	private String password;
+	// JWT Token
+	private String token;
 	/*
 	 * Network interface to bind for socket. If null will bind to all
 	 * interfaces.
@@ -64,6 +66,7 @@ public class ClientConfig {
 	 * Activate minute bars for all symbols on the exchange.
 	 */
 	private String minuteBarExchanges;
+
 
 	public String getSnapshotPassword() {
 		return snapshotPassword;
@@ -274,4 +277,8 @@ public class ClientConfig {
 	public void setSnapshotIntervalSec(int snapshotIntervalSec) {
 		this.snapshotIntervalSec = snapshotIntervalSec;
 	}
+
+	public String getToken() {return this.token; }
+
+	public void setToken(String v) { this.token = v;}
 }

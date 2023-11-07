@@ -46,6 +46,8 @@ public class Connection {
 
 	protected String username = "";
 
+	protected String token = "";
+
 	protected int version = 1;
 
 	private ConnectionType type = ConnectionType.TCP;
@@ -79,10 +81,11 @@ public class Connection {
 	 * be supplied as null.
 	 */
 	public Connection(ConnectionType type, String username, String password, InetAddress primaryServer, int port,
-			InetAddress intf, SymbolProvider symbolProvider, InetAddress secondaryServer) {
+			InetAddress intf, SymbolProvider symbolProvider, InetAddress secondaryServer,String jwtToken) {
 
 		this.username = username;
 		this.password = password;
+		this.token = jwtToken;
 		this.type = type;
 		this.primaryServer = primaryServer;
 		this.port = port;

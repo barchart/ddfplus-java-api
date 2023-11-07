@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.ddfplus.bims.BimsClient;
+import com.ddfplus.bims.BimsResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ import com.ddfplus.util.*;
 
 /**
  * This is a sample DDF client program, illustrating the DDF Plus API.
- *
+ * <p>
  * The actual DDF calls are very simple. Essentially, you need to do the
  * following to receive streaming data:
  *
@@ -34,7 +36,7 @@ import com.ddfplus.util.*;
  * communication with the DDF Server.
  * <li>Process the DDF messages via the Handler.
  * </ol>
- *
+ * <p>
  * To perform a programmatic client restart, the DdfClient must be
  * re-initialized completely and the subscriptions re-initialized.
  * <ol>
@@ -43,8 +45,6 @@ import com.ddfplus.util.*;
  * <li>add new subscriptions here.....
  * <li>client.connect();
  * </ol>
- *
- *
  */
 public class DdfClientExample implements ConnectionEventHandler, TimestampHandler {
 
@@ -96,6 +96,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
         ClientConfig config = new ClientConfig();
 
         String propFile = CLIENT_PROPS_FILE;
+        boolean useJwt = false;
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-s") && i + 1 < args.length) {
                 config.setPrimaryServer(args[i + 1]);
@@ -108,6 +109,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
             if (args[i].equals("-p") && i + 1 < args.length) {
                 config.setPassword(args[i + 1]);
                 i++;
+            }
+            if (args[i].equals("-jwt")) {
+                useJwt = true;
             }
             if (args[i].equals("-sym") && i + 1 < args.length) {
                 config.setSymbols(args[i + 1]);
@@ -257,11 +261,21 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
             }
         }
 
+
         // Validity Checks
         if (config.getUserName() == null || config.getPassword() == null) {
             System.err.println("user and password are required.");
             printHelp();
             System.exit(0);
+        }
+
+        if (useJwt) {
+            BimsClient client = new BimsClient();
+            BimsResponse rsp = client.getJwt(config.getUserName(), config.getPassword(), "realtime");
+            if (rsp != null && rsp.getAccess_token() != null) {
+                config.setToken(rsp.getAccess_token());
+            }
+            log.info("Using JWT Token: {}",config.getToken());
         }
 
         if (config.getSymbols() == null && config.getExchangeCodes() == null && config.getMinuteBarSymbols() == null
@@ -354,6 +368,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
          * @see ConnectionType
          *
          */
+        // HACK
         if (config.getConnectionType() == ConnectionType.TCP || config.getConnectionType() == ConnectionType.WS
                 || config.getConnectionType() == ConnectionType.WSS) {
             client = new DdfClientImpl(config);
@@ -448,9 +463,9 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
     public void onTimestamp(Date ts) {
         numTs++;
         if (logTS) {
-            if(numTs % 60 == 0) {
-                log.info("TS: {} ",ts);
-                log.info("numQuotes: {}",numQuoteReceived);
+            if (numTs % 60 == 0) {
+                log.info("TS: {} ", ts);
+                log.info("numQuotes: {}", numQuoteReceived);
             }
         }
     }
@@ -580,7 +595,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
             for (String symbol : symbols) {
                 // Market Quote/BBO
                 ClientQuoteHandler handler = new ClientQuoteHandler();
-                if(config.isSnapshotRequest()) {
+                if (config.isSnapshotRequest()) {
                     handler.setSnapshotRequest(true);
                     snapshotSymbols.add(symbol);
                 }
@@ -638,12 +653,12 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
         }
 
         // Periodically send snapshot requests
-        if(config.isSnapshotRequest() && snapshotSymbols.size() > 0 && config.getSnapshotIntervalSec() > 0) {
-            log.info("Sending periodic quote snapshot requests every {} seconds",config.getSnapshotIntervalSec());
+        if (config.isSnapshotRequest() && snapshotSymbols.size() > 0 && config.getSnapshotIntervalSec() > 0) {
+            log.info("Sending periodic quote snapshot requests every {} seconds", config.getSnapshotIntervalSec());
             snapshotExecutor = Executors.newSingleThreadScheduledExecutor();
             snapshotExecutor.scheduleAtFixedRate(() -> {
-                snapshotSymbols.forEach( s -> client.sendQuoteSnapshot(s));
-            },config.getSnapshotIntervalSec(),config.getSnapshotIntervalSec(),TimeUnit.SECONDS);
+                snapshotSymbols.forEach(s -> client.sendQuoteSnapshot(s));
+            }, config.getSnapshotIntervalSec(), config.getSnapshotIntervalSec(), TimeUnit.SECONDS);
         }
 
     }
@@ -683,12 +698,12 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 
         @Override
         public void onQuote(Quote quote) {
-            handleQuote(quote,false);
+            handleQuote(quote, false);
         }
 
         @Override
         public void onQuote(Quote quote, boolean refreshMessage) {
-            handleQuote(quote,refreshMessage);
+            handleQuote(quote, refreshMessage);
         }
 
         private void handleQuote(Quote quote, boolean refreshMessage) {
@@ -711,7 +726,6 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
 
     /**
      * Pull by exchange Quote handler
-     *
      */
     private class QuoteExchangeHandler implements QuoteHandler {
 
@@ -744,12 +758,11 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
         public void setSnapshotRequest(boolean v) {
             this.snapshotRequest = v;
         }
-        
+
     }
 
     /**
      * Pull by exchange Trade handler
-     *
      */
     private class TradeExchangeHandler implements TradeHandler {
 

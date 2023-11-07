@@ -197,6 +197,9 @@ class IoChannelTCP extends IoChannel {
 				// Send Login Command
 				String command = "LOGIN " + connection.username + ":" + connection.password + " VERSION="
 						+ connection.getVersion();
+				if(connection.token != null) {
+					command = "TOKEN " + connection.token + " VERSION=" +  connection.getVersion();
+				}
 				enqueueCommand(command);
 
 				String line = in.readLine();
