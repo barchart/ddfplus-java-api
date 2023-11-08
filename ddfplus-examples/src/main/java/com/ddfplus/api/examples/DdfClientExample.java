@@ -275,7 +275,7 @@ public class DdfClientExample implements ConnectionEventHandler, TimestampHandle
             if (rsp != null && rsp.getAccess_token() != null) {
                 config.setToken(rsp.getAccess_token());
             }
-            log.info("Using JWT Token: {}",config.getToken());
+            log.info("Using JWT Token Authentication for user: {}",config.getUserName());
         }
 
         if (config.getSymbols() == null && config.getExchangeCodes() == null && config.getMinuteBarSymbols() == null
