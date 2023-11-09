@@ -99,6 +99,8 @@ public class Quote implements Cloneable, Serializable {
         q._requestSymbol = _requestSymbol;
         q._seqNo = _seqNo;
         q._marketId = _marketId;
+        q._cacheTimeMs = _cacheTimeMs;
+        q._cacheAge = _cacheAge;
         return q;
 
     }
