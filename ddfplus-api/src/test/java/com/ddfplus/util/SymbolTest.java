@@ -128,4 +128,14 @@ public class SymbolTest {
         assertEquals("Long -> Short","_S_SP_ZSN3_ZSX3", new Symbol("_S_SP_ZSN23_ZSX23").getShortSymbol());
     }
 
+    @Test
+    public void testUDSSymbol() {
+        Symbol s = new Symbol("_U_VT_1@ZBZ3|11600C_-1@ZBZ3|11650C");
+        assertEquals(SymbolType.Future_Option_UserDefinedSpread,  s.getSymbolType());
+        assertEquals("ZB",  s.getCommodityCode());
+        assertEquals(2,  s.getSpreadLegs().size());
+        assertEquals("ZBZ3|11600C",  s.getSpreadLegs().get(0).getSymbol());
+        assertEquals("ZBZ3|11650C",  s.getSpreadLegs().get(1).getSymbol());
+    }
+
 }
