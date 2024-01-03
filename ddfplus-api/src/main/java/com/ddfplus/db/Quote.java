@@ -89,10 +89,10 @@ public class Quote implements Cloneable, Serializable {
         q._message = _message;
         q._permission = _permission;
 
-        q._combinedSession = (Session) _combinedSession.clone();
-        q._previousSession = (Session) _previousSession.clone();
+        q._combinedSession = (Session) _combinedSession.clone(q);
+        q._previousSession = (Session) _previousSession.clone(q);
         if (_zSession != null) {
-            q._zSession = (Session) _zSession.clone();
+            q._zSession = (Session) _zSession.clone(q);
         }
 
         q._sessions.addAll(_sessions);

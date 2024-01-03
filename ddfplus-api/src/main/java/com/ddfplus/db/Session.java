@@ -79,10 +79,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		this._session = sessionCode;		
 	}
 
-	@Override
-	public Object clone() { // Implements Cloneable
+	public Object clone(Quote newParentQuote) {
 
-		Session s = new Session(_parentQuote, this._day, this._session);
+		Session s = new Session(newParentQuote, this._day, this._session);
 
 		s._blockTrade = _blockTrade;
 		s._close = _close;
@@ -701,5 +700,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		}
 
 		return node;
+	}
+
+	Quote getParentQuote() {
+		return this._parentQuote;
 	}
 }

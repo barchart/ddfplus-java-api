@@ -106,4 +106,17 @@ public class QuoteTest {
 		assertEquals(200,jsonObject.getInt("asksize"));
 	}
 
+	@Test
+	public void cloneTest() {
+		symbolInfo = new SymbolInfo("RCK.VN", "rck", "TSX-V", 'B', null, 1);
+		quote = new Quote(symbolInfo);
+		quote.setBid(5.31f);
+		quote.setBidSize(1);
+		quote.setAsk(5.5f);
+		quote.setAskSize(2);
+
+		Quote c = (Quote) quote.clone();
+		assertNotEquals(quote.getCombinedSession().getParentQuote(),c.getCombinedSession().getParentQuote());
+	}
+
 }
