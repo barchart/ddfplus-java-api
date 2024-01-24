@@ -3,3 +3,5 @@
 .project
 .settings
 *.iml
+/log/ddfclient.log
+/ddfplus-examples/dependency-reduced-pom.xml
