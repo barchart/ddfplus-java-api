@@ -4,7 +4,7 @@
 
 	<groupId>com.ddfplus.jaws</groupId>
 	<artifactId>ddfplus-parent</artifactId>
-	<version>1.1.63-SNAPSHOT</version>
+	<version>1.1.64-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>ddfplus-parent</name>
