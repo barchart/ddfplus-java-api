@@ -482,8 +482,9 @@ public class Quote implements Cloneable, Serializable {
             session_t = this.getSession(this._zSession.getDayCode(), 'T');
         }
 
-        StringBuilder sb = new StringBuilder("\"" + this._symbolInfo.getSymbol() + "\": { " + "\"symbol\": \""
-                + this._symbolInfo.getSymbol() + "\""
+        String symbol = this._requestSymbol != null ? this.getRequestSymbol() : this._symbolInfo.getSymbol();
+        StringBuilder sb = new StringBuilder("\"" + symbol + "\": { " + "\"symbol\": \""
+                + symbol + "\""
                 + (this._symbolInfo.getLongSymbol() != null ? (", \"longsymbol\": \"" + this._symbolInfo.getLongSymbol() + "\"") : "")
                 + ", \"name\": \""
                 + this._symbolInfo.getName().replaceAll("\"", "\\\\\"") + "\"" + ", \"exchange\": \""
@@ -760,7 +761,7 @@ public class Quote implements Cloneable, Serializable {
         }
 
         XMLNode node = new XMLNode("QUOTE");
-        node.setAttribute("symbol", _symbolInfo.getSymbol());
+        node.setAttribute("symbol", this._requestSymbol != null ? this._requestSymbol : _symbolInfo.getSymbol());
         if (_symbolInfo.getLongSymbol() != null) {
             node.setAttribute("longsymbol", _symbolInfo.getLongSymbol());
         }

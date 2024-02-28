@@ -2,7 +2,7 @@ package com.ddfplus.util;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SymbolTest {
     @Test
@@ -137,5 +137,14 @@ public class SymbolTest {
         assertEquals("ZBZ3|11600C",  s.getSpreadLegs().get(0).getSymbol());
         assertEquals("ZBZ3|11650C",  s.getSpreadLegs().get(1).getSymbol());
     }
+
+    @Test
+    public void testIsExpired() {
+        Symbol s = new Symbol("CTZ14");
+        assertTrue(s.isExpired());
+        s = new Symbol("CTZ34");
+        assertFalse(s.isExpired());
+    }
+
 
 }
