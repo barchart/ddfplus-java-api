@@ -4,7 +4,7 @@
 
 	<groupId>com.ddfplus.jaws</groupId>
 	<artifactId>ddfplus-parent</artifactId>
-	<version>1.1.67-SNAPSHOT</version>
+	<version>1.1.67</version>
 	<packaging>pom</packaging>
 
 	<name>ddfplus-parent</name>
@@ -31,7 +31,7 @@
 		<url>https://github.com:/barchart/ddfplus-java-api</url>
 		<connection>scm:git:git://github.com/barchart/ddfplus-java-api.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/barchart/ddfplus-java-api.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>ddfplus-parent-1.1.67</tag>
 	</scm>
 
 
