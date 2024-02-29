@@ -139,19 +139,37 @@ public class SymbolTest {
     }
 
     @Test
-    public void testIsExpired() {
+    public void testIsExpiredFuture() {
         Symbol s = new Symbol("CTZ14");
-        assertTrue(s.isExpired());
+        assertTrue("2014",s.isExpired());
         s = new Symbol("CTZ34");
         assertFalse(s.isExpired());
     }
 
     @Test
-    public void testIsExpired2() {
-        Symbol s = new Symbol("GOOG");
+    public void testIsExpiredFutureSpread() {
+        Symbol s = new Symbol("_S_SP_SDN4_SDU5");
         assertFalse(s.isExpired());
-        s = new Symbol("TSLA");
+        s = new Symbol("_S_SP_SDN14_SDU15");
+        assertTrue("2014",s.isExpired());
+        s = new Symbol("_S_SP_ZDV4_ZDZ5");
         assertFalse(s.isExpired());
+    }
+
+    @Test
+    public void testIsExpiredEquityOption() {
+        Symbol s = new Symbol("SPY|20240228|423.00C");
+        assertFalse(s.isExpired());
+        s = new Symbol("SPY   240228C00423000");
+        assertFalse(s.isExpired());
+    }
+
+    @Test
+    public void testFutureOption() {
+        Symbol s = new Symbol("CCM670P");
+        assertFalse(s.isExpired());
+        s = new Symbol("KK7H12");
+        assertTrue("2012",s.isExpired());
     }
 
 

@@ -415,6 +415,15 @@ public class Symbol {
                 this._strike = null;
                 break;
             }
+            case Equity_Option:
+                this._commodityCode = null;
+                this._month = '\0';
+                this._optionType = OptionType.None;
+                this._strike = null;
+                this._year = 0;
+                this._spreadType = null;
+                this._spreadLegs = null;
+                break;
             default:
                 this._commodityCode = null;
                 this._month = '\0';
@@ -582,7 +591,6 @@ public class Symbol {
         switch (this._type) {
             case Future:
             case Future_Spread:
-            case Equity_Option:
             case Future_Option:
                 if (this._year > 0) {
                     return this._year < (Symbol._currentYear - 1);
