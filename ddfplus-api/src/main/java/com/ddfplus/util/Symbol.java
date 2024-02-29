@@ -579,6 +579,15 @@ public class Symbol {
     }
 
     public boolean isExpired() {
-        return this._year < (Symbol._currentYear - 1);
+        switch (this._type) {
+            case Future:
+            case Future_Spread:
+            case Equity_Option:
+            case Future_Option:
+                if (this._year > 0) {
+                    return this._year < (Symbol._currentYear - 1);
+                }
+        }
+        return false;
     }
 }

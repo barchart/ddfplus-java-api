@@ -146,5 +146,13 @@ public class SymbolTest {
         assertFalse(s.isExpired());
     }
 
+    @Test
+    public void testIsExpired2() {
+        Symbol s = new Symbol("GOOG");
+        assertFalse(s.isExpired());
+        s = new Symbol("TSLA");
+        assertFalse(s.isExpired());
+    }
+
 
 }
