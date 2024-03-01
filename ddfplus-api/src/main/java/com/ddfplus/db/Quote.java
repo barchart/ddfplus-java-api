@@ -949,4 +949,14 @@ public class Quote implements Cloneable, Serializable {
         this._cacheAge = age;
     }
     public CacheAge getCacheAge() { return this._cacheAge; }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("sym: " + _symbolInfo.getSymbol() + " reqSym: "+ _requestSymbol);
+        if(this._combinedSession != null ) {
+            sb.append(" curDate: "+this._combinedSession.getDay().toDDFString());
+        }
+        return sb.toString();
+    }
 }
