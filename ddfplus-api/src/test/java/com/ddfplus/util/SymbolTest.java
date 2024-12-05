@@ -12,6 +12,7 @@ public class SymbolTest {
         assertEquals(SymbolType.Platts, Symbol.getSymbolType("AA.PT"));
         assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
         assertEquals(SymbolType.Index, Symbol.getSymbolType("$SPX"));
+        assertEquals(SymbolType.Baltic, Symbol.getSymbolType("C5TC.BI"));
     }
 
     @Test

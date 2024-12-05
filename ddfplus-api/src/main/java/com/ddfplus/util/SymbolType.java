@@ -66,6 +66,7 @@ public enum SymbolType {
 	 * Globex user defined spread on Future Options
 	 */
 	Future_Option_UserDefinedSpread,
-	Economic_Indicators;
+	Economic_Indicators,
+	Baltic;
 
 }

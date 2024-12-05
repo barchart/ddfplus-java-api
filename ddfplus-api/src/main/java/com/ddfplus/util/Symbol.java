@@ -151,6 +151,8 @@ public class Symbol {
                 return SymbolType.Platts;
             else if (symbol.endsWith(".RP"))
                 return SymbolType.Economic_Indicators;
+            else if (symbol.endsWith(".BI"))
+                return SymbolType.Baltic;
 
             for (int i = 0; i < ca.length; i++) {
                 if (Character.isDigit(ca[i])) {
