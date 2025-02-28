@@ -577,6 +577,9 @@ public class Quote implements Cloneable, Serializable {
                             + ", \"openinterest\": "
                             + ((session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : session.getOpenInterest())
+                            + ", \"openinterestdate\": "
+                            + ((session.getOpenInterestDate() == null) ? "null"
+                            : "\"" + session.getOpenInterestDate().toYYYYMMDDString() +"\"")
                             + (voloi != null ? ", \"voloi\": " + voloi : "")
                             + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                             + ", \"timestamp\": " + session.getTimeInMillis()
@@ -634,6 +637,9 @@ public class Quote implements Cloneable, Serializable {
                     + ", \"openinterest\": "
                     + ((session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : session.getOpenInterest())
+                    + ", \"openinterestdate\": "
+                    + ((session.getOpenInterestDate() == null) ? "null"
+                    : "\""+session.getOpenInterestDate().toYYYYMMDDString() +"\"")
                     + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                     + ", \"timestamp\": " + session.getTimeInMillis()
                     + (version == 1 && _seqNo > 0 ? ", \"seqno\": " + _seqNo : "")
@@ -692,6 +698,7 @@ public class Quote implements Cloneable, Serializable {
         sb.append(((previousSession.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previousSession.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append((previousSession.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previousSession.getVolume());
         sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
+        sb.append((previousSession.getOpenInterestDate() == null) ? "" : ",\"openinterestdate\": " + "\"" + previousSession.getOpenInterestDate().toYYYYMMDDString() +"\"");
         sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(), baseCode, ParserHelper.PURE_DECIMAL));
         sb.append(",\"day\": " + ((previousSession.getDayCode() == '\0') ? "null" : "\"" + previousSession.getDayCode() + "\""));
         if (previousSession.getDay() != null) {

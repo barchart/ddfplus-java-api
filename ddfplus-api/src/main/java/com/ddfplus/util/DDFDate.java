@@ -8,6 +8,7 @@
 package com.ddfplus.util;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +23,8 @@ public class DDFDate {
 	private static final DateTimeFormatter _formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
 			.withZone(_zoneChicago);
 	private static final DateTimeFormatter _formatterOhlc = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+			.withZone(_zoneChicago);
+	private static final DateTimeFormatter _formatterYYYYMMDD = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 			.withZone(_zoneChicago);
 
 	private final ZonedDateTime _zdt;
@@ -42,6 +45,8 @@ public class DDFDate {
 		_zdt = ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), _zoneChicago);
 		_dayCode = DDFDate.convertNumberToDayCode(_zdt.getDayOfMonth());
 	}
+
+
 
 	/**
 	 * *
@@ -79,6 +84,11 @@ public class DDFDate {
 
 	public String toDDFString() {
 		return _zdt.format(_formatter);
+	}
+
+	public String toYYYYMMDDString() {
+		String dt = LocalDate.from(_zdt).format(_formatterYYYYMMDD);
+		return dt;
 	}
 
 	@Override
@@ -164,6 +174,16 @@ public class DDFDate {
 	public static DDFDate fromDDFString(String s) {
 		try {
 			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatter);
+			return new DDFDate(zdt);
+		} catch (Exception e) {
+			;
+		}
+		return null;
+	}
+
+	public static DDFDate fromYYYYYMMDDString(String s) {
+		try {
+			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatterYYYYMMDD);
 			return new DDFDate(zdt);
 		} catch (Exception e) {
 			;
