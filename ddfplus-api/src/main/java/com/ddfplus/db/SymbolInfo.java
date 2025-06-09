@@ -23,6 +23,7 @@ public class SymbolInfo {
     private final int _unitCode;
 
     private String _longSymbol;
+    private String _requestSymbol;
     private String _updatedAt;
 
     public SymbolInfo(String symbol, String name, String exchange, int unitCode, Float pointValue, int tickIncrement) {
@@ -260,5 +261,13 @@ public class SymbolInfo {
 
     public void setLongSymbol(String _longSymbol) {
         this._longSymbol = _longSymbol;
+    }
+
+    public String getRequestSymbol() {
+        return _requestSymbol;
+    }
+
+    public void setRequestSymbol(String _requestSymbol) {
+        this._requestSymbol = _requestSymbol;
     }
 }
