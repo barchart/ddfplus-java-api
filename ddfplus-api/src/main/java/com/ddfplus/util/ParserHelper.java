@@ -116,7 +116,7 @@ public final class ParserHelper {
 	 *            </ul>
 	 */
 	public synchronized static final String float2string(float f, char basecode, int target) {
-		return float2string(NF, f, basecode, target, true);
+		return float2string(NF_THREAD_LOCAL.get(), f, basecode, target, true);
 	}
 
 	/**
@@ -142,13 +142,13 @@ public final class ParserHelper {
 		return float2string(numberFormat, f, basecode, target, true);
 	}
 
-	private final static NumberFormat NF = NumberFormat.getInstance();
+	private final static ThreadLocal<NumberFormat> NF_THREAD_LOCAL = ThreadLocal.withInitial(NumberFormat::getNumberInstance);
 
 	/*
 	 * Convert a float to a DDF string.
 	 */
-	public synchronized static final String float2string(double value, final char basecode, final int target, final boolean special64) {
-		return float2string(NF, value, basecode, target, special64);
+	public synchronized static String float2string(double value, final char basecode, final int target, final boolean special64) {
+		return float2string(NF_THREAD_LOCAL.get(), value, basecode, target, special64);
 	}
 
 	/*

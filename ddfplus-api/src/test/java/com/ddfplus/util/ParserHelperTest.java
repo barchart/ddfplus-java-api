@@ -41,6 +41,13 @@ public class ParserHelperTest {
         assertEquals("4.63",v);
         v = ParserHelper.float2string(4.636f,'A',ParserHelper.PURE_DECIMAL);
         assertEquals("4.64",v);
+
+        v = ParserHelper.float2string(6.0300f,'C',ParserHelper.PURE_DECIMAL);
+        assertEquals("6.0300",v);
+
+        v = ParserHelper.float2string(6.03f,'C',ParserHelper.PURE_DECIMAL);
+        assertEquals("6.0300",v);
+
     }
 
 }
