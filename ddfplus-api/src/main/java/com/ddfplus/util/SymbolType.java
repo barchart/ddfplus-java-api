@@ -67,6 +67,6 @@ public enum SymbolType {
 	 */
 	Future_Option_UserDefinedSpread,
 	Economic_Indicators,
-	Baltic;
+	Baltic, YieldBP;
 
 }

@@ -13,6 +13,7 @@ public class SymbolTest {
         assertEquals(SymbolType.Future_Option, Symbol.getSymbolType("CLG3|1300C"));
         assertEquals(SymbolType.Index, Symbol.getSymbolType("$SPX"));
         assertEquals(SymbolType.Baltic, Symbol.getSymbolType("C5TC.BI"));
+        assertEquals(SymbolType.YieldBP, Symbol.getSymbolType("ZCYAOH80.BP"));
     }
 
     @Test
