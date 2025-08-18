@@ -174,5 +174,44 @@ public class SymbolTest {
         assertTrue("2012",s.isExpired());
     }
 
+    @Test
+    public void futureParse() {
+        Symbol s = new Symbol("ESK5");
+        assertEquals(SymbolType.Future,s.getSymbolType());
+        assertEquals("ES",s.getCommodityCode());
+        assertEquals('K',s.getMonth());
+        assertEquals(2025,s.getYear());
+        s = new Symbol("ESK25");
+        assertEquals(SymbolType.Future,s.getSymbolType());
+        assertEquals("ES",s.getCommodityCode());
+        assertEquals('K',s.getMonth());
+        assertEquals(2025,s.getYear());
+    }
+
+    @Test
+    public void futureParseFourCharRoot() {
+        // 4 char root, 2 digit year
+        Symbol s = new Symbol("FJB7Q25");
+        assertEquals(SymbolType.Future,s.getSymbolType());
+        assertEquals("FJB7",s.getCommodityCode());
+        assertEquals('Q',s.getMonth());
+        assertEquals(2025,s.getYear());
+        // 4 char root, single digit year
+        s = new Symbol("FJB7Q5");
+        assertEquals(SymbolType.Future,s.getSymbolType());
+        assertEquals("FJB7",s.getCommodityCode());
+        assertEquals('Q',s.getMonth());
+        assertEquals(2025,s.getYear());
+    }
+
+    @Test
+    public void normalizedSymbol() {
+        Symbol s = new Symbol("FJB7Q25");
+        assertEquals("2 digit year","FJB7Q25",s.getNormalizedSymbol());
+        s = new Symbol("FJB7Q5");
+        assertEquals("1 digit year","FJB7Q25",s.getNormalizedSymbol());
+    }
+
+
 
 }

@@ -212,12 +212,29 @@ public class Symbol {
         return splitSymbol(symbol, type, currentYear, currentMonth);
     }
 
+    private static boolean is2digitSymbol(String symbol) {
+        int len = symbol.length();
+        if (len < 3) {
+            return false;
+        }
+        char v = symbol.charAt(len - 3);
+        if (Character.isDigit(v)) { // probably a 4 digit year
+            return false;
+        }
+        char one = symbol.charAt(len - 2);
+        char two = symbol.charAt(len - 1);
+        if (Character.isDigit(one) && Character.isDigit(two)) {
+            return true;
+        }
+        return false;
+    }
+
     private static String[] splitSymbol(String symbol, SymbolType type, int currentYear, int currentMonth) {
         String[] parts = null;
         switch (type) {
             case Future:
                 parts = new String[3]; // Commodity Code, Month, Year
-                if (symbol.length() == 6) {
+                if (symbol.length() == 6 && is2digitSymbol(symbol)) {  // FJB7Q25
                     parts[0] = symbol.substring(0, 3);
                     parts[1] = symbol.substring(3, 4);
                     parts[2] = symbol.substring(4, 6);
@@ -462,6 +479,10 @@ public class Symbol {
         return this._commodityCode;
     }
 
+    public boolean isCommodityCode4Chars() {
+        return this._commodityCode != null && this._commodityCode.length() == 4;
+    }
+
     public char getMonth() {
         return this._month;
     }
@@ -603,3 +624,6 @@ public class Symbol {
         return false;
     }
 }
+
+
+
