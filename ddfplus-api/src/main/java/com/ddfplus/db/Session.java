@@ -65,6 +65,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	protected volatile int _tradeSize = 0;
 	protected volatile long _tradeTimestamp = 0L;
 	protected volatile long _volume = 0L;
+	protected volatile DDFDate _volumeDate = null;
 	protected volatile long _numTrades = 0L;
 	protected volatile double _priceVolume = 0.0;
 	protected volatile float _vwap = 0.0f;
@@ -104,6 +105,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._tradeSize = _tradeSize;
 		s._tradeTimestamp = _tradeTimestamp;
 		s._volume = _volume;
+		s._volumeDate = _volumeDate;
 		s._numTrades = _numTrades;
 		s._priceVolume = _priceVolume;
 		s._vwap = _vwap;
@@ -379,13 +381,22 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _volume;
 	}
 
-	/**
+    public DDFDate getVolumeDate() {
+        return _volumeDate;
+    }
+
+    public void setVolumeDate(DDFDate _volumeDate) {
+        this._volumeDate = _volumeDate;
+    }
+
+    /**
 	 * Deserializes the object from an XMLNode object.
 	 * 
 	 * @param node
 	 *            The <code>XMLNode</code> containing the serialized
 	 *            <code>Session</code>.
 	 */
+
 
 	public void fromXMLNode(XMLNode node) {
 
@@ -477,6 +488,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s = node.getAttribute("volume");
 		if (s != null)
 			_volume = ParserHelper.string2int(s);
+        s = node.getAttribute("volumeDate");
+        if (s != null)
+            _volumeDate = DDFDate.fromDDFString(s);
 
 		s = node.getAttribute("numtrades");
 		if (s != null)
@@ -614,6 +628,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		if (_volume != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("volume", "" + _volume);
 
+        if (_volumeDate != null)
+			node.setAttribute("volumeDate",_volumeDate.toDDFString());
+
 		if (opra && _volume != ParserHelper.DDFAPI_NOVALUE && _openInterest != ParserHelper.DDFAPI_NOVALUE) {
 			Float voloi = (float) _volume / _openInterest;
 			if(voloi != null) {
@@ -705,6 +722,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_volume != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("volume", "" + _volume);
+        if (_volumeDate != null)
+            node.setAttribute("volumeDate", _volumeDate.toDDFString());
 
 		if (_numTrades > 0)
 			node.setAttribute("numtrades", "" + _numTrades);
