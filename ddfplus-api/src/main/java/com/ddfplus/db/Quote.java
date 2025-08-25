@@ -572,6 +572,9 @@ public class Quote implements Cloneable, Serializable {
                             + ((session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(session.getPrevious(), baseCode,
                             ParserHelper.PURE_DECIMAL))
+                            + ", \"previousdate\": "
+                            + ((session.getPreviousDay() == null) ? "null"
+                            : "\"" + session.getPreviousDay().toYYYYMMDDString() +"\"")
                             + ", \"volume\": "
                             + ((session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getVolume())
                             + ", \"openinterest\": "
@@ -696,7 +699,9 @@ public class Quote implements Cloneable, Serializable {
         sb.append(((previousSession.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previousSession.getHigh(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append(((previousSession.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previousSession.getLow(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append(((previousSession.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previousSession.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(((previousSession.getPreviousDay() == null) ? "" : ",\"previousdate\": " + "\"" + previousSession.getPreviousDay().toYYYYMMDDString() +"\""));
         sb.append((previousSession.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previousSession.getVolume());
+        sb.append((previousSession.getVolumeDate() == null) ? "" : ",\"volumedate\": " + "\"" + previousSession.getVolumeDate().toYYYYMMDDString() + "\"");
         sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
         sb.append((previousSession.getOpenInterestDate() == null) ? "" : ",\"openinterestdate\": " + "\"" + previousSession.getOpenInterestDate().toYYYYMMDDString() +"\"");
         sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(), baseCode, ParserHelper.PURE_DECIMAL));
@@ -707,6 +712,8 @@ public class Quote implements Cloneable, Serializable {
         } else {
             sb.append(", \"date\": \"null\"");
         }
+        sb.append(", \"numtrades\": " + previousSession.getNumberOfTrades());
+        sb.append(", \"pricevolume\": " + ParserHelper.float2string(previousSession.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
 
         sb.append(" }");
 
