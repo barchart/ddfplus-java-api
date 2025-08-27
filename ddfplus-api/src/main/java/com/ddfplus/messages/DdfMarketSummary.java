@@ -53,4 +53,17 @@ public interface DdfMarketSummary extends DdfMarketBase {
 	 */
 	long getVolume();
 
+	/**
+	 * Gets the open interest.
+	 *
+	 * @return the open interest
+	 */
+	Long getOpenInterestLong();
+
+	/**
+	 * Gets the volume.
+	 *
+	 * @return the volume
+	 */
+	Long getVolumeLong();
 }

@@ -80,6 +80,16 @@ public class Data3XSummary extends AbstractMsgBaseMarket implements DdfMarketSum
         return ((this._volume == null) ? 0L : this._volume);
     }
 
+    @Override
+    public Long getOpenInterestLong() {
+        return this._openInterest;
+    }
+
+    @Override
+    public Long getVolumeLong() {
+        return this._volume;
+    }
+
     /**
      * Parses the.
      * 
