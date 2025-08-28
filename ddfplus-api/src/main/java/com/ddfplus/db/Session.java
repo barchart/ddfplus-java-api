@@ -488,9 +488,6 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s = node.getAttribute("volume");
 		if (s != null)
 			_volume = ParserHelper.string2int(s);
-        s = node.getAttribute("volumeDate");
-        if (s != null)
-            _volumeDate = DDFDate.fromDDFString(s);
 
 		s = node.getAttribute("numtrades");
 		if (s != null)
@@ -611,8 +608,6 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_previous != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("previous", Integer.toString(ParserHelper.float2int(uc, _previous)));
-        if (_previousDay != null)
-            node.setAttribute("previousdate", _previousDay.toDDFString());
 
 		if (_settlement != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("settlement", Integer.toString(ParserHelper.float2int(uc, _settlement)));
@@ -629,9 +624,6 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_volume != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("volume", "" + _volume);
-
-        if (_volumeDate != null)
-			node.setAttribute("volumedate",_volumeDate.toDDFString());
 
 		if (opra && _volume != ParserHelper.DDFAPI_NOVALUE && _openInterest != ParserHelper.DDFAPI_NOVALUE) {
 			Float voloi = (float) _volume / _openInterest;
@@ -724,8 +716,6 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_volume != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("volume", "" + _volume);
-        if (_volumeDate != null)
-            node.setAttribute("volumeDate", _volumeDate.toDDFString());
 
 		if (_numTrades > 0)
 			node.setAttribute("numtrades", "" + _numTrades);
