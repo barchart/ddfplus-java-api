@@ -458,6 +458,16 @@ public class Symbol {
     }
 
     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{sym="+_symbol);
+        sb.append(",type="+_type);
+        sb.append(",shortSym="+getShortSymbol());
+        sb.append("}");
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Symbol) {
             Symbol s = (Symbol) o;
