@@ -112,6 +112,31 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		return s;
 	}
+
+    public void clear() {
+        _close = 0.0f;
+        _close2 = 0.0f;
+        _high = 0.0f;
+        clearLasts();
+        _settlement = 0.0f;
+        _low = 0.0f;
+        _open = 0.0f;
+        _open2 = 0.0f;
+        _openInterest = 0;
+        _openInterestDate = null;
+        _previous = 0.0f;
+        _previousDay = null;
+        _timestamp = 0;
+        _tzAdjustment = 0;
+        _tradeSize = 0;
+        _tradeTimestamp = 0;
+        _volume = 0;
+        _volumeDate = null;
+        _numTrades = 0;
+        _priceVolume = 0.0f;
+        _vwap = 0.0f;
+    }
+
 	
 	/**
 	 * @return The last Block Trade price
