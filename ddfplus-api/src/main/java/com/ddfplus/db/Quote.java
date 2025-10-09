@@ -969,7 +969,10 @@ public class Quote implements Cloneable, Serializable {
         StringBuilder sb = new StringBuilder();
         sb.append("sym: " + _symbolInfo.getSymbol() + " reqSym: "+ _requestSymbol);
         if(this._combinedSession != null ) {
-            sb.append(" curDate: "+this._combinedSession.getDay().toDDFString());
+            sb.append(" curDate: "+this._combinedSession.getDay().getDate().toLocalDate());
+        }
+        if(this._previousSession != null ) {
+            sb.append(" prevDate: "+this._previousSession.getDay().getDate().toLocalDate());
         }
         return sb.toString();
     }

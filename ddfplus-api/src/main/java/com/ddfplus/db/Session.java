@@ -81,7 +81,12 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		this._session = sessionCode;		
 	}
 
-	public Object clone(Quote newParentQuote) {
+    @Override
+    public String toString() {
+        return "{ session: "+this._day.getDate().toLocalDate() +" }";
+    }
+
+    public Object clone(Quote newParentQuote) {
 
 		Session s = new Session(newParentQuote, this._day, this._session);
 
