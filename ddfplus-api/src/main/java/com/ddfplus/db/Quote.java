@@ -441,8 +441,16 @@ public class Quote implements Cloneable, Serializable {
         boolean opra = this._symbolInfo.getExchange().equals("OPRA") ? true : false;
         // US Exchange Equity
         boolean usEquity = false;
+        String exchange = this._symbolInfo.getExchange();
+        int lotSize = 100;
+        switch (exchange) {
+            case "NYSE":
+            case "NASDAQ":
+            case "AMEX":
+                lotSize = 1;
+                break;
+        }
         if (useEquityExtendedDecimals) {
-            String exchange = this._symbolInfo.getExchange();
             switch (exchange) {
                 case "NYSE":
                 case "NASDAQ":
@@ -517,12 +525,12 @@ public class Quote implements Cloneable, Serializable {
                             + ((_bid == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(_bid, baseCode,
                             ParserHelper.PURE_DECIMAL))
-                            + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _bidSize * 100 : _bidSize))
+                            + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _bidSize * lotSize : _bidSize))
                             + ", \"ask\": "
                             + ((_ask == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(_ask, baseCode,
                             ParserHelper.PURE_DECIMAL))
-                            + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * 100 : _askSize)));
+                            + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * lotSize : _askSize)));
             if (opra &&  _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
                 sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint,'C', ParserHelper.PURE_DECIMAL));
@@ -563,7 +571,7 @@ public class Quote implements Cloneable, Serializable {
                             .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                             : "null")
                             + ", \"lastsize\": "
-                            + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * 100 : session.getLastSize()))
+                            + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * lotSize : session.getLastSize()))
                             + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
                             + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(session.getSettlement(), baseCode,
@@ -592,7 +600,7 @@ public class Quote implements Cloneable, Serializable {
                                     : ParserHelper.float2string(_zSession.getLast(), baseCode,
                                     ParserHelper.PURE_DECIMAL))
                                     + ", \"lastsize_z\": "
-                                    + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _zSession.getLastSize() * 100 : _zSession.getLastSize()))
+                                    + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _zSession.getLastSize() * lotSize : _zSession.getLastSize()))
                                     + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()
                     ) : "")
                             + (version == 1 && _seqNo > 0 ? ", \"seqno\": " + _seqNo : "")
@@ -624,7 +632,7 @@ public class Quote implements Cloneable, Serializable {
                     : "null")
                     + ", \"lastsize\": null"
                     + ", \"lastsize_z\": "
-                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * 100 : session.getLastSize()))
+                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session.getLastSize() * lotSize : session.getLastSize()))
                     + ", \"tradetimestamp\": null"
                     + ", \"tradetimestamp_z\": " + session.getTradeTimestamp()
                     + ", \"settlement\": "
@@ -676,7 +684,7 @@ public class Quote implements Cloneable, Serializable {
             if (display) {
                 sb.append(", \"t_session\" : { ");
                 sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
-                sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session_t.getLastSize() * 100 : session_t.getLastSize())));
+                sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? session_t.getLastSize() * lotSize : session_t.getLastSize())));
                 sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()));
                 sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()));
                 if (session_t.getNumberOfTrades() != 0) {
@@ -766,6 +774,7 @@ public class Quote implements Cloneable, Serializable {
         boolean usEquity = false;
         String exchange = this._symbolInfo.getExchange();
         boolean opra = this._symbolInfo.getExchange().equals("OPRA") ? true : false;
+        int lotSize = 100;
         switch (exchange) {
             case "TSX":
             case "TSXV":
@@ -808,11 +817,11 @@ public class Quote implements Cloneable, Serializable {
             if (_bid != ParserHelper.DDFAPI_NOVALUE)
                 node.setAttribute("bid", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), _bid)));
             if (_bidSize != ParserHelper.DDFAPI_NOVALUE)
-                node.setAttribute("bidsize", "" + (usEquity ? _bidSize * 100 : _bidSize));
+                node.setAttribute("bidsize", "" + (usEquity ? _bidSize * lotSize : _bidSize));
             if (_ask != ParserHelper.DDFAPI_NOVALUE)
                 node.setAttribute("ask", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), _ask)));
             if (_askSize != ParserHelper.DDFAPI_NOVALUE)
-                node.setAttribute("asksize", "" + (usEquity ? _askSize * 100 : _askSize));
+                node.setAttribute("asksize", "" + (usEquity ? _askSize * lotSize : _askSize));
             if (opra && _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
                 node.setAttribute("midpoint", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(),midpoint)));
