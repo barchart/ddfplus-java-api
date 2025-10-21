@@ -26,14 +26,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Quote implements Cloneable, Serializable {
 
-    public static enum CacheAge { SevenDays, SixWeeks,SixWeeksPlus }
+    public enum CacheAge { SevenDays, SixWeeks,SixWeeksPlus }
 
     public static final ZoneId ZONE_ID_CHICAGO = ZoneId.of("America/Chicago");
     // By defining the serialVersionUID we can keep Object Serialization
     // consistent.
     private static final long serialVersionUID = 9094149815858170620L;
 
-    private Clock clock = Clock.system(ZONE_ID_CHICAGO);
+    private final Clock clock = Clock.system(ZONE_ID_CHICAGO);
     private volatile String _ddfExchange = "";
     private final SymbolInfo _symbolInfo;
     // Request symbol can be short symbol
@@ -437,8 +437,12 @@ public class Quote implements Cloneable, Serializable {
     }
 
     public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals) {
+        return toJSONString(version,displayBbo,useEquityExtendedDecimals,null);
+    }
+
+    public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals,String displaySymbol) {
         char baseCode = this._symbolInfo.getBaseCode();
-        boolean opra = this._symbolInfo.getExchange().equals("OPRA") ? true : false;
+        boolean opra = this._symbolInfo.getExchange().equals("OPRA");
         // US Exchange Equity
         boolean usEquity = false;
         if (useEquityExtendedDecimals) {
@@ -483,6 +487,9 @@ public class Quote implements Cloneable, Serializable {
         }
 
         String symbol = this._requestSymbol != null ? this.getRequestSymbol() : this._symbolInfo.getSymbol();
+        if(displaySymbol != null) {
+            symbol = displaySymbol;
+        }
         StringBuilder sb = new StringBuilder("\"" + symbol + "\": { " + "\"symbol\": \""
                 + symbol + "\""
                 + (this._symbolInfo.getLongSymbol() != null ? (", \"longsymbol\": \"" + this._symbolInfo.getLongSymbol() + "\"") : "")
@@ -670,7 +677,7 @@ public class Quote implements Cloneable, Serializable {
                     }
                 } else if (now.getHour() >= 15) {
                     // For the current session, only show if trade after 12 pm
-                    display = tradeTime.getHour() >= 12 ? true : false;
+                    display = tradeTime.getHour() >= 12;
                 }
             }
             if (display) {
@@ -765,7 +772,7 @@ public class Quote implements Cloneable, Serializable {
     public XMLNode toXMLNode(boolean showBidAsk) {
         boolean usEquity = false;
         String exchange = this._symbolInfo.getExchange();
-        boolean opra = this._symbolInfo.getExchange().equals("OPRA") ? true : false;
+        boolean opra = this._symbolInfo.getExchange().equals("OPRA");
         switch (exchange) {
             case "TSX":
             case "TSXV":
