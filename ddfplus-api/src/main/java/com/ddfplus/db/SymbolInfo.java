@@ -17,7 +17,7 @@ public class SymbolInfo {
     private char _baseCode;
     private final String _exchange;
     private final String _name;
-    private final String _symbol;
+    private String _symbol;
     private final float _pointValue;
     private final int _tickIncrement;
     private final int _unitCode;
@@ -105,6 +105,7 @@ public class SymbolInfo {
     public String getSymbol() {
         return _symbol;
     }
+    public void setSymbol(String s) {this._symbol = s; }
 
     public int getTickIncrement() {
         return _tickIncrement;
@@ -270,4 +271,6 @@ public class SymbolInfo {
     public void setRequestSymbol(String _requestSymbol) {
         this._requestSymbol = _requestSymbol;
     }
+
+
 }

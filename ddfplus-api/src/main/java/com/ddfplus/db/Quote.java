@@ -486,11 +486,12 @@ public class Quote implements Cloneable, Serializable {
             session_t = this.getSession(this._zSession.getDayCode(), 'T');
         }
 
-        String symbol = this._requestSymbol != null ? this.getRequestSymbol() : this._symbolInfo.getSymbol();
+        String symbol = this._symbolInfo.getSymbol();
+        String keySymbol = symbol;
         if(displaySymbol != null) {
-            symbol = displaySymbol;
+            keySymbol = displaySymbol;
         }
-        StringBuilder sb = new StringBuilder("\"" + symbol + "\": { " + "\"symbol\": \""
+        StringBuilder sb = new StringBuilder("\"" + keySymbol + "\": { " + "\"symbol\": \""
                 + symbol + "\""
                 + (this._symbolInfo.getLongSymbol() != null ? (", \"longsymbol\": \"" + this._symbolInfo.getLongSymbol() + "\"") : "")
                 + ", \"name\": \""
