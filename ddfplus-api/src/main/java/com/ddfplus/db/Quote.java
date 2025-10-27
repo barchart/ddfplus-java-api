@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Quote implements Cloneable, Serializable {
 
-    public enum CacheAge { SevenDays, SixWeeks,SixWeeksPlus }
+    public enum CacheAge {SevenDays, SixWeeks, SixWeeksPlus}
 
     public static final ZoneId ZONE_ID_CHICAGO = ZoneId.of("America/Chicago");
     // By defining the serialVersionUID we can keep Object Serialization
@@ -437,10 +437,10 @@ public class Quote implements Cloneable, Serializable {
     }
 
     public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals) {
-        return toJSONString(version,displayBbo,useEquityExtendedDecimals,null);
+        return toJSONString(version, displayBbo, useEquityExtendedDecimals, null);
     }
 
-    public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals,String displaySymbol) {
+    public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals, String displaySymbol) {
         char baseCode = this._symbolInfo.getBaseCode();
         boolean opra = this._symbolInfo.getExchange().equals("OPRA");
         // US Exchange Equity
@@ -488,7 +488,7 @@ public class Quote implements Cloneable, Serializable {
 
         String symbol = this._symbolInfo.getSymbol();
         String keySymbol = symbol;
-        if(displaySymbol != null) {
+        if (displaySymbol != null) {
             keySymbol = displaySymbol;
         }
         StringBuilder sb = new StringBuilder("\"" + keySymbol + "\": { " + "\"symbol\": \""
@@ -531,9 +531,9 @@ public class Quote implements Cloneable, Serializable {
                             : ParserHelper.float2string(_ask, baseCode,
                             ParserHelper.PURE_DECIMAL))
                             + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * 100 : _askSize)));
-            if (opra &&  _ask != ParserHelper.DDFAPI_NOVALUE) {
+            if (opra && _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
-                sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint,'C', ParserHelper.PURE_DECIMAL));
+                sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint, 'C', ParserHelper.PURE_DECIMAL));
             }
         }
 
@@ -582,7 +582,7 @@ public class Quote implements Cloneable, Serializable {
                             ParserHelper.PURE_DECIMAL))
                             + ", \"previousdate\": "
                             + ((session.getPreviousDay() == null) ? "null"
-                            : "\"" + session.getPreviousDay().toYYYYMMDDString() +"\"")
+                            : "\"" + session.getPreviousDay().toYYYYMMDDString() + "\"")
                             + ", \"volume\": "
                             + ((session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getVolume())
                             + ", \"openinterest\": "
@@ -590,7 +590,7 @@ public class Quote implements Cloneable, Serializable {
                             : session.getOpenInterest())
                             + ", \"openinterestdate\": "
                             + ((session.getOpenInterestDate() == null) ? "null"
-                            : "\"" + session.getOpenInterestDate().toYYYYMMDDString() +"\"")
+                            : "\"" + session.getOpenInterestDate().toYYYYMMDDString() + "\"")
                             + (voloi != null ? ", \"voloi\": " + voloi : "")
                             + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                             + ", \"timestamp\": " + session.getTimeInMillis()
@@ -650,7 +650,7 @@ public class Quote implements Cloneable, Serializable {
                     : session.getOpenInterest())
                     + ", \"openinterestdate\": "
                     + ((session.getOpenInterestDate() == null) ? "null"
-                    : "\""+session.getOpenInterestDate().toYYYYMMDDString() +"\"")
+                    : "\"" + session.getOpenInterestDate().toYYYYMMDDString() + "\"")
                     + ", \"numtrades\": " + session.getNumberOfTrades() + ", \"pricevolume\": " + ParserHelper.float2string(session.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false)
                     + ", \"timestamp\": " + session.getTimeInMillis()
                     + (version == 1 && _seqNo > 0 ? ", \"seqno\": " + _seqNo : "")
@@ -707,11 +707,11 @@ public class Quote implements Cloneable, Serializable {
         sb.append(((previousSession.getHigh() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"high\": " + ParserHelper.float2string(previousSession.getHigh(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append(((previousSession.getLow() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"low\": " + ParserHelper.float2string(previousSession.getLow(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append(((previousSession.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"previous\": " + ParserHelper.float2string(previousSession.getPrevious(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append(((previousSession.getPreviousDay() == null) ? "" : ",\"previousdate\": " + "\"" + previousSession.getPreviousDay().toYYYYMMDDString() +"\""));
+        sb.append(((previousSession.getPreviousDay() == null) ? "" : ",\"previousdate\": " + "\"" + previousSession.getPreviousDay().toYYYYMMDDString() + "\""));
         sb.append((previousSession.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"volume\": " + previousSession.getVolume());
         sb.append((previousSession.getVolumeDate() == null) ? "" : ",\"volumedate\": " + "\"" + previousSession.getVolumeDate().toYYYYMMDDString() + "\"");
         sb.append((previousSession.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"openinterest\": " + previousSession.getOpenInterest());
-        sb.append((previousSession.getOpenInterestDate() == null) ? "" : ",\"openinterestdate\": " + "\"" + previousSession.getOpenInterestDate().toYYYYMMDDString() +"\"");
+        sb.append((previousSession.getOpenInterestDate() == null) ? "" : ",\"openinterestdate\": " + "\"" + previousSession.getOpenInterestDate().toYYYYMMDDString() + "\"");
         sb.append((previousSession.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "" : ",\"settlement\": " + ParserHelper.float2string(previousSession.getSettlement(), baseCode, ParserHelper.PURE_DECIMAL));
         sb.append(",\"day\": " + ((previousSession.getDayCode() == '\0') ? "null" : "\"" + previousSession.getDayCode() + "\""));
         if (previousSession.getDay() != null) {
@@ -823,7 +823,7 @@ public class Quote implements Cloneable, Serializable {
                 node.setAttribute("asksize", "" + (usEquity ? _askSize * 100 : _askSize));
             if (opra && _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
-                node.setAttribute("midpoint", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(),midpoint)));
+                node.setAttribute("midpoint", Integer.toString(ParserHelper.float2int(_symbolInfo.getUnitCode(), midpoint)));
             }
         }
 
@@ -855,7 +855,7 @@ public class Quote implements Cloneable, Serializable {
     }
 
     private float calcMidPoint() {
-        float midpoint = (_ask + _bid) / 2 ;
+        float midpoint = (_ask + _bid) / 2;
         return midpoint;
     }
 
@@ -970,17 +970,20 @@ public class Quote implements Cloneable, Serializable {
     public void setCacheAge(CacheAge age) {
         this._cacheAge = age;
     }
-    public CacheAge getCacheAge() { return this._cacheAge; }
+
+    public CacheAge getCacheAge() {
+        return this._cacheAge;
+    }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("si: " + _symbolInfo + " qteReqSym: "+ _requestSymbol);
-        if(this._combinedSession != null ) {
-            sb.append(" curDate: "+ this._combinedSession.getDay() != null ? this._combinedSession.getDay().getDate().toLocalDate() : "");
+        sb.append("si: " + _symbolInfo + " qteReqSym: " + _requestSymbol + " ");
+        if (this._combinedSession != null) {
+            sb.append(" curSession: " + (this._combinedSession.getDay() != null ? this._combinedSession.getDay().getDate().toLocalDate() : ""));
         }
-        if(this._previousSession != null ) {
-            sb.append(" prevDate: "+ this._previousSession.getDay() != null ? this._previousSession.getDay().getDate().toLocalDate() : "");
+        if (this._previousSession != null) {
+            sb.append(" prevSession: " + (this._previousSession.getDay() != null ? this._previousSession.getDay().getDate().toLocalDate() : ""));
         }
         return sb.toString();
     }
