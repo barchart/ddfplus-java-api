@@ -47,7 +47,7 @@ public class SymbolInfo {
 
     @Override
     public String toString() {
-        return "sym: "+_symbol + " exch: " + _exchange +"  bc: "+_baseCode + " lngSym "+_longSymbol;
+        return "{sym: "+_symbol + " exch: " + _exchange +"  bc: "+_baseCode + " lngSym "+_longSymbol + " reqSym: "+_requestSymbol + "}";
     }
 
     /**
@@ -229,7 +229,7 @@ public class SymbolInfo {
         if (c == '*')
             return 0;
 
-        int ival = (int) c;
+        int ival = c;
 
         // Get A-E ==> int
         if (ival >= 65)

@@ -974,7 +974,7 @@ public class Quote implements Cloneable, Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("sym: " + _symbolInfo.getSymbol() + " reqSym: "+ _requestSymbol);
+        sb.append("si: " + _symbolInfo + " qteReqSym: "+ _requestSymbol);
         if(this._combinedSession != null ) {
             sb.append(" curDate: "+this._combinedSession.getDay().getDate().toLocalDate());
         }
