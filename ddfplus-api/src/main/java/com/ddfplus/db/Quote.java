@@ -520,17 +520,16 @@ public class Quote implements Cloneable, Serializable {
         sb.append(", \"tzadjustment\": " + session.getTzAdjustment());
 
         if (displayBbo && !useZSessionAsCurrentSession) {
+            String bidSize = (_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : Integer.toString(usEquity ? _bidSize * 100 : _bidSize);
+            String askSize = (_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : Integer.toString(usEquity ? _askSize * 100 : _askSize);
             sb.append(
                     ", \"bid\": "
                             + ((_bid == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                            : ParserHelper.float2string(_bid, baseCode,
-                            ParserHelper.PURE_DECIMAL))
-                            + ", \"bidsize\": " + ((_bidSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _bidSize * 100 : _bidSize))
-                            + ", \"ask\": "
-                            + ((_ask == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                            : ParserHelper.float2string(_ask, baseCode,
-                            ParserHelper.PURE_DECIMAL))
-                            + ", \"asksize\": " + ((_askSize == ParserHelper.DDFAPI_NOVALUE) ? "null" : (usEquity ? _askSize * 100 : _askSize)));
+                            : ParserHelper.float2string(_bid, baseCode,ParserHelper.PURE_DECIMAL))
+                            + ", \"bidsize\": " + bidSize
+                            + ", \"ask\": " + ((_ask == ParserHelper.DDFAPI_NOVALUE) ? "null"
+                            : ParserHelper.float2string(_ask, baseCode,ParserHelper.PURE_DECIMAL))
+                            + ", \"asksize\": " + askSize);
             if (opra && _ask != ParserHelper.DDFAPI_NOVALUE) {
                 float midpoint = calcMidPoint();
                 sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint, 'C', ParserHelper.PURE_DECIMAL));
