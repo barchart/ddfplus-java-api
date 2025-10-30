@@ -65,7 +65,7 @@ public class Quote implements Cloneable, Serializable {
     private ReferenceVolatilityPrice _referenceVolatilityPrice;
     private PriceLimits _priceLimits;
     private MarketOpenInterest _marketOpenInterest;
-
+    private Vwap _vwap;
 
     public Quote(SymbolInfo symbolInfo) {
         this._symbolInfo = symbolInfo;
@@ -108,6 +108,7 @@ public class Quote implements Cloneable, Serializable {
         q._referenceVolatilityPrice = _referenceVolatilityPrice;
         q._priceLimits = _priceLimits;
         q._marketOpenInterest = _marketOpenInterest;
+        q._vwap = _vwap;
 
         return q;
 
@@ -542,9 +543,9 @@ public class Quote implements Cloneable, Serializable {
                 float midpoint = calcMidPoint();
                 sb.append(", \"midpoint\": " + ParserHelper.float2string(midpoint, 'C', ParserHelper.PURE_DECIMAL));
             }
-            if(session.getOfficialBestBidOffer() != null) {
-                buildJsonOfficialBestBidOffer(sb,baseCode, session.getOfficialBestBidOffer());
-            }
+//            if(session.getOfficialBestBidOffer() != null) {
+//                buildJsonOfficialBestBidOffer(sb,baseCode, session.getOfficialBestBidOffer());
+//            }
         }
 
         Float voloi = null;
@@ -732,38 +733,50 @@ public class Quote implements Cloneable, Serializable {
         sb.append(", \"numtrades\": " + previousSession.getNumberOfTrades());
         sb.append(", \"pricevolume\": " + ParserHelper.float2string(previousSession.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
 
-        if(previousSession.getOfficialBestBidOffer() != null) {
-            buildJsonOfficialBestBidOffer(sb,baseCode, previousSession.getOfficialBestBidOffer());
-        }
+//        if(previousSession.getOfficialBestBidOffer() != null) {
+//            buildJsonOfficialBestBidOffer(sb,baseCode, previousSession.getOfficialBestBidOffer());
+//        }
         sb.append(" }");
 
         // ReferenceVolatilityPrice
-        if(_referenceVolatilityPrice != null) {
-            buildJsonReferenceVolatilityPrice(sb,baseCode);
-        }
-        if(_priceLimits != null) {
-            buildJsonPriceLimits(sb,baseCode);
-        }
-        if(_marketOpenInterest != null) {
-            buildJsonMarketOpenInterest(sb);
-        }
+//        if(_referenceVolatilityPrice != null) {
+//            buildJsonReferenceVolatilityPrice(sb,baseCode);
+//        }
+//        if(_priceLimits != null) {
+//            buildJsonPriceLimits(sb,baseCode);
+//        }
+//        if(_marketOpenInterest != null) {
+//            buildJsonMarketOpenInterest(sb);
+//        }
+//        if(_vwap != null) {
+//            buildJsonVwap(sb);
+//        }
+
 
         sb.append("}");
         return sb.toString();
     }
 
+    private void buildJsonVwap(StringBuilder sb) {
+        DDFDate dt = _vwap.getTradeDate() > 0 ? DDFDate.fromTradeDate(_vwap.getTradeDate()) : null;
+        sb.append(", \"vwap\": {");
+        sb.append(" \"date\": " +  (dt != null  ? "\"" + dt.toYYYYMMDDString()  + "\"" : "null"));
+        sb.append(", \"vwap\": " + _vwap.getVwap());
+        sb.append("}");
+    }
+
     private void buildJsonMarketOpenInterest(StringBuilder sb) {
-        DDFDate dt = DDFDate.fromTradeDate(_marketOpenInterest.getTradeDate());
+        DDFDate dt = _marketOpenInterest.getTradeDate() > 0 ? DDFDate.fromTradeDate(_marketOpenInterest.getTradeDate()) : null;
         sb.append(", \"marketOpenInterest\": {");
-        sb.append(" \"date\": " +  (dt != null  ? "\"" + dt.toYYYYMMDDString()  + "\"": ""));
+        sb.append(" \"date\": " +  (dt != null  ? "\"" + dt.toYYYYMMDDString()  + "\"": "null"));
         sb.append(", \"volume\": " + _marketOpenInterest.getVolume());
         sb.append("}");
     }
 
     private void buildJsonPriceLimits(StringBuilder sb, char baseCode) {
-        DDFDate dt = DDFDate.fromTradeDate(_priceLimits.getTradeDate());
+        DDFDate dt = _priceLimits.getTradeDate() > 0 ? DDFDate.fromTradeDate(_priceLimits.getTradeDate()) : null;
         sb.append(", \"priceLimits\": {");
-        sb.append(" \"date\": " + (dt != null  ? "\""+ dt.toYYYYMMDDString() + "\"" : ""));
+        sb.append(" \"date\": " + (dt != null  ? "\""+ dt.toYYYYMMDDString() + "\"" : "null"));
         sb.append(", \"upperPriceLimit\": " + ((_priceLimits.getUpperPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                         : ParserHelper.float2string(_priceLimits.getUpperPriceLimit() , baseCode,ParserHelper.PURE_DECIMAL)));
         sb.append(", \"lowerPriceLimit\": " +((_priceLimits.getLowerPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
@@ -772,9 +785,9 @@ public class Quote implements Cloneable, Serializable {
     }
 
     private void buildJsonReferenceVolatilityPrice(StringBuilder sb, char baseCode) {
-        DDFDate dt = DDFDate.fromTradeDate(_referenceVolatilityPrice.getTradeDate());
+        DDFDate dt = _referenceVolatilityPrice.getTradeDate() > 0 ? DDFDate.fromTradeDate(_referenceVolatilityPrice.getTradeDate()) : null;
         sb.append(", \"referenceVolatilityPrice\": {");
-        sb.append(" \"date\": " + (dt != null  ? "\"" + dt.toYYYYMMDDString() + "\"": ""));
+        sb.append(" \"date\": " + (dt != null  ? "\"" + dt.toYYYYMMDDString() + "\"": "null"));
         sb.append(", \"atm\": " + _referenceVolatilityPrice.getAtm());
         sb.append(", \"surfaceDomain\": \"" + _referenceVolatilityPrice.getSurfaceDomain() + "\"");
         sb.append(", \"volatility\": " + _referenceVolatilityPrice.getVolatility());
@@ -1072,5 +1085,13 @@ public class Quote implements Cloneable, Serializable {
 
     public void setMarketOpenInterest(MarketOpenInterest _marketOpenInterest) {
         this._marketOpenInterest = _marketOpenInterest;
+    }
+
+    public Vwap getVwap() {
+        return _vwap;
+    }
+
+    public void setVwap(Vwap vwap) {
+        this._vwap = vwap;
     }
 }
