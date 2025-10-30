@@ -69,6 +69,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	protected volatile long _numTrades = 0L;
 	protected volatile double _priceVolume = 0.0;
 	protected volatile float _vwap = 0.0f;
+    private OfficialBestBidOffer _officialBestBidOffer;
 
 	// Default Constructor
 	public Session(Quote parent) {
@@ -115,6 +116,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._numTrades = _numTrades;
 		s._priceVolume = _priceVolume;
 		s._vwap = _vwap;
+        s._officialBestBidOffer = _officialBestBidOffer;
 
 		return s;
 	}
@@ -141,6 +143,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         _numTrades = 0;
         _priceVolume = 0.0f;
         _vwap = 0.0f;
+        _officialBestBidOffer = null;
     }
 
 	
@@ -529,16 +532,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 			if (s != null)
 				_priceVolume = Double.parseDouble(s);
 		} catch (Exception e) {
-			;
-		}
+        }
 
 		s = node.getAttribute("vwap");
 		try {
 			if ((s != null) && (s.length() > 0))
 				this._vwap = ParserHelper.string2float(s, _parentQuote.getSymbolInfo().getBaseCode());
 		} catch (Exception e) {
-			;
-		}
+        }
 
 		s = node.getAttribute("blocktrade");
 		if (s != null)
@@ -598,7 +599,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	 */
 	public XMLNode toXMLNode(Session zSession) {
 		int uc = _parentQuote.getSymbolInfo().getUnitCode();
-		boolean opra = _parentQuote.getSymbolInfo().getExchange().equals("OPRA") ? true : false;
+		boolean opra = _parentQuote.getSymbolInfo().getExchange().equals("OPRA");
 
 		XMLNode node = new XMLNode("SESSION");
 
@@ -667,7 +668,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 			node.setAttribute("numtrades", "" + _numTrades);
 
 		if (_priceVolume != ParserHelper.DDFAPI_NOVALUE)
-			node.setAttribute("pricevolume", "" + _numberFormatInstance.format(_priceVolume));
+			node.setAttribute("pricevolume", _numberFormatInstance.format(_priceVolume));
 
 		if (_vwap != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("vwap", Integer.toString(ParserHelper.float2int(uc, _vwap)));
@@ -752,7 +753,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 			node.setAttribute("numtrades", "" + _numTrades);
 
 		if (_priceVolume != ParserHelper.DDFAPI_NOVALUE)
-			node.setAttribute("pricevolume", "" + _numberFormatInstance.format(_priceVolume));
+			node.setAttribute("pricevolume", _numberFormatInstance.format(_priceVolume));
 
 		if (_tradeTimestamp > 0L) {
 			DDFDate d = new DDFDate(_tradeTimestamp);
@@ -765,4 +766,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	Quote getParentQuote() {
 		return this._parentQuote;
 	}
+
+    public OfficialBestBidOffer getOfficialBestBidOffer() {
+        return _officialBestBidOffer;
+    }
+
+    public void setOfficialBestBidOffer(OfficialBestBidOffer _officialBestBidOffer) {
+        this._officialBestBidOffer = _officialBestBidOffer;
+    }
+
+
 }

@@ -176,8 +176,7 @@ public class DDFDate {
 			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatter);
 			return new DDFDate(zdt);
 		} catch (Exception e) {
-			;
-		}
+        }
 		return null;
 	}
 
@@ -186,8 +185,7 @@ public class DDFDate {
 			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatterYYYYMMDD);
 			return new DDFDate(zdt);
 		} catch (Exception e) {
-			;
-		}
+        }
 		return null;
 	}
 
@@ -196,8 +194,20 @@ public class DDFDate {
 			ZonedDateTime zdt = ZonedDateTime.parse(s, _formatterOhlc);
 			return new DDFDate(zdt);
 		} catch (Exception e) {
-			;
-		}
+        }
 		return null;
 	}
+
+    public static DDFDate fromTradeDate(int tradeDate) {
+        if (tradeDate != 0) {
+            int year = tradeDate / 10000;
+            int month = (tradeDate - (year * 10000)) / 100;
+            int dayOfMonth = tradeDate - (year * 10000) - (month * 100);
+
+            final ZonedDateTime dt = ZonedDateTime.of(year, month, dayOfMonth, 0, 0, 0, 0, _zoneChicago);
+
+            return new DDFDate(dt);
+        }
+        return null;
+    }
 }
