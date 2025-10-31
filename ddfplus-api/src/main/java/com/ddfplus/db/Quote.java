@@ -748,11 +748,8 @@ public class Quote implements Cloneable, Serializable {
         if(vwap == null) {
             return;
         }
-        DDFDate dt = vwap.getTradeDate() > 0 ? DDFDate.fromTradeDate(vwap.getTradeDate()) : null;
-        sb.append(", \"vwap\": {");
         String p = (vwap.getVwap() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(vwap.getVwap(), baseCode,ParserHelper.PURE_DECIMAL);
-        sb.append(" \"vwap\": " + p);
-        sb.append("}");
+        sb.append(", \"vwap\": "+p);
     }
 
     private void buildJsonMarketOpenInterest(Session session,StringBuilder sb) {
@@ -760,10 +757,7 @@ public class Quote implements Cloneable, Serializable {
         if(marketOpenInterest == null) {
             return;
         }
-        DDFDate dt = marketOpenInterest.getTradeDate() > 0 ? DDFDate.fromTradeDate(marketOpenInterest.getTradeDate()) : null;
-        sb.append(", \"marketOpenInterest\": {");
-        sb.append(" \"volume\": " + marketOpenInterest.getVolume());
-        sb.append("}");
+        sb.append(", \"marketOpenInterest\": " + marketOpenInterest.getVolume());
     }
 
     private void buildJsonPriceLimits(Session session, char baseCode, StringBuilder sb) {
@@ -771,7 +765,6 @@ public class Quote implements Cloneable, Serializable {
         if(priceLimits == null) {
             return;
         }
-        DDFDate dt = priceLimits.getTradeDate() > 0 ? DDFDate.fromTradeDate(priceLimits.getTradeDate()) : null;
         sb.append(", \"priceLimits\": {");
         sb.append(" \"upperPriceLimit\": " + ((priceLimits.getUpperPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                         : ParserHelper.float2string(priceLimits.getUpperPriceLimit() , baseCode,ParserHelper.PURE_DECIMAL)));
@@ -785,7 +778,6 @@ public class Quote implements Cloneable, Serializable {
         if(referenceVolatilityPrice == null) {
             return;
         }
-        DDFDate dt = referenceVolatilityPrice.getTradeDate() > 0 ? DDFDate.fromTradeDate(referenceVolatilityPrice.getTradeDate()) : null;
         sb.append(", \"referenceVolatilityPrice\": {");
         sb.append(" \"atm\": " + referenceVolatilityPrice.getAtm());
         sb.append(", \"surfaceDomain\": \"" + referenceVolatilityPrice.getSurfaceDomain() + "\"");
