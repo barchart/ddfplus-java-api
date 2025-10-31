@@ -3,7 +3,7 @@ package com.ddfplus.db;
 public class Vwap {
     private long transactionTime;
     private int tradeDate;
-    private long vwap;
+    private float vwap;
 
     public long getTransactionTime() {
         return transactionTime;
@@ -21,11 +21,11 @@ public class Vwap {
         this.tradeDate = tradeDate;
     }
 
-    public long getVwap() {
+    public float getVwap() {
         return vwap;
     }
 
-    public void setVwap(long vwap) {
+    public void setVwap(float vwap) {
         this.vwap = vwap;
     }
 }

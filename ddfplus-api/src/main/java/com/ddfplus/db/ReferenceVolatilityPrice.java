@@ -4,9 +4,9 @@ public class ReferenceVolatilityPrice {
     private int tradeDate;
     private int atm;
     private String surfaceDomain;
-    private long volatility;
-    private long premium;
-    private long delta;
+    private float volatility;
+    private float premium;
+    private float delta;
 
     public int getTradeDate() {
         return tradeDate;
@@ -32,27 +32,27 @@ public class ReferenceVolatilityPrice {
         this.surfaceDomain = surfaceDomain;
     }
 
-    public long getVolatility() {
+    public float getVolatility() {
         return volatility;
     }
 
-    public void setVolatility(long volatility) {
+    public void setVolatility(float volatility) {
         this.volatility = volatility;
     }
 
-    public long getPremium() {
+    public float getPremium() {
         return premium;
     }
 
-    public void setPremium(long premium) {
+    public void setPremium(float premium) {
         this.premium = premium;
     }
 
-    public long getDelta() {
+    public float getDelta() {
         return delta;
     }
 
-    public void setDelta(long delta) {
+    public void setDelta(float delta) {
         this.delta = delta;
     }
 }

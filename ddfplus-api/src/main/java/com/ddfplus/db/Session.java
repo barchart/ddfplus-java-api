@@ -70,6 +70,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	protected volatile double _priceVolume = 0.0;
 	protected volatile float _vwap = 0.0f;
     private OfficialBestBidOffer _officialBestBidOffer;
+    private ReferenceVolatilityPrice _referenceVolatilityPrice;
+    private PriceLimits _priceLimits;
+    private MarketOpenInterest _marketOpenInterest;
+    private Vwap _vwapNew;
 
 	// Default Constructor
 	public Session(Quote parent) {
@@ -117,7 +121,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._priceVolume = _priceVolume;
 		s._vwap = _vwap;
         s._officialBestBidOffer = _officialBestBidOffer;
-
+        s._referenceVolatilityPrice = _referenceVolatilityPrice;
+        s._priceLimits = _priceLimits;
+        s._marketOpenInterest = _marketOpenInterest;
+        s._vwapNew = _vwapNew;
 		return s;
 	}
 
@@ -144,6 +151,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         _priceVolume = 0.0f;
         _vwap = 0.0f;
         _officialBestBidOffer = null;
+        _referenceVolatilityPrice = null;
+        _priceLimits = null;
+        _marketOpenInterest = null;
+        _vwapNew = null;
     }
 
 	
@@ -768,6 +779,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	}
 
     public OfficialBestBidOffer getOfficialBestBidOffer() {
+        if(_officialBestBidOffer == null) {
+            _officialBestBidOffer = new OfficialBestBidOffer();
+        }
         return _officialBestBidOffer;
     }
 
@@ -775,5 +789,47 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         this._officialBestBidOffer = _officialBestBidOffer;
     }
 
+    public ReferenceVolatilityPrice getReferenceVolatilityPrice() {
+        if(_referenceVolatilityPrice == null) {
+            _referenceVolatilityPrice = new ReferenceVolatilityPrice();
+        }
+        return _referenceVolatilityPrice;
+    }
 
+    public void setReferenceVolatilityPrice(ReferenceVolatilityPrice referenceVolatilityPrice) {
+        this._referenceVolatilityPrice = _referenceVolatilityPrice;
+    }
+
+    public PriceLimits getPriceLimits() {
+        if(_priceLimits == null) {
+            _priceLimits = new PriceLimits();
+        }
+        return _priceLimits;
+    }
+
+    public void setPriceLimits(PriceLimits _priceLimits) {
+        this._priceLimits = _priceLimits;
+    }
+
+    public MarketOpenInterest getMarketOpenInterest() {
+        if(_marketOpenInterest == null) {
+            _marketOpenInterest = new MarketOpenInterest();
+        }
+        return _marketOpenInterest;
+    }
+
+    public void setMarketOpenInterest(MarketOpenInterest _marketOpenInterest) {
+        this._marketOpenInterest = _marketOpenInterest;
+    }
+
+    public Vwap getVwapNew() {
+        if(_vwapNew == null) {
+            _vwapNew = new Vwap();
+        }
+        return _vwapNew;
+    }
+
+    public void setVwapNew(Vwap _vwapNew) {
+        this._vwapNew = _vwapNew;
+    }
 }
