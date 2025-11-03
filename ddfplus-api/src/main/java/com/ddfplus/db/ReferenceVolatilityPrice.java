@@ -1,6 +1,6 @@
 package com.ddfplus.db;
 
-public class ReferenceVolatilityPrice {
+public class ReferenceVolatilityPrice implements Cloneable{
     private int tradeDate;
     private int atm;
     private String surfaceDomain;
@@ -54,5 +54,15 @@ public class ReferenceVolatilityPrice {
 
     public void setDelta(float delta) {
         this.delta = delta;
+    }
+
+    @Override
+    public ReferenceVolatilityPrice clone() {
+        try {
+            ReferenceVolatilityPrice clone = (ReferenceVolatilityPrice) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

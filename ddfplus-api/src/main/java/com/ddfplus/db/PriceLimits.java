@@ -1,6 +1,6 @@
 package com.ddfplus.db;
 
-public class PriceLimits {
+public class PriceLimits implements  Cloneable{
     private int tradeDate;
     private long transactionTime;
     private float upperPriceLimit;
@@ -36,5 +36,15 @@ public class PriceLimits {
 
     public void setLowerPriceLimit(float lowerPriceLimit) {
         this.lowerPriceLimit = lowerPriceLimit;
+    }
+
+    @Override
+    public PriceLimits clone() {
+        try {
+            PriceLimits clone = (PriceLimits) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

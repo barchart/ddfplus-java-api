@@ -120,11 +120,11 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._numTrades = _numTrades;
 		s._priceVolume = _priceVolume;
 		s._vwap = _vwap;
-        s._officialBestBidOffer = _officialBestBidOffer;
-        s._referenceVolatilityPrice = _referenceVolatilityPrice;
-        s._priceLimits = _priceLimits;
-        s._marketOpenInterest = _marketOpenInterest;
-        s._vwapNew = _vwapNew;
+        s._officialBestBidOffer = _officialBestBidOffer != null ? _officialBestBidOffer.clone() : null;
+        s._referenceVolatilityPrice = _referenceVolatilityPrice !=null ? _referenceVolatilityPrice.clone() : null;
+        s._priceLimits = _priceLimits != null ? _priceLimits.clone() : null;
+        s._marketOpenInterest = _marketOpenInterest != null ? _marketOpenInterest.clone() : null;
+        s._vwapNew = _vwapNew != null ? _vwapNew.clone() : null;
 		return s;
 	}
 

@@ -1,6 +1,6 @@
 package com.ddfplus.db;
 
-public class Vwap {
+public class Vwap implements Cloneable{
     private long transactionTime;
     private int tradeDate;
     private float vwap;
@@ -27,5 +27,15 @@ public class Vwap {
 
     public void setVwap(float vwap) {
         this.vwap = vwap;
+    }
+
+    @Override
+    public Vwap clone() {
+        try {
+            Vwap clone = (Vwap) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

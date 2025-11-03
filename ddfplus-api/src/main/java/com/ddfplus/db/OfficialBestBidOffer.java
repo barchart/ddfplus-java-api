@@ -1,6 +1,6 @@
 package com.ddfplus.db;
 
-public class OfficialBestBidOffer {
+public class OfficialBestBidOffer implements Cloneable{
     private int tradeDate;
     private long transactionTime;
     private float bidPrice;
@@ -36,5 +36,15 @@ public class OfficialBestBidOffer {
 
     public void setOfferPrice(float offerPrice) {
         this.offerPrice = offerPrice;
+    }
+
+    @Override
+    public OfficialBestBidOffer clone() {
+        try {
+            OfficialBestBidOffer clone = (OfficialBestBidOffer) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
