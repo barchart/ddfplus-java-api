@@ -745,7 +745,7 @@ public class Quote implements Cloneable, Serializable {
 
     private void buildJsonVwap(Session session, char baseCode, StringBuilder sb) {
         Vwap vwap = session.getVwapNew();
-        if (vwap == null || vwap.getTradeDate() == ParserHelper.DDFAPI_NOVALUE) {
+        if (vwap == null || vwap.getVwap() == ParserHelper.DDFAPI_NOVALUE) {
             return;
         }
         String p = (vwap.getVwap() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(vwap.getVwap(), baseCode, ParserHelper.PURE_DECIMAL);
@@ -806,8 +806,7 @@ public class Quote implements Cloneable, Serializable {
     private void buildJsonOfficialBestBidOffer(Session session, char baseCode, StringBuilder sb) {
         OfficialBestBidOffer officialBestBidOffer = session.getOfficialBestBidOffer();
         if (officialBestBidOffer == null ||
-                (officialBestBidOffer.getTradeDate() == 0 &&
-                        officialBestBidOffer.getOfferPrice() == ParserHelper.DDFAPI_NOVALUE &&
+                (officialBestBidOffer.getOfferPrice() == ParserHelper.DDFAPI_NOVALUE &&
                         officialBestBidOffer.getBidPrice() == ParserHelper.DDFAPI_NOVALUE)) {
             return;
         }
