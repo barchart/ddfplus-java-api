@@ -774,12 +774,10 @@ public class Quote implements Cloneable, Serializable {
                         priceLimits.getUpperPriceLimit() == ParserHelper.DDFAPI_NOVALUE)) {
             return;
         }
-        sb.append(", \"priceLimits\": {");
-        sb.append(" \"upperPriceLimit\": " + ((priceLimits.getUpperPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
+        sb.append(", \"upperPriceLimit\": " + ((priceLimits.getUpperPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                 : ParserHelper.float2string(priceLimits.getUpperPriceLimit(), baseCode, ParserHelper.PURE_DECIMAL)));
         sb.append(", \"lowerPriceLimit\": " + ((priceLimits.getLowerPriceLimit() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                 : ParserHelper.float2string(priceLimits.getLowerPriceLimit(), baseCode, ParserHelper.PURE_DECIMAL)));
-        sb.append("}");
     }
 
     private void buildJsonReferenceVolatilityPrice(Session session, char baseCode, StringBuilder sb) {
