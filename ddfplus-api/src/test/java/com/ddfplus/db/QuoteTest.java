@@ -82,9 +82,9 @@ public class QuoteTest {
 		quote.setAskSize(2);
 		XMLNode xml = quote.toXMLNode(true);
 		assertEquals("5310",xml.getAttribute("bid"));
-		assertEquals("1",xml.getAttribute("bidsize"));
+		assertEquals("100",xml.getAttribute("bidsize"));
 		assertEquals("5500",xml.getAttribute("ask"));
-		assertEquals("2",xml.getAttribute("asksize"));
+		assertEquals("200",xml.getAttribute("asksize"));
 	}
 
 	@Test
@@ -101,9 +101,9 @@ public class QuoteTest {
 		JSONObject jsonObject = obj.getJSONObject("RCK.VN");
 		float bid = jsonObject.getFloat("bid");
 		assertEquals(5.310,bid,0.01);
-		assertEquals(1,jsonObject.getInt("bidsize"));
+		assertEquals(100,jsonObject.getInt("bidsize"));
 		assertEquals(5.50,jsonObject.getFloat("ask"),0.01);
-		assertEquals(2,jsonObject.getInt("asksize"));
+		assertEquals(200,jsonObject.getInt("asksize"));
 	}
 
 	@Test
