@@ -789,12 +789,18 @@ public class Quote implements Cloneable, Serializable {
             return;
         }
         sb.append(", \"referenceVolatilityPrice\": {");
-        sb.append(" \"atm\": " + referenceVolatilityPrice.getAtm());
-        sb.append(", \"surfaceDomain\": \"" + referenceVolatilityPrice.getSurfaceDomain() + "\"");
+        if(referenceVolatilityPrice.getAtm() != 0) {
+            sb.append(" \"atm\": " + referenceVolatilityPrice.getAtm() +", ");
+        }
+        if(referenceVolatilityPrice.getSurfaceDomain() != null && !referenceVolatilityPrice.getSurfaceDomain().isBlank()) {
+            sb.append("\"surfaceDomain\": \"" + referenceVolatilityPrice.getSurfaceDomain() + "\", ");
+        }
         String p = (referenceVolatilityPrice.getVolatility() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getVolatility(), baseCode, ParserHelper.PURE_DECIMAL);
-        sb.append(", \"volatility\": " + p);
-        p = (referenceVolatilityPrice.getPremium() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getPremium(), baseCode, ParserHelper.PURE_DECIMAL);
-        sb.append(", \"premium\": " + p);
+        sb.append("\"volatility\": " + p);
+        if(referenceVolatilityPrice.getPremium() != ParserHelper.DDFAPI_NOVALUE){
+            p = (referenceVolatilityPrice.getPremium() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getPremium(), baseCode, ParserHelper.PURE_DECIMAL);
+            sb.append(", \"premium\": " + p);
+        }
         p = (referenceVolatilityPrice.getDelta() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getDelta(), baseCode, ParserHelper.PURE_DECIMAL);
         sb.append(", \"delta\": " + p);
         sb.append("}");
