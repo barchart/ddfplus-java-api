@@ -785,8 +785,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         return _officialBestBidOffer;
     }
 
-    public void setOfficialBestBidOffer(OfficialBestBidOffer _officialBestBidOffer) {
-        this._officialBestBidOffer = _officialBestBidOffer;
+    public void setOfficialBestBidOffer(OfficialBestBidOffer officialBestBidOffer) {
+        this._officialBestBidOffer = officialBestBidOffer;
     }
 
     public ReferenceVolatilityPrice getReferenceVolatilityPrice() {
@@ -797,7 +797,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
     }
 
     public void setReferenceVolatilityPrice(ReferenceVolatilityPrice referenceVolatilityPrice) {
-        this._referenceVolatilityPrice = _referenceVolatilityPrice;
+        this._referenceVolatilityPrice = referenceVolatilityPrice;
     }
 
     public PriceLimits getPriceLimits() {
@@ -807,8 +807,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         return _priceLimits;
     }
 
-    public void setPriceLimits(PriceLimits _priceLimits) {
-        this._priceLimits = _priceLimits;
+    public void setPriceLimits(PriceLimits priceLimits) {
+        this._priceLimits = priceLimits;
     }
 
     public MarketOpenInterest getMarketOpenInterest() {
@@ -818,8 +818,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         return _marketOpenInterest;
     }
 
-    public void setMarketOpenInterest(MarketOpenInterest _marketOpenInterest) {
-        this._marketOpenInterest = _marketOpenInterest;
+    public void setMarketOpenInterest(MarketOpenInterest marketOpenInterest) {
+        this._marketOpenInterest = marketOpenInterest;
     }
 
     public Vwap getVwapNew() {
@@ -829,7 +829,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         return _vwapNew;
     }
 
-    public void setVwapNew(Vwap _vwapNew) {
-        this._vwapNew = _vwapNew;
+    public void setVwapNew(Vwap vwapNew) {
+        this._vwapNew = vwapNew;
     }
 }
