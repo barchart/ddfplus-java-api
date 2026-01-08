@@ -18,10 +18,10 @@ public class Symbol {
     public static final int _currentYear = new DateTime().getYear();
     public static final int _currentMonth = new DateTime().getMonthOfYear();
 
-    private static char[] _extendedFuturesMonths = new char[]{'A', 'B', 'C', 'D', 'E', 'I', 'L', 'O', 'P', 'R', 'S',
+    private static final char[] _extendedFuturesMonths = new char[]{'A', 'B', 'C', 'D', 'E', 'I', 'L', 'O', 'P', 'R', 'S',
             'T'};
 
-    private static char[] _futuresMonths = new char[]{'F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z'};
+    private static final char[] _futuresMonths = new char[]{'F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z'};
 
     public static int calculateYear(String value) {
         int fullYear = 0;
@@ -30,7 +30,6 @@ public class Symbol {
         try {
             year = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            ;
         }
 
         if (year < 0)
@@ -223,10 +222,7 @@ public class Symbol {
         }
         char one = symbol.charAt(len - 2);
         char two = symbol.charAt(len - 1);
-        if (Character.isDigit(one) && Character.isDigit(two)) {
-            return true;
-        }
-        return false;
+        return Character.isDigit(one) && Character.isDigit(two);
     }
 
     private static String[] splitSymbol(String symbol, SymbolType type, int currentYear, int currentMonth) {
@@ -252,7 +248,7 @@ public class Symbol {
                                 year = false;
                             }
                         } else
-                            parts[0] = "" + c + parts[0];
+                            parts[0] = c + parts[0];
                     }
                     parts[0] = parts[0].trim();
                     parts[2] = parts[2].trim();
@@ -366,7 +362,6 @@ public class Symbol {
                     for (String s2 : sa) {
                         s2 = s2.trim();
                         if (count < 2) {
-                            ;
                         } else if (count == 2)
                             spreadType = s2;
                         else if (s2.length() > 0)
@@ -404,7 +399,6 @@ public class Symbol {
                     for (String s2 : sa) {
                         s2 = s2.trim();
                         if (count < 2) {
-                            ;
                         } else if (count == 2)
                             spreadType = s2;
                         else if (s2.length() > 0) {
@@ -459,12 +453,11 @@ public class Symbol {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{sym="+_symbol);
-        sb.append(",type="+_type);
-        sb.append(",shortSym="+getShortSymbol());
-        sb.append("}");
-        return sb.toString();
+        String sb = "{sym=" + _symbol +
+                ",type=" + _type +
+                ",shortSym=" + getShortSymbol() +
+                "}";
+        return sb;
     }
 
     @Override
@@ -504,10 +497,9 @@ public class Symbol {
     public String getNormalizedSymbol() {
         switch (this._type) {
             case Future:
-                StringBuilder sb = new StringBuilder(this._commodityCode);
-                sb.append(this._month);
-                sb.append(Integer.toString(_year).substring(2, 4));
-                return sb.toString();
+                String sb = this._commodityCode + this._month +
+                        Integer.toString(_year).substring(2, 4);
+                return sb;
             default:
                 return this._symbol;
         }
@@ -541,7 +533,7 @@ public class Symbol {
                     }
                 }
 
-                return _commodityCode + c_mo + Integer.toString(_year).substring(3, 4);
+                return _commodityCode + c_mo + Integer.toString(_year).charAt(3);
             }
             case Future_Option: {
                 char c_mo = _month;
@@ -628,7 +620,7 @@ public class Symbol {
             case Future_Spread:
             case Future_Option:
                 if (this._year > 0) {
-                    return this._year < (Symbol._currentYear - 1);
+                    return this._year <= (Symbol._currentYear - 1);
                 }
         }
         return false;

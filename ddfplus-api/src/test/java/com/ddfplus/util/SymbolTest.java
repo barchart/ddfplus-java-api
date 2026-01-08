@@ -146,6 +146,13 @@ public class SymbolTest {
         assertTrue("2014",s.isExpired());
         s = new Symbol("CTZ34");
         assertFalse(s.isExpired());
+
+        s = new Symbol("CLM25");
+        assertTrue("Expired in 2025",s.isExpired());
+        s = new Symbol("CLM5");
+        assertFalse("Expires in 2035",s.isExpired());
+        s = new Symbol("CLM35");
+        assertFalse("Expires in 2035",s.isExpired());
     }
 
     @Test
@@ -180,7 +187,7 @@ public class SymbolTest {
         assertEquals(SymbolType.Future,s.getSymbolType());
         assertEquals("ES",s.getCommodityCode());
         assertEquals('K',s.getMonth());
-        assertEquals(2025,s.getYear());
+        assertEquals(2035,s.getYear());
         s = new Symbol("ESK25");
         assertEquals(SymbolType.Future,s.getSymbolType());
         assertEquals("ES",s.getCommodityCode());
@@ -201,7 +208,7 @@ public class SymbolTest {
         assertEquals(SymbolType.Future,s.getSymbolType());
         assertEquals("FJB7",s.getCommodityCode());
         assertEquals('Q',s.getMonth());
-        assertEquals(2025,s.getYear());
+        assertEquals(2035,s.getYear());
     }
 
     @Test
@@ -209,7 +216,7 @@ public class SymbolTest {
         Symbol s = new Symbol("FJB7Q25");
         assertEquals("2 digit year","FJB7Q25",s.getNormalizedSymbol());
         s = new Symbol("FJB7Q5");
-        assertEquals("1 digit year","FJB7Q25",s.getNormalizedSymbol());
+        assertEquals("1 digit year","FJB7Q35",s.getNormalizedSymbol());
     }
 
 
