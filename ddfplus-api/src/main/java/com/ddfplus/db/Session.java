@@ -63,8 +63,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	protected volatile long _timestamp = 0L;
 	protected volatile int _tradeSize = 0;
+	protected double _tradeSizeFractional = 0f;
 	protected volatile long _tradeTimestamp = 0L;
 	protected volatile long _volume = 0L;
+	protected double _volumeFractional = 0f;
 	protected volatile DDFDate _volumeDate = null;
 	protected volatile long _numTrades = 0L;
 	protected volatile double _priceVolume = 0.0;
@@ -114,8 +116,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._timestamp = _timestamp;
 		s._tzAdjustment = _tzAdjustment;
 		s._tradeSize = _tradeSize;
+		s._tradeSizeFractional = _tradeSizeFractional;
 		s._tradeTimestamp = _tradeTimestamp;
 		s._volume = _volume;
+		s._volumeFractional = _volumeFractional;
 		s._volumeDate = _volumeDate;
 		s._numTrades = _numTrades;
 		s._priceVolume = _priceVolume;
@@ -144,8 +148,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         _timestamp = 0;
         _tzAdjustment = 0;
         _tradeSize = 0;
+        _tradeSizeFractional = 0f;
         _tradeTimestamp = 0;
         _volume = 0;
+        _volumeFractional = 0f;
         _volumeDate = null;
         _numTrades = 0;
         _priceVolume = 0.0f;
@@ -272,6 +278,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 	public int getLastSize() {
 		return _tradeSize;
+	}
+
+	public double getLastSizeFractional() {
+		return _tradeSizeFractional;
+	}
+
+	public void setLastSizeFractional(double _tradeSizeFractional) {
+		this._tradeSizeFractional = _tradeSizeFractional;
 	}
 
 	/**
@@ -430,11 +444,21 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         return _volumeDate;
     }
 
-    public void setVolumeDate(DDFDate _volumeDate) {
+	public void setVolumeDate(DDFDate _volumeDate) {
         this._volumeDate = _volumeDate;
     }
 
-    /**
+
+	public double getVolumeFractional() {
+		return _volumeFractional;
+	}
+
+	public void setVolumeFractional(double _volumeFractional) {
+		this._volumeFractional = _volumeFractional;
+	}
+
+
+	/**
 	 * Deserializes the object from an XMLNode object.
 	 * 
 	 * @param node
