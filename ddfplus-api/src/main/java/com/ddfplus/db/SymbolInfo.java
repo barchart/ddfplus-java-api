@@ -25,6 +25,7 @@ public class SymbolInfo {
     private String _longSymbol;
     private String _requestSymbol;
     private String _updatedAt;
+    private boolean expired;
 
     public SymbolInfo(String symbol, String name, String exchange, int unitCode, Float pointValue, int tickIncrement) {
         this(symbol, name, exchange, convertUnitCodeInt2DDF(unitCode), pointValue, tickIncrement);
@@ -272,5 +273,11 @@ public class SymbolInfo {
         this._requestSymbol = _requestSymbol;
     }
 
+    public boolean isExpired() {
+        return expired;
+    }
 
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
 }
