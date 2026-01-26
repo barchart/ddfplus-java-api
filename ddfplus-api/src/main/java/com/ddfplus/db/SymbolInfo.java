@@ -8,6 +8,8 @@ package com.ddfplus.db;
 
 import com.ddfplus.util.XMLNode;
 
+import java.util.Objects;
+
 /**
  * Symbol definition parameters
  *
@@ -39,6 +41,18 @@ public class SymbolInfo {
         this._unitCode = ddfuc2bb(baseCode);
         this._pointValue = (pointValue == null) ? 1.0f : pointValue;
         this._tickIncrement = tickIncrement;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SymbolInfo)) return false;
+        SymbolInfo that = (SymbolInfo) o;
+        return Objects.equals(_exchange, that._exchange) && Objects.equals(_symbol, that._symbol) && Objects.equals(_longSymbol, that._longSymbol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(_exchange, _symbol, _longSymbol);
     }
 
     public SymbolInfo clone(String symbol) {
