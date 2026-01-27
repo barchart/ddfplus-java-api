@@ -33,6 +33,7 @@ public class Quote implements Cloneable, Serializable {
     // By defining the serialVersionUID we can keep Object Serialization
     // consistent.
     private static final long serialVersionUID = 9094149815858170620L;
+    private static final char BASECODE_DECIMALS_TWO = 'B';
 
     private final Clock clock = Clock.system(ZONE_ID_CHICAGO);
     private volatile String _ddfExchange = "";
@@ -795,6 +796,7 @@ public class Quote implements Cloneable, Serializable {
     }
 
     private void buildJsonReferenceVolatilityPrice(Session session, char baseCode, StringBuilder sb) {
+
         ReferenceVolatilityPrice referenceVolatilityPrice = session.getReferenceVolatilityPrice();
         if (referenceVolatilityPrice == null ||
                 (referenceVolatilityPrice.getAtm() == 0 && (referenceVolatilityPrice.getSurfaceDomain() == null || referenceVolatilityPrice.getSurfaceDomain().isBlank()) &&
@@ -810,13 +812,13 @@ public class Quote implements Cloneable, Serializable {
         if(referenceVolatilityPrice.getSurfaceDomain() != null && !referenceVolatilityPrice.getSurfaceDomain().isBlank()) {
             sb.append("\"surfaceDomain\": \"" + referenceVolatilityPrice.getSurfaceDomain() + "\", ");
         }
-        String p = (referenceVolatilityPrice.getVolatility() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getVolatility(), baseCode, ParserHelper.PURE_DECIMAL);
+        String p = (referenceVolatilityPrice.getVolatility() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getVolatility(), BASECODE_DECIMALS_TWO, ParserHelper.PURE_DECIMAL);
         sb.append("\"volatility\": " + p);
         if(referenceVolatilityPrice.getPremium() != ParserHelper.DDFAPI_NOVALUE){
             p = (referenceVolatilityPrice.getPremium() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getPremium(), baseCode, ParserHelper.PURE_DECIMAL);
             sb.append(", \"premium\": " + p);
         }
-        p = (referenceVolatilityPrice.getDelta() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getDelta(), baseCode, ParserHelper.PURE_DECIMAL);
+        p = (referenceVolatilityPrice.getDelta() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(referenceVolatilityPrice.getDelta(), BASECODE_DECIMALS_TWO, ParserHelper.PURE_DECIMAL);
         sb.append(", \"delta\": " + p);
         sb.append("}");
     }
