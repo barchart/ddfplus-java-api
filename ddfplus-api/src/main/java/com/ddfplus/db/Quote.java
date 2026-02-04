@@ -1088,11 +1088,15 @@ public class Quote implements Cloneable, Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("si: " + _symbolInfo + " qteReqSym: " + _requestSymbol + " ");
+        sb.append(" marketId: "+_marketId);
+        sb.append(" seqNo " + _seqNo);
         if (this._combinedSession != null) {
             sb.append(" curSession: " + (this._combinedSession.getDay() != null ? this._combinedSession.getDay().getDate().toLocalDate() : ""));
+            sb.append(" settle: "+this._combinedSession.getSettlement());
         }
         if (this._previousSession != null) {
             sb.append(" prevSession: " + (this._previousSession.getDay() != null ? this._previousSession.getDay().getDate().toLocalDate() : ""));
+            sb.append(" settle: "+this._previousSession.getSettlement());
         }
         return sb.toString();
     }
