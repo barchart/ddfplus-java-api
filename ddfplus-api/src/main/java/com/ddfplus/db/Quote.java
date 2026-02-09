@@ -578,7 +578,7 @@ public class Quote implements Cloneable, Serializable {
                     + ", \"lastsize\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSize() * 100 : session.getLastSize() ))
                     + ", \"lastsizefractional\": "
-                    + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSize() * 100 : Double.toString(session.getLastSizeFractional()) ))
+                    + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSizeFractional() * 100 : Double.toString(session.getLastSizeFractional()) ))
                     + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
                     + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : ParserHelper.float2string(session.getSettlement(), baseCode,
@@ -611,7 +611,7 @@ public class Quote implements Cloneable, Serializable {
                             + ", \"lastsize_z\": "
                             + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? _zSession.getLastSize() * 100: _zSession.getLastSize()))
                             + ", \"lastsizefractional_z\": "
-                            + ((_zSession.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? _zSession.getLastSize() * 100: Double.toString(_zSession.getLastSizeFractional())))
+                            + ((_zSession.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? _zSession.getLastSizeFractional() * 100: Double.toString(_zSession.getLastSizeFractional())))
                             + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()) : "")
                     + ", \"seqno\": " + _seqNo
                     + ", \"marketId\": " + _marketId
@@ -644,7 +644,7 @@ public class Quote implements Cloneable, Serializable {
                     + ", \"lastsize_z\": "
                     + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSize() * 100: session.getLastSize()))
                     + ", \"lastsizefractional_z\": "
-                    + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSize() * 100: Double.toString(session.getLastSizeFractional())))
+                    + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSizeFractional() * 100: Double.toString(session.getLastSizeFractional())))
                     + ", \"tradetimestamp\": null"
                     + ", \"tradetimestamp_z\": " + session.getTradeTimestamp()
                     + ", \"settlement\": "
@@ -704,7 +704,7 @@ public class Quote implements Cloneable, Serializable {
                 sb.append(", \"t_session\" : { ");
                 sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
                 sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session_t.getLastSize() * 100 : session_t.getLastSize())));
-                sb.append(", \"lastsizefractional\": " + ((session_t.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session_t.getLastSize() * 100 : Double.toString(session_t.getLastSizeFractional()))));
+                sb.append(", \"lastsizefractional\": " + ((session_t.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session_t.getLastSizeFractional() * 100 : Double.toString(session_t.getLastSizeFractional()))));
                 sb.append(", \"tradetimestamp\": " + (session_t.getTradeTimestamp() == 0 ? null : session_t.getTradeTimestamp()));
                 sb.append(", \"timestamp\": " + (session_t.getTimeInMillis() == 0 ? null : session_t.getTimeInMillis()));
                 if (session_t.getNumberOfTrades() != 0) {
