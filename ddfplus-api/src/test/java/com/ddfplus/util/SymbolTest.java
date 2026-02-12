@@ -14,6 +14,7 @@ public class SymbolTest {
         assertEquals(SymbolType.Index, Symbol.getSymbolType("$SPX"));
         assertEquals(SymbolType.Baltic, Symbol.getSymbolType("C5TC.BI"));
         assertEquals(SymbolType.YieldBP, Symbol.getSymbolType("ZCYAOH80.BP"));
+        assertEquals(SymbolType.Equity_Brazil, Symbol.getSymbolType("VALE3.SA"));
     }
 
     @Test

@@ -154,6 +154,8 @@ public class Symbol {
                 return SymbolType.Baltic;
             else if (symbol.endsWith(".BP"))
                 return SymbolType.YieldBP;
+            else if (symbol.endsWith(".SA"))
+                return SymbolType.Equity_Brazil;
 
             for (int i = 0; i < ca.length; i++) {
                 if (Character.isDigit(ca[i])) {
