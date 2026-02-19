@@ -40,22 +40,58 @@ public class QuoteTest {
 		assertEquals(100, t_session.getInt("last"));
 	}
 
+
+
 	@Test
-	public void testJsonZSession() {
-		symbolInfo = new SymbolInfo("HGEN", "MEZ900C", "G", '2', null, 1);
+	public void testJsonFractionalQuantities() {
+		symbolInfo = new SymbolInfo("TSLA", "TSLA", "NASDAQ", '2', null, 1);
 		quote = new Quote(symbolInfo);
 		// Current Session
-		quote.getCombinedSession().setDayCode(DDFDate.fromDDFString("20210501000000"));
-		// Z Session
-		Session z = quote.createZSession();
-		z.setLast(100);
-		z.setDayCode(new DDFDate(ZonedDateTime.now()));
+		quote.getCombinedSession().setDayCode('1');
+		// Add T session
+		Session tSession= quote.createSession('1', 'T');
+		// No quantities
 		String json = quote.toJSONString();
 		assertNotNull(json);
-		System.out.println(json);
+//		System.out.println(json);
 		JSONObject obj = new JSONObject("{" + json + "}");
-		JSONObject jsonObject = obj.getJSONObject("HGEN");
-		assertEquals(100, jsonObject.getInt("last_z"));
+		JSONObject jsonObject = obj.getJSONObject("TSLA");
+		assertTrue(jsonObject.isNull("lastsize"));
+		assertTrue(jsonObject.isNull("lastsizefractional"));
+		assertTrue(jsonObject.isNull("volume"));
+		assertTrue(jsonObject.isNull("volumeFractional"));
+		// previous
+		JSONObject previousSession = jsonObject.getJSONObject("previous_session");
+		assertTrue(previousSession.isNull("volume"));
+		assertTrue(previousSession.isNull("volumefractional"));
+		// t_session
+		assertTrue(jsonObject.isNull("t_session"));
+
+
+		// Add values
+		// combined session
+		quote.getCombinedSession().setLastSize(11);
+		quote.getCombinedSession().setLastSizeFractional(11.123);
+		quote.getCombinedSession().setVolume(10);
+		quote.getCombinedSession().setVolumeFractional(10.123);
+		// previous
+		quote.getPreviousSession().setVolume(12);
+		quote.getPreviousSession().setVolumeFractional(12.123);
+
+		json = quote.toJSONString();
+		assertNotNull(json);
+		System.out.println(json);
+		obj = new JSONObject("{" + json + "}");
+		jsonObject = obj.getJSONObject("TSLA");
+		assertEquals(11,jsonObject.getFloat("lastsize"),0.001);
+		assertEquals(11.123,jsonObject.getDouble("lastsizefractional"),0.001);
+		assertEquals(10,jsonObject.getLong("volume"));
+		assertEquals(10.123,jsonObject.getDouble("volumefractional"),0.001);
+		//previous
+		previousSession = jsonObject.getJSONObject("previous_session");
+		assertEquals(12,previousSession.getLong("volume"));
+		assertEquals(12.123,previousSession.getDouble("volumefractional"),0.001);
+
 	}
 
 	@Test

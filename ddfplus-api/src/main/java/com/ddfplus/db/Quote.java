@@ -666,7 +666,7 @@ public class Quote implements Cloneable, Serializable {
                     ParserHelper.PURE_DECIMAL))
                     + ", \"volume\": "
                     + ((session.getVolume() == ParserHelper.DDFAPI_NOVALUE) ? "null" : session.getVolume())
-                    + (useFractional ?  ((session.getVolumeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : Double.toString(session.getVolumeFractional())) : "")
+                    + (useFractional ? ", \"volumefractional\": " + ((session.getVolumeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : Double.toString(session.getVolumeFractional())) : "")
                     + ", \"openinterest\": "
                     + ((session.getOpenInterest() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : session.getOpenInterest())
