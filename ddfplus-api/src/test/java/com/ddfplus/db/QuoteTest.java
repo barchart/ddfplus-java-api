@@ -150,9 +150,15 @@ public class QuoteTest {
 		quote.setBidSize(1);
 		quote.setAsk(5.5f);
 		quote.setAskSize(2);
+		ReferenceVolatilityPrice referenceVolatilityPrice = quote.getCombinedSession().getReferenceVolatilityPrice();
+		referenceVolatilityPrice.setTradeDate(20260218);
+		referenceVolatilityPrice.setVolatility(0.5f);
 
 		Quote c = (Quote) quote.clone();
 		assertNotEquals(quote.getCombinedSession().getParentQuote(),c.getCombinedSession().getParentQuote());
+		assertNotEquals(referenceVolatilityPrice,c.getCombinedSession().getReferenceVolatilityPrice());
+		assertEquals(referenceVolatilityPrice.getTradeDate(),c.getCombinedSession().getReferenceVolatilityPrice().getTradeDate());
+		assertEquals(referenceVolatilityPrice.getVolatility(),c.getCombinedSession().getReferenceVolatilityPrice().getVolatility(),0.001);
 	}
 
 }
