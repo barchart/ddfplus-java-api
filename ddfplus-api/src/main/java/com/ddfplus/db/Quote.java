@@ -588,8 +588,7 @@ public class Quote implements Cloneable, Serializable {
                     + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
-                    + ", \"lastsize\": "
-                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSize() * 100 : session.getLastSize() ))
+                    + ", \"lastsize\": " + session.getLastSizeDisplay(multiply100)
                     + (useFractional ? ", \"lastsizefractional\": " + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSizeFractional() * 100 : Double.toString(session.getLastSizeFractional()) )) : "")
                     + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
                     + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
@@ -619,8 +618,7 @@ public class Quote implements Cloneable, Serializable {
                             + ((_zSession.getLast() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                             : ParserHelper.float2string(_zSession.getLast(), baseCode,
                             ParserHelper.PURE_DECIMAL))
-                            + ", \"lastsize_z\": "
-                            + ((_zSession.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? _zSession.getLastSize() * 100: _zSession.getLastSize()))
+                            + ", \"lastsize_z\": " + _zSession.getLastSizeDisplay(multiply100)
                             + (useFractional ? ", \"lastsizefractional_z\": " + ((_zSession.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? _zSession.getLastSizeFractional() * 100: Double.toString(_zSession.getLastSizeFractional()))) : "")
                             + ", \"tradetimestamp_z\": " + _zSession.getTradeTimestamp()) : "")
                     + ", \"seqno\": " + _seqNo
@@ -651,8 +649,7 @@ public class Quote implements Cloneable, Serializable {
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
                     + ", \"lastsize\": null"
-                    + ", \"lastsize_z\": "
-                    + ((session.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSize() * 100: session.getLastSize()))
+                    + ", \"lastsize_z\": " + session.getLastSizeDisplay(multiply100)
                     + (useFractional ? ", \"lastsizefractional_z\": " + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSizeFractional() * 100: Double.toString(session.getLastSizeFractional()))) : "")
                     + ", \"tradetimestamp\": null"
                     + ", \"tradetimestamp_z\": " + session.getTradeTimestamp()
@@ -711,7 +708,7 @@ public class Quote implements Cloneable, Serializable {
             if (display) {
                 sb.append(", \"t_session\" : { ");
                 sb.append("\"last\": " + ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL));
-                sb.append(", \"lastsize\": " + ((session_t.getLastSize() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session_t.getLastSize() * 100 : session_t.getLastSize())));
+                sb.append(", \"lastsize\": " + session_t.getLastSizeDisplay(multiply100));
                 if(useFractional) {
                     sb.append(", \"lastsizefractional\": " + ((session_t.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session_t.getLastSizeFractional() * 100 : Double.toString(session_t.getLastSizeFractional()))));
                 }

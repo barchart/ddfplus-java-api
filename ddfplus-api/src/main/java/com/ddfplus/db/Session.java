@@ -284,6 +284,13 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		return _tradeSizeFractional;
 	}
 
+	public String getLastSizeDisplay( boolean multiply100) {
+		if(_tradeSizeFractional != 0 && _tradeSize == ParserHelper.DDFAPI_NOVALUE) {
+			return "0";
+		}
+		return _tradeSize == ParserHelper.DDFAPI_NOVALUE ? "null" : (multiply100 ?  Integer.toString(_tradeSize * 100) : Integer.toString(_tradeSize));
+	}
+
 	public void setLastSizeFractional(double _tradeSizeFractional) {
 		this._tradeSizeFractional = _tradeSizeFractional;
 	}
