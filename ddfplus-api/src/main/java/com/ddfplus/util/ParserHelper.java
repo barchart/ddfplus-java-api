@@ -64,7 +64,7 @@ public final class ParserHelper {
 	public static int float2int(int basecode, float value) {
 
 		// Have cent support, 4.635 --> 4.64
-		boolean roundUp = ((value * 100) % 1) >= .5f ? true : false;
+		boolean roundUp = ((value * 100) % 1) >= .5f;
 		float c = value;
 		float rf = (float) 0.25;
 
@@ -82,7 +82,7 @@ public final class ParserHelper {
 		}
 
 		// Now the pain in the ass stuff
-		int i = 0 - basecode - 1;
+		int i = -basecode - 1;
 		int ii = units_f3[i];
 		int jj = units_f4[i];
 
@@ -115,7 +115,7 @@ public final class ParserHelper {
 	 *            <LI>#INTEGER - Integer (like dash but no dashes) notation
 	 *            </ul>
 	 */
-	public synchronized static final String float2string(float f, char basecode, int target) {
+	public static String float2string(float f, char basecode, int target) {
 		return float2string(NF_THREAD_LOCAL.get(), f, basecode, target, true);
 	}
 
@@ -138,7 +138,7 @@ public final class ParserHelper {
 	 *            <LI>#INTEGER - Integer (like dash but no dashes) notation
 	 *            </ul>
 	 */
-	public static final String float2string(NumberFormat numberFormat, float f, char basecode, int target) {
+	public static String float2string(NumberFormat numberFormat, float f, char basecode, int target) {
 		return float2string(numberFormat, f, basecode, target, true);
 	}
 
@@ -147,7 +147,7 @@ public final class ParserHelper {
 	/*
 	 * Convert a float to a DDF string.
 	 */
-	public synchronized static String float2string(double value, final char basecode, final int target, final boolean special64) {
+	public static String float2string(double value, final char basecode, final int target, final boolean special64) {
 		return float2string(NF_THREAD_LOCAL.get(), value, basecode, target, special64);
 	}
 
@@ -156,14 +156,11 @@ public final class ParserHelper {
 	 *
 	 * TODO Possible optimizations here.
 	 */
-	public static final String float2string(NumberFormat numberFormat, double value, final char basecode, final int target, final boolean special64) {
+	public static String float2string(NumberFormat numberFormat, double value, final char basecode, final int target, final boolean special64) {
 		final int unit = SymbolInfo.ddfuc2bb(basecode);
 
 		if (unit >= 0) {
-			if (target == PURE_DECIMAL)
-				numberFormat.setGroupingUsed(false);
-			else
-				numberFormat.setGroupingUsed(true);
+            numberFormat.setGroupingUsed(target != PURE_DECIMAL);
 
 			numberFormat.setMinimumFractionDigits(unit);
 			numberFormat.setMaximumFractionDigits(unit);
@@ -171,7 +168,7 @@ public final class ParserHelper {
 			String s = numberFormat.format(value);
 
 			if (target == INTEGER) {
-				char ca[] = s.toCharArray();
+				char[] ca = s.toCharArray();
 				int st = 0;
 
 				s = "";
@@ -206,10 +203,7 @@ public final class ParserHelper {
 		}
 
 		if ((target == DECIMAL) || (target == PURE_DECIMAL)) {
-			if (target == PURE_DECIMAL)
-				numberFormat.setGroupingUsed(false);
-			else
-				numberFormat.setGroupingUsed(true);
+            numberFormat.setGroupingUsed(target != PURE_DECIMAL);
 
 			switch (unit) {
 			case -1:
@@ -295,7 +289,7 @@ public final class ParserHelper {
 		}
 
 		sf = "00000000" + (int) div;
-		sf = sf.substring(sf.length() - digits, sf.length());
+		sf = sf.substring(sf.length() - digits);
 
 		if (target == INTEGER) {
 			if (iWhole != 0)
@@ -390,8 +384,7 @@ public final class ParserHelper {
 		try {
 			i = Integer.parseInt(value);
 		} catch (Exception e) {
-			;
-		}
+        }
 
 		return i;
 	}
@@ -402,7 +395,7 @@ public final class ParserHelper {
 				&& block != Character.UnicodeBlock.SPECIALS;
 	}
 
-	public final static char filterNullChar(final char in) {
+	public static char filterNullChar(final char in) {
 		if (in == ASCII.NUL) {
 			return '?';
 		} else {
@@ -410,7 +403,7 @@ public final class ParserHelper {
 		}
 	}
 
-	public final static String toAsciiString(final byte bytes[]) {
+	public static String toAsciiString(final byte[] bytes) {
 		int size = bytes.length;
 		char[] charArray = new char[size];
 		for (int k = 0; k < size; k++) {
@@ -424,7 +417,7 @@ public final class ParserHelper {
 		return new String(charArray);
 	}
 
-	public final static String toAsciiString2(final byte bytes[]) {
+	public static String toAsciiString2(final byte[] bytes) {
 		int size = bytes.length;
 		char[] charArray = new char[size * 2];
 		int m = 0;
@@ -440,7 +433,7 @@ public final class ParserHelper {
 		return new String(charArray);
 	}
 
-	public final static String toHexString(final byte bytes[]) {
+	public static String toHexString(final byte[] bytes) {
 		if (bytes == null) {
 			return null;
 		}
@@ -455,7 +448,7 @@ public final class ParserHelper {
 		return sb.toString();
 	}
 
-	private final static char nibble2char(final byte b) {
+	private static char nibble2char(final byte b) {
 		byte nibble = (byte) (b & 0x0f);
 		if (nibble < 10) {
 			return (char) ('0' + nibble);
