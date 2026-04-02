@@ -755,6 +755,7 @@ public class Quote implements Cloneable, Serializable {
         }
         sb.append(", \"numtrades\": " + previousSession.getNumberOfTrades());
         sb.append(", \"pricevolume\": " + ParserHelper.float2string(previousSession.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
+        sb.append(", \"tradetimestamp\": " +previousSession.getTradeTimestamp());
 
         buildJsonOfficialBestBidOffer(previousSession, baseCode, sb);
         buildJsonReferenceVolatilityPrice(previousSession, baseCode, sb);
