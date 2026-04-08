@@ -14,7 +14,6 @@ import com.ddfplus.util.ParserHelper;
 import com.ddfplus.util.XMLNode;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,6 +25,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * also contains formatting and other information.
  */
 public class Quote implements Cloneable, Serializable {
+
+
 
     public enum CacheAge {SevenDays, SixWeeks, SixWeeksPlus}
 
@@ -45,6 +46,11 @@ public class Quote implements Cloneable, Serializable {
     private volatile int _askSize = 0;
     private volatile float _bid = 0.0f;
     private volatile int _bidSize = 0;
+    // BOLO fields
+    private float _bolbid;
+    private int _bolbidsize;
+    private float _bolask;
+    private int _bolasksize;
 
     // Sessions
     protected volatile Session _combinedSession = new Session(this);
@@ -84,6 +90,11 @@ public class Quote implements Cloneable, Serializable {
         q._askSize = _askSize;
         q._bid = _bid;
         q._bidSize = _bidSize;
+        // Bolo
+        q._bolbid = _bolbid;
+        q._bolbidsize = _bolbidsize;
+        q._bolask = _bolask;
+        q._bolasksize = _bolasksize;
         q._ddfExchange = _ddfExchange;
         q._flag = _flag;
         q._lastUpdated = this._lastUpdated;
@@ -190,6 +201,42 @@ public class Quote implements Cloneable, Serializable {
 
     public int getBidSize() {
         return _bidSize;
+    }
+
+    public float getBolbid() {
+        return _bolbid;
+    }
+
+    public void setBolbid(float _bolbid) {
+        this._bolbid = _bolbid;
+    }
+
+    public int getBolbidsize() {
+        return _bolbidsize;
+    }
+
+    public void setBolbidsize(int _bolbidsize) {
+        this._bolbidsize = _bolbidsize;
+    }
+
+    public float getBolask() {
+        return _bolask;
+    }
+
+    public void setBolask(float _bolask) {
+        this._bolask = _bolask;
+    }
+
+    public int getBolasksize() {
+        return _bolasksize;
+    }
+
+    public void setBolasksize(int _bolasksize) {
+        this._bolasksize = _bolasksize;
+    }
+
+    public void clearBolo() {
+        this._bolbid = this._bolask = this._bolasksize = this._bolbidsize = 0;
     }
 
     /**
@@ -456,12 +503,24 @@ public class Quote implements Cloneable, Serializable {
         }
     }
 
+    private boolean isEquity(String exchange) {
+        switch (exchange) {
+            case "NYSE":
+            case "AMEX":
+            case "NASDAQ":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public String toJSONString(int version, boolean displayBbo, boolean useEquityExtendedDecimals, String displaySymbol) {
         char baseCode = this._symbolInfo.getBaseCode();
         boolean opra = this._symbolInfo.getExchange().equals("OPRA");
         // US Exchange Equity
         boolean multiply100 = false;
         boolean useFractional = isUseFractional(this._symbolInfo.getExchange());
+        boolean isEquity = isEquity(this._symbolInfo.getExchange());
         if (useEquityExtendedDecimals) {
             String exchange = this._symbolInfo.getExchange();
             switch (exchange) {
@@ -552,6 +611,10 @@ public class Quote implements Cloneable, Serializable {
             }
             if (session.getOfficialBestBidOffer() != null) {
                 buildJsonOfficialBestBidOffer(session, baseCode, sb);
+            }
+            if(isEquity) {
+                // Bolo Fields
+                buildJsonBoloFields(sb,baseCode);
             }
         }
 
@@ -766,6 +829,15 @@ public class Quote implements Cloneable, Serializable {
 
         sb.append("}");
         return sb.toString();
+    }
+
+    private void buildJsonBoloFields(StringBuilder sb, char baseCode) {
+        String bidSize = (_bolbidsize == ParserHelper.DDFAPI_NOVALUE) ? "null" :  Integer.toString(_bolbidsize);
+        String askSize = (_bolasksize == ParserHelper.DDFAPI_NOVALUE) ? "null" :  Integer.toString(_bolasksize);
+        sb.append(", \"bolbid\": "+ ((_bolbid == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(_bolbid, baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(", \"bolbidsize\": " + bidSize);
+        sb.append(", \"bolask\": " + ((_bolask == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(_bolask, baseCode, ParserHelper.PURE_DECIMAL)));
+        sb.append(", \"bolasksize\": " + askSize);
     }
 
     private void buildJsonVwap(Session session, char baseCode, StringBuilder sb) {
