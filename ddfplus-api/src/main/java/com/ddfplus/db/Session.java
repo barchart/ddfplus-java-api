@@ -65,6 +65,8 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 	protected volatile int _tradeSize = 0;
 	protected double _tradeSizeFractional = 0f;
 	protected volatile long _tradeTimestamp = 0L;
+	protected volatile float _lastTrade = 0L;
+	//
 	protected volatile long _volume = 0L;
 	protected double _volumeFractional = 0f;
 	protected volatile DDFDate _volumeDate = null;
@@ -118,6 +120,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s._tradeSize = _tradeSize;
 		s._tradeSizeFractional = _tradeSizeFractional;
 		s._tradeTimestamp = _tradeTimestamp;
+		s._lastTrade = _lastTrade;
 		s._volume = _volume;
 		s._volumeFractional = _volumeFractional;
 		s._volumeDate = _volumeDate;
@@ -150,6 +153,7 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
         _tradeSize = 0;
         _tradeSizeFractional = 0f;
         _tradeTimestamp = 0;
+		_lastTrade = 0.0f;
         _volume = 0;
         _volumeFractional = 0f;
         _volumeDate = null;
@@ -427,6 +431,14 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		_tradeSize = value;
 	}
 
+	public float getLastTrade() {
+		return _lastTrade;
+	}
+
+	public void setLastTrade(float lastTrade) {
+		this._lastTrade = lastTrade;
+	}
+
 	/**
 	 * @return <B>char</B> The Session Code
 	 */
@@ -552,6 +564,10 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 		s = node.getAttribute("tradesize");
 		if (s != null)
 			_tradeSize = ParserHelper.string2int(s);
+
+		s = node.getAttribute("lasttrade");
+		if (s != null)
+			_lastTrade = ParserHelper.string2float(s, _parentQuote.getSymbolInfo().getBaseCode());
 
 		s = node.getAttribute("openinterest");
 		if (s != null)
@@ -688,6 +704,9 @@ public class Session implements java.lang.Cloneable, java.io.Serializable {
 
 		if (_tradeSize != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("tradesize", "" + _tradeSize);
+
+		if (_lastTrade != ParserHelper.DDFAPI_NOVALUE)
+			node.setAttribute("lasttrade", Integer.toString(ParserHelper.float2int(uc, _lastTrade)));
 
 		if (_openInterest != ParserHelper.DDFAPI_NOVALUE)
 			node.setAttribute("openinterest", "" + _openInterest);

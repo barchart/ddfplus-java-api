@@ -648,15 +648,12 @@ public class Quote implements Cloneable, Serializable {
                     : ParserHelper.float2string(session.getLast(2), baseCode,
                     ParserHelper.PURE_DECIMAL))
                     + ", \"last_t\": "
-                    + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper
-                    .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
-                    : "null")
+                    + (((session_t != null) && (session_t.getLast() != ParserHelper.DDFAPI_NOVALUE)) ? ParserHelper.float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL) : "null")
                     + ", \"lastsize\": " + session.getLastSizeDisplay(multiply100)
                     + (useFractional ? ", \"lastsizefractional\": " + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ?  session.getLastSizeFractional() * 100 : Double.toString(session.getLastSizeFractional()) )) : "")
-                    + ", \"tradetimestamp\": " + session.getTradeTimestamp() + ", \"settlement\": "
-                    + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null"
-                    : ParserHelper.float2string(session.getSettlement(), baseCode,
-                    ParserHelper.PURE_DECIMAL))
+                    + ", \"lasttrade\": " + ((session.getLastTrade() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(session.getLastTrade(), baseCode,ParserHelper.PURE_DECIMAL))
+                    + ", \"tradetimestamp\": " + session.getTradeTimestamp() +
+                    ", \"settlement\": " + ((session.getSettlement() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(session.getSettlement(), baseCode,ParserHelper.PURE_DECIMAL))
                     + ", \"previous\": "
                     + ((session.getPrevious() == ParserHelper.DDFAPI_NOVALUE) ? "null"
                     : ParserHelper.float2string(session.getPrevious(), baseCode,
@@ -712,6 +709,7 @@ public class Quote implements Cloneable, Serializable {
                     .float2string(session_t.getLast(), baseCode, ParserHelper.PURE_DECIMAL)
                     : "null")
                     + ", \"lastsize\": null"
+                    + ", \"lasttrade\": " + ((session.getLastTrade() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(session.getLastTrade(), baseCode,ParserHelper.PURE_DECIMAL))
                     + ", \"lastsize_z\": " + session.getLastSizeDisplay(multiply100)
                     + (useFractional ? ", \"lastsizefractional_z\": " + ((session.getLastSizeFractional() == ParserHelper.DDFAPI_NOVALUE) ? "null" : (multiply100 ? session.getLastSizeFractional() * 100: Double.toString(session.getLastSizeFractional()))) : "")
                     + ", \"tradetimestamp\": null"
