@@ -817,6 +817,7 @@ public class Quote implements Cloneable, Serializable {
         sb.append(", \"numtrades\": " + previousSession.getNumberOfTrades());
         sb.append(", \"pricevolume\": " + ParserHelper.float2string(previousSession.getPriceVolume(), 'A', ParserHelper.PURE_DECIMAL, false));
         sb.append(", \"tradetimestamp\": " +previousSession.getTradeTimestamp());
+        sb.append(", \"lasttrade\": " + ((previousSession.getLastTrade() == ParserHelper.DDFAPI_NOVALUE) ? "null" : ParserHelper.float2string(previousSession.getLastTrade(), baseCode,ParserHelper.PURE_DECIMAL)));
 
         buildJsonOfficialBestBidOffer(previousSession, baseCode, sb);
         buildJsonReferenceVolatilityPrice(previousSession, baseCode, sb);
