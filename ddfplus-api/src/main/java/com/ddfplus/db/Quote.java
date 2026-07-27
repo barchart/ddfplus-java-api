@@ -947,7 +947,11 @@ public class Quote implements Cloneable, Serializable {
     }
 
     public XMLNode toXMLNode() {
-        return toXMLNode(true);
+        return toXMLNode(true,true);
+    }
+
+    public XMLNode toXMLNode(boolean showBidAsk) {
+        return toXMLNode(showBidAsk,true);
     }
 
 
@@ -959,7 +963,7 @@ public class Quote implements Cloneable, Serializable {
      * @return <code>XMLNode</code> The XMLNode representing this Quote.
      */
 
-    public XMLNode toXMLNode(boolean showBidAsk) {
+    public XMLNode toXMLNode(boolean showBidAsk,boolean useRequestSymbol) {
         boolean usEquity = false;
         String exchange = this._symbolInfo.getExchange();
         boolean opra = this._symbolInfo.getExchange().equals("OPRA");
@@ -973,7 +977,7 @@ public class Quote implements Cloneable, Serializable {
         }
 
         XMLNode node = new XMLNode("QUOTE");
-        node.setAttribute("symbol", this._requestSymbol != null ? this._requestSymbol : _symbolInfo.getSymbol());
+        node.setAttribute("symbol", this._requestSymbol != null && useRequestSymbol ? this._requestSymbol : _symbolInfo.getSymbol());
         if (_symbolInfo.getLongSymbol() != null) {
             node.setAttribute("longsymbol", _symbolInfo.getLongSymbol());
         }
