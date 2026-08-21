@@ -980,7 +980,7 @@ public class Quote implements Cloneable, Serializable {
         XMLNode node = new XMLNode("QUOTE");
         String symbol = this._requestSymbol != null && useRequestSymbol ? this._requestSymbol : _symbolInfo.getSymbol();
         // For XML always ensure to use the short symbol
-        symbol = Symbol.getShortSymbol(symbol);
+        symbol = Symbol.getShortSymbolForDisplay(symbol);
         node.setAttribute("symbol", symbol);
         if (_symbolInfo.getLongSymbol() != null) {
             node.setAttribute("longsymbol", _symbolInfo.getLongSymbol());

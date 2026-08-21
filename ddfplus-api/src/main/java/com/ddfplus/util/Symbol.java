@@ -198,7 +198,8 @@ public class Symbol {
             return SymbolType.Unknown;
     }
 
-    public static String getShortSymbol(String symbol) {
+    // Symbols in the past should use the long symbol
+    public static String getShortSymbolForDisplay(String symbol) {
         if(isCashSymbol(symbol)) {
             return getShortCashSymbol(symbol);
         }
@@ -208,11 +209,17 @@ public class Symbol {
             if(sym._year < Symbol._currentYear) {
                 return symbol;
             }
+            if(sym._year == Symbol._currentYear) {
+                int mon = Symbol.getMonthFromFuturesCode(sym._month);
+                if(mon < Symbol._currentMonth) {
+                    return symbol;
+                }
+            }
         } catch (Exception e) {
             System.out.println("Can not parse symbol: " +symbol + " error: " + e.getMessage());
         }
         if (sym != null) {
-            return sym.getShortSymbol();
+            return sym.getShortSymbolForDisplay();
         }
         return symbol;
     }
@@ -477,7 +484,7 @@ public class Symbol {
     public String toString() {
         String sb = "{sym=" + _symbol +
                 ",type=" + _type +
-                ",shortSym=" + getShortSymbol() +
+                ",shortSym=" + getShortSymbolForDisplay() +
                 "}";
         return sb;
     }
@@ -527,11 +534,11 @@ public class Symbol {
         }
     }
 
-    public String getShortSymbol() {
-        return getShortSymbol(_currentYear, _currentMonth);
+    public String getShortSymbolForDisplay() {
+        return getShortSymbolForDisplay(_currentYear, _currentMonth);
     }
 
-    public String getShortSymbol(int currentYear, int currentMonth) {
+    public String getShortSymbolForDisplay(int currentYear, int currentMonth) {
         if (isCashSymbol(_symbol)) {
             return getShortCashSymbol(_symbol);
         }
@@ -590,7 +597,7 @@ public class Symbol {
                     String shortSymbol = "_S_" + this._spreadType;
                     for (Symbol symbol : this._spreadLegs) {
                         shortSymbol += "_";
-                        shortSymbol += symbol.getShortSymbol();
+                        shortSymbol += symbol.getShortSymbolForDisplay();
                     }
                     return shortSymbol;
                 }
