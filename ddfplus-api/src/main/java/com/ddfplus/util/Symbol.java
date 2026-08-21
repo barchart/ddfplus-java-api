@@ -205,6 +205,9 @@ public class Symbol {
         Symbol sym = null;
         try {
             sym = new Symbol(symbol);
+            if(sym._year < Symbol._currentYear) {
+                return symbol;
+            }
         } catch (Exception e) {
             System.out.println("Can not parse symbol: " +symbol + " error: " + e.getMessage());
         }
