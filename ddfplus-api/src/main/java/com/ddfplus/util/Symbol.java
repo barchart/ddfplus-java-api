@@ -219,7 +219,7 @@ public class Symbol {
             System.out.println("Can not parse symbol: " +symbol + " error: " + e.getMessage());
         }
         if (sym != null) {
-            return sym.getShortSymbolForDisplay();
+            return sym.getShortSymbol();
         }
         return symbol;
     }
@@ -484,7 +484,7 @@ public class Symbol {
     public String toString() {
         String sb = "{sym=" + _symbol +
                 ",type=" + _type +
-                ",shortSym=" + getShortSymbolForDisplay() +
+                ",shortSym=" + getShortSymbol() +
                 "}";
         return sb;
     }
@@ -534,11 +534,11 @@ public class Symbol {
         }
     }
 
-    public String getShortSymbolForDisplay() {
-        return getShortSymbolForDisplay(_currentYear, _currentMonth);
+    public String getShortSymbol() {
+        return getShortSymbol(_currentYear, _currentMonth);
     }
 
-    public String getShortSymbolForDisplay(int currentYear, int currentMonth) {
+    public String getShortSymbol(int currentYear, int currentMonth) {
         if (isCashSymbol(_symbol)) {
             return getShortCashSymbol(_symbol);
         }
@@ -597,7 +597,7 @@ public class Symbol {
                     String shortSymbol = "_S_" + this._spreadType;
                     for (Symbol symbol : this._spreadLegs) {
                         shortSymbol += "_";
-                        shortSymbol += symbol.getShortSymbolForDisplay();
+                        shortSymbol += symbol.getShortSymbol();
                     }
                     return shortSymbol;
                 }
