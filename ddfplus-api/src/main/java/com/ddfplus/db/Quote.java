@@ -11,6 +11,7 @@ import com.ddfplus.enums.MarketConditionType;
 import com.ddfplus.messages.DdfMarketBase;
 import com.ddfplus.util.DDFDate;
 import com.ddfplus.util.ParserHelper;
+import com.ddfplus.util.Symbol;
 import com.ddfplus.util.XMLNode;
 
 import java.io.Serializable;
@@ -977,7 +978,10 @@ public class Quote implements Cloneable, Serializable {
         }
 
         XMLNode node = new XMLNode("QUOTE");
-        node.setAttribute("symbol", this._requestSymbol != null && useRequestSymbol ? this._requestSymbol : _symbolInfo.getSymbol());
+        String symbol = this._requestSymbol != null && useRequestSymbol ? this._requestSymbol : _symbolInfo.getSymbol();
+        // For XML always ensure to use the short symbol
+        symbol = Symbol.getShortSymbol(symbol);
+        node.setAttribute("symbol", symbol);
         if (_symbolInfo.getLongSymbol() != null) {
             node.setAttribute("longsymbol", _symbolInfo.getLongSymbol());
         }

@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Symbol {
 
     // XXX TIME!ZONE
@@ -195,6 +196,22 @@ public class Symbol {
             }
         } else
             return SymbolType.Unknown;
+    }
+
+    public static String getShortSymbol(String symbol) {
+        if(isCashSymbol(symbol)) {
+            return getShortCashSymbol(symbol);
+        }
+        Symbol sym = null;
+        try {
+            sym = new Symbol(symbol);
+        } catch (Exception e) {
+            System.out.println("Can not parse symbol: " +symbol + " error: " + e.getMessage());
+        }
+        if (sym != null) {
+            return sym.getShortSymbol();
+        }
+        return symbol;
     }
 
     public static boolean isCashSymbol(String symbol) {
